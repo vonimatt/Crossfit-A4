@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cardio Calorie Converter</title>
+  <title>Cardio Converter</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -12,34 +12,55 @@
       color: #1a1a2e;
       min-height: 100vh;
     }
+
+    /* ── HEADER ── */
     header {
-      background: #000000;
+      background: #000;
       color: white;
-      padding: 16px 16px 14px;
+      padding: 16px 16px 0;
       text-align: center;
     }
     header img {
-      max-width: 260px;
-      width: 70%;
+      max-width: 240px;
+      width: 65%;
       height: auto;
       display: block;
-      margin: 0 auto;
-    }
-    .badge {
-      display: inline-block;
-      background: #4a90d9;
-      color: white;
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      padding: 2px 8px;
-      border-radius: 20px;
-      margin-top: 10px;
-      text-transform: uppercase;
+      margin: 0 auto 14px;
     }
 
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      justify-content: center;
+      padding: 0 16px;
+    }
+    .tab-btn {
+      flex: 1;
+      max-width: 200px;
+      padding: 10px 6px;
+      border: none;
+      background: rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.6);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      border-radius: 10px 10px 0 0;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: #f0f2f5;
+      color: #1a1a2e;
+    }
+
+    /* ── LAYOUT ── */
     .container { max-width: 480px; margin: 0 auto; padding: 16px; }
 
+    .section { display: none; }
+    .section.active { display: block; }
+
+    /* ── CARD ── */
     .card {
       background: white;
       border-radius: 16px;
@@ -48,7 +69,7 @@
       box-shadow: 0 2px 12px rgba(0,0,0,0.08);
     }
     .card h2 {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
       color: #4a90d9;
       text-transform: uppercase;
@@ -56,7 +77,7 @@
       margin-bottom: 14px;
     }
 
-    /* Gender Toggle */
+    /* ── GENDER TOGGLE ── */
     .gender-toggle {
       display: flex;
       background: #f0f2f5;
@@ -82,36 +103,35 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.12);
     }
 
-    /* Machine selector */
+    /* ── MACHINE GRID ── */
     .machines {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 8px;
     }
+    .machines.three-col { grid-template-columns: 1fr 1fr 1fr; }
     .machine-btn {
-      padding: 12px 8px;
+      padding: 11px 6px;
       border: 2px solid #e8ecf0;
       border-radius: 12px;
       background: white;
       cursor: pointer;
       text-align: center;
       transition: all 0.2s;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 600;
       color: #555;
       line-height: 1.3;
     }
-    .machine-btn .icon { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+    .machine-btn .icon { font-size: 1.3rem; display: block; margin-bottom: 3px; }
     .machine-btn.active {
       border-color: #4a90d9;
       background: #eaf3fc;
       color: #1a6fc4;
     }
 
-    /* Input */
-    .input-wrap {
-      position: relative;
-    }
+    /* ── CALORIE INPUT ── */
+    .input-wrap { position: relative; }
     .input-wrap input {
       width: 100%;
       padding: 16px 50px 16px 20px;
@@ -141,16 +161,36 @@
       text-align: center;
     }
 
-    /* Results */
-    .results-grid {
-      display: grid;
-      gap: 10px;
+    /* ── DISTANCE CHIPS ── */
+    .dist-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
     }
+    .dist-chip {
+      padding: 8px 14px;
+      border: 2px solid #e8ecf0;
+      border-radius: 20px;
+      background: white;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #555;
+      transition: all 0.2s;
+    }
+    .dist-chip.active {
+      border-color: #4a90d9;
+      background: #eaf3fc;
+      color: #1a6fc4;
+    }
+
+    /* ── RESULTS ── */
+    .results-grid { display: grid; gap: 10px; }
     .result-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 16px;
+      padding: 13px 16px;
       background: #f7f9fc;
       border-radius: 12px;
       border-left: 4px solid #e0e0e0;
@@ -168,18 +208,18 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.85rem;
+      font-size: 0.83rem;
       font-weight: 600;
       color: #444;
     }
     .result-label .icon { font-size: 1.1rem; }
     .result-value {
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 800;
       color: #1a1a2e;
     }
     .result-value .unit-small {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 500;
       color: #888;
       margin-left: 2px;
@@ -188,7 +228,7 @@
     .result-item.highlight .result-value { color: #1a6fc4; }
 
     .source-tag {
-      font-size: 0.6rem;
+      font-size: 0.58rem;
       background: #4caf50;
       color: white;
       padding: 1px 6px;
@@ -204,7 +244,7 @@
       font-size: 0.85rem;
     }
 
-    /* Info */
+    /* ── INFO ── */
     .info-text {
       font-size: 0.72rem;
       color: #999;
@@ -213,7 +253,7 @@
     }
     .info-text strong { color: #4a90d9; }
 
-    /* Interpolation note */
+    /* ── INTERP NOTE ── */
     .interp-note {
       background: #fff8e1;
       border: 1px solid #ffe082;
@@ -231,12 +271,17 @@
 
 <header>
   <img src="logo.png" alt="CrossFit Affoltern am Albis" />
-  <span class="badge">Cardio Calorie Converter</span>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('calorie')">🔥 Calorie Converter</button>
+    <button class="tab-btn" onclick="switchTab('distance')">📏 Distance Converter</button>
+  </div>
 </header>
 
 <div class="container">
 
-  <!-- Gender -->
+  <!-- ══════════════════════════════════════════
+       SHARED: Gender Toggle
+  ══════════════════════════════════════════ -->
   <div class="card">
     <h2>Gender</h2>
     <div class="gender-toggle">
@@ -245,205 +290,341 @@
     </div>
   </div>
 
-  <!-- Source Machine -->
-  <div class="card">
-    <h2>Source Machine</h2>
-    <div class="machines">
-      <button class="machine-btn active" data-machine="row" onclick="setMachine(this)">
-        <span class="icon">🚣</span>Row / BikeErg / SkiErg
-      </button>
-      <button class="machine-btn" data-machine="assault" onclick="setMachine(this)">
-        <span class="icon">🚴</span>Assault Bike
-      </button>
-      <button class="machine-btn" data-machine="echo" onclick="setMachine(this)">
-        <span class="icon">⚡</span>Echo Bike
-      </button>
-      <button class="machine-btn" data-machine="airrunner" onclick="setMachine(this)">
-        <span class="icon">🏃</span>Air Runner
-      </button>
-    </div>
-  </div>
+  <!-- ══════════════════════════════════════════
+       TAB 1: CALORIE CONVERTER
+  ══════════════════════════════════════════ -->
+  <div id="section-calorie" class="section active">
 
-  <!-- Input -->
-  <div class="card">
-    <h2>Enter Calories</h2>
-    <div class="input-wrap">
-      <input type="number" id="cal-input" placeholder="e.g. 50" min="1" max="200"
-             oninput="convert()" inputmode="numeric" />
-      <span class="unit">Cal</span>
+    <div class="card">
+      <h2>Source Machine</h2>
+      <div class="machines">
+        <button class="machine-btn active" data-machine="row" onclick="setCalMachine(this)">
+          <span class="icon">🚣</span>Row / BikeErg / SkiErg
+        </button>
+        <button class="machine-btn" data-machine="assault" onclick="setCalMachine(this)">
+          <span class="icon">🚴</span>Assault Bike
+        </button>
+        <button class="machine-btn" data-machine="echo" onclick="setCalMachine(this)">
+          <span class="icon">⚡</span>Echo Bike
+        </button>
+        <button class="machine-btn" data-machine="airrunner" onclick="setCalMachine(this)">
+          <span class="icon">🏃</span>Air Runner
+        </button>
+      </div>
     </div>
-    <p class="input-hint">Enter the calories shown on your machine</p>
-    <div id="interp-note" class="interp-note">
-      ⚠️ Value interpolated — not in the original table
-    </div>
-  </div>
 
-  <!-- Results -->
-  <div class="card">
-    <h2>Conversions</h2>
-    <div id="results" class="results-grid">
-      <div class="no-result">Enter calories above to see the conversion</div>
+    <div class="card">
+      <h2>Enter Calories</h2>
+      <div class="input-wrap">
+        <input type="number" id="cal-input" placeholder="e.g. 50" min="1" max="200"
+               oninput="convertCal()" inputmode="numeric" />
+        <span class="unit">Cal</span>
+      </div>
+      <p class="input-hint">Enter the calories shown on your machine</p>
+      <div id="cal-interp-note" class="interp-note">
+        ⚠️ Value interpolated — not in the original table
+      </div>
     </div>
-  </div>
+
+    <div class="card">
+      <h2>Conversions</h2>
+      <div id="cal-results" class="results-grid">
+        <div class="no-result">Enter calories above to see the conversion</div>
+      </div>
+    </div>
+
+  </div><!-- /section-calorie -->
+
+  <!-- ══════════════════════════════════════════
+       TAB 2: DISTANCE CONVERTER
+  ══════════════════════════════════════════ -->
+  <div id="section-distance" class="section">
+
+    <div class="card">
+      <h2>Source Machine</h2>
+      <div class="machines three-col">
+        <button class="dist-machine-btn machine-btn active" data-dmachine="run" onclick="setDistMachine(this)">
+          <span class="icon">🏃</span>Run
+        </button>
+        <button class="dist-machine-btn machine-btn" data-dmachine="row" onclick="setDistMachine(this)">
+          <span class="icon">🚣</span>Row
+        </button>
+        <button class="dist-machine-btn machine-btn" data-dmachine="bikeerg" onclick="setDistMachine(this)">
+          <span class="icon">🚲</span>BikeErg
+        </button>
+        <button class="dist-machine-btn machine-btn" data-dmachine="skierg" onclick="setDistMachine(this)">
+          <span class="icon">⛷️</span>SkiErg
+        </button>
+        <button class="dist-machine-btn machine-btn" data-dmachine="assault" onclick="setDistMachine(this)">
+          <span class="icon">🚴</span>Assault Bike
+        </button>
+        <button class="dist-machine-btn machine-btn" data-dmachine="echo" onclick="setDistMachine(this)">
+          <span class="icon">⚡</span>Echo Bike
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Select Distance / Calories</h2>
+      <div id="dist-chips" class="dist-chips">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Conversions</h2>
+      <div id="dist-results" class="results-grid">
+        <div class="no-result">Select a distance above to see the conversion</div>
+      </div>
+    </div>
+
+  </div><!-- /section-distance -->
 
   <!-- Info -->
   <div class="card">
     <p class="info-text">
-      Based on the <strong>Mayhem Athlete × Cardio Conversion Chart</strong>.<br/>
-      Values: <strong>Male / Female</strong><br/>
-      Values between table entries are interpolated.
+      Based on the <strong>Mayhem Athlete × Cardio Conversion Chart</strong><br/>
+      Distance values: <strong>Male / Female</strong> &nbsp;·&nbsp; Calorie values are interpolated where needed.
     </p>
   </div>
 
-</div>
+</div><!-- /container -->
 
 <script>
-  // Data: [row_m, row_f, assault_m, assault_f, echo_m, echo_f, airrunner_m, airrunner_f]
-  const TABLE = [
-    [10,8,  8,6,  6,5,  8,6],
-    [12,10, 9,7,  7,6,  9,7],
-    [13,11, 10,8, 8,6,  10,8],
-    [15,12, 11,9, 9,7,  11,9],
-    [16,13, 12,10,10,8, 12,10],
-    [20,16, 15,12,12,10,15,12],
-    [21,17, 16,13,13,10,16,13],
-    [24,19, 18,14,14,11,18,14],
-    [25,20, 19,15,15,12,19,15],
-    [28,22, 21,17,17,14,21,17],
-    [30,24, 23,18,18,14,23,18],
-    [33,26, 25,20,20,16,25,20],
-    [35,28, 26,21,21,17,26,21],
-    [40,32, 30,24,24,19,30,24],
-    [45,36, 34,27,27,22,34,27],
-    [50,40, 38,30,30,24,38,30],
-    [55,44, 41,33,33,26,41,33],
-    [60,48, 45,36,36,29,45,36],
-    [65,52, 49,39,39,31,49,39],
-    [70,56, 53,42,42,34,53,42],
-    [75,60, 56,45,45,36,56,45],
-    [80,64, 60,48,48,38,60,48],
-    [85,68, 64,51,51,41,64,51],
-    [90,72, 68,54,54,43,68,54],
-    [95,76, 71,57,57,46,71,57],
-    [100,80,75,60,60,48,75,60],
-  ];
+// ─────────────────────────────────────────────
+// SHARED STATE
+// ─────────────────────────────────────────────
+let gender = 'male';
+let activeTab = 'calorie';
 
-  // Column indices: row=0/1, assault=2/3, echo=4/5, airrunner=6/7
-  const COLS = { row: [0,1], assault: [2,3], echo: [4,5], airrunner: [6,7] };
-  const LABELS = {
-    row: { name: 'Row / BikeErg / SkiErg', icon: '🚣' },
-    assault: { name: 'Assault Bike', icon: '🚴' },
-    echo: { name: 'Echo Bike', icon: '⚡' },
-    airrunner: { name: 'Air Runner', icon: '🏃' },
-  };
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    b.classList.toggle('active', (i === 0 && tab === 'calorie') || (i === 1 && tab === 'distance'));
+  });
+  document.getElementById('section-calorie').classList.toggle('active', tab === 'calorie');
+  document.getElementById('section-distance').classList.toggle('active', tab === 'distance');
+}
 
-  let gender = 'male'; // 0 = male col offset, 1 = female
-  let sourceMachine = 'row';
+function setGender(g) {
+  gender = g;
+  document.getElementById('btn-male').classList.toggle('active', g === 'male');
+  document.getElementById('btn-female').classList.toggle('active', g === 'female');
+  convertCal();
+  refreshDistChips();
+  convertDist();
+}
 
-  function setGender(g) {
-    gender = g;
-    document.getElementById('btn-male').classList.toggle('active', g === 'male');
-    document.getElementById('btn-female').classList.toggle('active', g === 'female');
-    convert();
+// ─────────────────────────────────────────────
+// TAB 1 — CALORIE CONVERTER
+// ─────────────────────────────────────────────
+// [row_m, row_f, assault_m, assault_f, echo_m, echo_f, airrunner_m, airrunner_f]
+const CAL_TABLE = [
+  [10,8,  8,6,  6,5,  8,6],
+  [12,10, 9,7,  7,6,  9,7],
+  [13,11, 10,8, 8,6,  10,8],
+  [15,12, 11,9, 9,7,  11,9],
+  [16,13, 12,10,10,8, 12,10],
+  [20,16, 15,12,12,10,15,12],
+  [21,17, 16,13,13,10,16,13],
+  [24,19, 18,14,14,11,18,14],
+  [25,20, 19,15,15,12,19,15],
+  [28,22, 21,17,17,14,21,17],
+  [30,24, 23,18,18,14,23,18],
+  [33,26, 25,20,20,16,25,20],
+  [35,28, 26,21,21,17,26,21],
+  [40,32, 30,24,24,19,30,24],
+  [45,36, 34,27,27,22,34,27],
+  [50,40, 38,30,30,24,38,30],
+  [55,44, 41,33,33,26,41,33],
+  [60,48, 45,36,36,29,45,36],
+  [65,52, 49,39,39,31,49,39],
+  [70,56, 53,42,42,34,53,42],
+  [75,60, 56,45,45,36,56,45],
+  [80,64, 60,48,48,38,60,48],
+  [85,68, 64,51,51,41,64,51],
+  [90,72, 68,54,54,43,68,54],
+  [95,76, 71,57,57,46,71,57],
+  [100,80,75,60,60,48,75,60],
+];
+
+const CAL_COLS  = { row:[0,1], assault:[2,3], echo:[4,5], airrunner:[6,7] };
+const CAL_LABELS = {
+  row:       { name:'Row / BikeErg / SkiErg', icon:'🚣' },
+  assault:   { name:'Assault Bike',           icon:'🚴' },
+  echo:      { name:'Echo Bike',              icon:'⚡' },
+  airrunner: { name:'Air Runner',             icon:'🏃' },
+};
+
+let calSourceMachine = 'row';
+
+function setCalMachine(btn) {
+  document.querySelectorAll('#section-calorie .machine-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  calSourceMachine = btn.dataset.machine;
+  convertCal();
+}
+
+function calInterpolate(inputCal, srcCol, tgtCol) {
+  for (const row of CAL_TABLE)
+    if (row[srcCol] === inputCal) return { value: row[tgtCol], exact: true };
+  let lower = null, upper = null;
+  for (const row of CAL_TABLE) {
+    if (row[srcCol] <= inputCal) lower = row;
+    if (row[srcCol] >= inputCal && !upper) upper = row;
   }
+  if (!lower && !upper) return null;
+  if (!lower) return { value: upper[tgtCol], exact: false };
+  if (!upper) return { value: lower[tgtCol], exact: false };
+  if (lower === upper) return { value: lower[tgtCol], exact: true };
+  const ratio = (inputCal - lower[srcCol]) / (upper[srcCol] - lower[srcCol]);
+  return { value: Math.round(lower[tgtCol] + ratio * (upper[tgtCol] - lower[tgtCol])), exact: false };
+}
 
-  function setMachine(btn) {
-    document.querySelectorAll('.machine-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    sourceMachine = btn.dataset.machine;
-    convert();
+function convertCal() {
+  const input = parseInt(document.getElementById('cal-input').value);
+  const resultsDiv = document.getElementById('cal-results');
+  const interpNote = document.getElementById('cal-interp-note');
+  if (!input || input < 1) {
+    resultsDiv.innerHTML = '<div class="no-result">Enter calories above to see the conversion</div>';
+    interpNote.classList.remove('show');
+    return;
   }
-
-  function getGenderOffset() {
-    return gender === 'male' ? 0 : 1;
-  }
-
-  // Get value from table for a machine and gender
-  function getSourceCol() {
-    const [mCol, fCol] = COLS[sourceMachine];
-    return gender === 'male' ? mCol : fCol;
-  }
-  function getTargetCol(machine) {
-    const [mCol, fCol] = COLS[machine];
-    return gender === 'male' ? mCol : fCol;
-  }
-
-  // Interpolate: given input calories for source machine, find equivalent for target machine
-  function interpolate(inputCal, sourceCol, targetCol) {
-    // Find exact match first
-    for (const row of TABLE) {
-      if (row[sourceCol] === inputCal) {
-        return { value: row[targetCol], exact: true };
-      }
+  const gi = gender === 'male' ? 0 : 1;
+  const srcCol = CAL_COLS[calSourceMachine][gi];
+  let anyInterp = false, html = '';
+  for (const [machine, info] of Object.entries(CAL_LABELS)) {
+    if (machine === calSourceMachine) {
+      html += `<div class="result-item source">
+        <div class="result-label"><span class="icon">${info.icon}</span>${info.name}<span class="source-tag">Input</span></div>
+        <div class="result-value">${input}<span class="unit-small">Cal</span></div>
+      </div>`;
+      continue;
     }
-
-    // Find surrounding rows
-    let lower = null, upper = null;
-    for (const row of TABLE) {
-      if (row[sourceCol] <= inputCal) lower = row;
-      if (row[sourceCol] >= inputCal && !upper) upper = row;
-    }
-
-    if (!lower && !upper) return null;
-    if (!lower) return { value: upper[targetCol], exact: false };
-    if (!upper) return { value: lower[targetCol], exact: false };
-    if (lower === upper) return { value: lower[targetCol], exact: true };
-
-    // Linear interpolation
-    const ratio = (inputCal - lower[sourceCol]) / (upper[sourceCol] - lower[sourceCol]);
-    const interp = lower[targetCol] + ratio * (upper[targetCol] - lower[targetCol]);
-    return { value: Math.round(interp), exact: false };
+    const tgtCol = CAL_COLS[machine][gi];
+    const res = calInterpolate(input, srcCol, tgtCol);
+    if (!res) continue;
+    if (!res.exact) anyInterp = true;
+    html += `<div class="result-item highlight">
+      <div class="result-label"><span class="icon">${info.icon}</span>${info.name}</div>
+      <div class="result-value">${res.value}<span class="unit-small">Cal</span></div>
+    </div>`;
   }
+  resultsDiv.innerHTML = html;
+  interpNote.classList.toggle('show', anyInterp);
+}
 
-  function convert() {
-    const input = parseInt(document.getElementById('cal-input').value);
-    const resultsDiv = document.getElementById('results');
-    const interpNote = document.getElementById('interp-note');
+// ─────────────────────────────────────────────
+// TAB 2 — DISTANCE CONVERTER
+// ─────────────────────────────────────────────
+// Each row: { run, row:[m,f], bikeerg:[m,f], skierg:[m,f], assault:[m,f], echo:[m,f] }
+// run has no gender variant (same for all)
+const DIST_TABLE = [
+  { run:100,   row:[125,100],       bikeerg:[250,200],        skierg:[125,100],      assault:[8,6],    echo:[6,5]    },
+  { run:200,   row:[250,200],       bikeerg:[500,400],        skierg:[250,200],      assault:[15,12],  echo:[12,10]  },
+  { run:400,   row:[500,400],       bikeerg:[1000,800],       skierg:[500,400],      assault:[30,24],  echo:[24,19]  },
+  { run:600,   row:[750,600],       bikeerg:[1500,1200],      skierg:[750,600],      assault:[45,36],  echo:[36,29]  },
+  { run:800,   row:[1000,800],      bikeerg:[2000,1600],      skierg:[1000,800],     assault:[60,48],  echo:[48,38]  },
+  { run:1000,  row:[1250,1000],     bikeerg:[2500,2000],      skierg:[1250,1000],    assault:[75,60],  echo:[60,48]  },
+  { run:1600,  row:[2000,1600],     bikeerg:[4000,3200],      skierg:[2000,1600],    assault:[120,96], echo:[96,77]  },
+  { run:2000,  row:[2500,2000],     bikeerg:[5000,4000],      skierg:[2500,2000],    assault:[150,120],echo:[120,96] },
+  { run:5000,  row:[6250,5000],     bikeerg:[12500,10000],    skierg:[6250,5000],    assault:[375,300],echo:[300,240]},
+  { run:10000, row:[12500,10000],   bikeerg:[25000,20000],    skierg:[12500,10000],  assault:[750,600],echo:[600,480]},
+];
 
-    if (!input || input < 1) {
-      resultsDiv.innerHTML = '<div class="no-result">Enter calories above to see the conversion</div>';
-      interpNote.classList.remove('show');
-      return;
-    }
+const DIST_META = {
+  run:     { name:'Run',         icon:'🏃', unit:'m',   isCalorie:false },
+  row:     { name:'Row',         icon:'🚣', unit:'m',   isCalorie:false },
+  bikeerg: { name:'BikeErg',     icon:'🚲', unit:'m',   isCalorie:false },
+  skierg:  { name:'SkiErg',      icon:'⛷️', unit:'m',   isCalorie:false },
+  assault: { name:'Assault Bike',icon:'🚴', unit:'cal', isCalorie:true  },
+  echo:    { name:'Echo Bike',   icon:'⚡', unit:'cal', isCalorie:true  },
+};
 
-    const sourceCol = getSourceCol();
-    let anyInterp = false;
-    let html = '';
+let distSourceMachine = 'run';
+let distSelectedIdx = null;
 
-    for (const [machine, info] of Object.entries(LABELS)) {
-      const isSource = machine === sourceMachine;
-      if (isSource) {
-        html += `
-          <div class="result-item source">
-            <div class="result-label">
-              <span class="icon">${info.icon}</span>
-              ${info.name}
-              <span class="source-tag">Input</span>
-            </div>
-            <div class="result-value">${input}<span class="unit-small">Cal</span></div>
-          </div>`;
-        continue;
-      }
+function setDistMachine(btn) {
+  document.querySelectorAll('.dist-machine-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  distSourceMachine = btn.dataset.dmachine;
+  distSelectedIdx = null;
+  refreshDistChips();
+  document.getElementById('dist-results').innerHTML =
+    '<div class="no-result">Select a distance above to see the conversion</div>';
+}
 
-      const targetCol = getTargetCol(machine);
-      const result = interpolate(input, sourceCol, targetCol);
+function fmtDist(val, machine) {
+  if (DIST_META[machine].isCalorie) return val + ' cal';
+  if (val >= 1000) return (val/1000).toLocaleString('en', {maximumFractionDigits:1}) + ',000m';
+  return val + 'm';
+}
 
-      if (!result) continue;
-      if (!result.exact) anyInterp = true;
+function getDistValue(row, machine) {
+  const gi = gender === 'male' ? 0 : 1;
+  if (machine === 'run') return row.run;
+  return row[machine][gi];
+}
 
-      html += `
-        <div class="result-item highlight">
-          <div class="result-label">
-            <span class="icon">${info.icon}</span>
-            ${info.name}
-          </div>
-          <div class="result-value">${result.value}<span class="unit-small">Cal</span></div>
-        </div>`;
-    }
+function refreshDistChips() {
+  const container = document.getElementById('dist-chips');
+  container.innerHTML = '';
+  DIST_TABLE.forEach((row, idx) => {
+    const val = getDistValue(row, distSourceMachine);
+    const label = DIST_META[distSourceMachine].isCalorie ? val + ' cal' : formatMeters(val);
+    const chip = document.createElement('button');
+    chip.className = 'dist-chip' + (distSelectedIdx === idx ? ' active' : '');
+    chip.textContent = label;
+    chip.onclick = () => selectDistChip(idx);
+    container.appendChild(chip);
+  });
+}
 
-    resultsDiv.innerHTML = html;
-    interpNote.classList.toggle('show', anyInterp);
+function formatMeters(m) {
+  if (m >= 1000) return (m >= 10000 ? m.toLocaleString('en') : m.toLocaleString('en')) + 'm';
+  return m + 'm';
+}
+
+function selectDistChip(idx) {
+  distSelectedIdx = idx;
+  document.querySelectorAll('.dist-chip').forEach((c, i) => c.classList.toggle('active', i === idx));
+  convertDist();
+}
+
+function convertDist() {
+  const resultsDiv = document.getElementById('dist-results');
+  if (distSelectedIdx === null) {
+    resultsDiv.innerHTML = '<div class="no-result">Select a distance above to see the conversion</div>';
+    return;
   }
+  const row = DIST_TABLE[distSelectedIdx];
+  const gi = gender === 'male' ? 0 : 1;
+  let html = '';
+
+  for (const [machine, meta] of Object.entries(DIST_META)) {
+    const isSource = machine === distSourceMachine;
+    const val = machine === 'run' ? row.run : row[machine][gi];
+    const display = meta.isCalorie
+      ? `${val}<span class="unit-small">Cal</span>`
+      : `${val.toLocaleString('en')}<span class="unit-small">m</span>`;
+
+    if (isSource) {
+      html += `<div class="result-item source">
+        <div class="result-label"><span class="icon">${meta.icon}</span>${meta.name}<span class="source-tag">Input</span></div>
+        <div class="result-value">${display}</div>
+      </div>`;
+    } else {
+      html += `<div class="result-item highlight">
+        <div class="result-label"><span class="icon">${meta.icon}</span>${meta.name}</div>
+        <div class="result-value">${display}</div>
+      </div>`;
+    }
+  }
+  resultsDiv.innerHTML = html;
+}
+
+// init distance chips on load
+refreshDistChips();
 </script>
 
 </body>
