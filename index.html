@@ -1,0 +1,2507 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VEGA — Abstrahlwinkel-Rechner</title>
+  <link rel="apple-touch-icon" href="apple-touch-icon.svg" />
+  <link rel="icon" href="apple-touch-icon.svg" type="image/svg+xml" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="VEGA" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif;
+      background: #fff; color: #1a1a1a; min-height: 100vh; display: flex; flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: #fff; padding: 18px 24px;
+      display: flex; align-items: center; gap: 24px;
+      border-bottom: 3px solid #FFDE00;
+    }
+    .logo-svg { height: 36px; width: auto; }
+    .header-divider { width: 2px; height: 32px; background: #e0e0e0; }
+    .header-title { color: #1a1a1a; font-size: 1rem; font-weight: 600; }
+
+    /* ── TABS ── */
+    .tab-bar-wrap { border-bottom: 1px solid #e0e0e0; background: #fff; }
+    .tab-bar { max-width: 800px; margin: 0 auto; display: flex; padding: 0 20px; }
+    .tab-btn {
+      padding: 14px 22px; font-size: 0.875rem; font-weight: 600;
+      color: #888; cursor: pointer; border: none; background: none;
+      border-bottom: 3px solid transparent; transition: all 0.2s;
+      margin-bottom: -1px; outline: none;
+    }
+    .tab-btn.active { color: #1a1a1a; border-bottom-color: #FFDE00; }
+    .tab-btn:hover:not(.active) { color: #333; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 800px; width: 100%; margin: 0 auto; padding: 24px 20px; flex: 1; }
+    .page-title { font-size: 1.4rem; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+    .page-subtitle { font-size: 0.82rem; color: #666; margin-bottom: 22px; }
+
+    /* ── CARD ── */
+    .card {
+      background: #fff; border-radius: 6px; padding: 22px;
+      margin-bottom: 14px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); border: 1px solid #eee;
+    }
+    .card h2 {
+      font-size: 0.7rem; font-weight: 700; color: #1a1a1a;
+      text-transform: uppercase; letter-spacing: 1.5px;
+      margin-bottom: 16px; padding-bottom: 7px;
+      border-bottom: 3px solid #FFDE00; display: inline-block;
+    }
+
+    /* ── CONTROLS ── */
+    .config-layout { display: flex; gap: 20px; align-items: flex-start; }
+    .config-controls { flex: 1; min-width: 0; }
+    .product-image-wrap {
+      width: 150px; min-width: 150px; height: 190px;
+      display: flex; align-items: center; justify-content: center;
+      background: #fafafa; border: 1px solid #eee; border-radius: 8px; overflow: hidden;
+    }
+    .product-image-wrap img { max-width: 130px; max-height: 170px; object-fit: contain; transition: opacity 0.3s; }
+
+    .control-row { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+    .control-row:last-child { margin-bottom: 0; }
+    .control-label { min-width: 100px; font-size: 0.82rem; font-weight: 600; color: #555; }
+
+    select {
+      flex: 1; padding: 9px 34px 9px 12px;
+      border: 1px solid #ccc; border-radius: 4px;
+      background: #fff; color: #1a1a1a; font-size: 0.84rem; font-weight: 500;
+      cursor: pointer; outline: none; transition: border-color 0.2s;
+      appearance: none; -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23999' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 11px center;
+    }
+    select:focus { border-color: #FFDE00; box-shadow: 0 0 0 2px rgba(255,222,0,0.25); }
+
+    .slider-wrap { flex: 1; display: flex; align-items: center; gap: 10px; }
+    input[type="range"] {
+      flex: 1; -webkit-appearance: none; height: 4px; border-radius: 2px; background: #e0e0e0; outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
+      background: #FFDE00; border: 2px solid #1a1a1a; cursor: pointer;
+    }
+    input[type="range"]::-moz-range-thumb {
+      width: 20px; height: 20px; border-radius: 50%; background: #FFDE00; border: 2px solid #1a1a1a; cursor: pointer;
+    }
+    .num-input {
+      width: 72px; padding: 8px 8px; border: 1px solid #ccc; border-radius: 4px;
+      background: #fff; color: #1a1a1a; font-size: 0.9rem; font-weight: 700; text-align: center; outline: none;
+    }
+    .num-input:focus { border-color: #FFDE00; box-shadow: 0 0 0 2px rgba(255,222,0,0.25); }
+    .unit-label { font-size: 0.82rem; color: #888; font-weight: 600; white-space: nowrap; }
+
+    .info-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .info-badge {
+      display: flex; align-items: center; gap: 5px;
+      background: #f7f7f7; border: 1px solid #eee;
+      border-radius: 4px; padding: 5px 10px; font-size: 0.72rem; color: #777;
+    }
+    .info-badge strong { color: #1a1a1a; }
+
+    /* ── RESULTS ── */
+    .results-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    .result-box { background: #f9f9f9; border: 1px solid #eee; border-radius: 6px; padding: 16px; text-align: center; }
+    .result-box.accent { border-color: #FFDE00; background: #fffde6; box-shadow: inset 0 -3px 0 #FFDE00; }
+    .result-label { font-size: 0.67rem; color: #888; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; font-weight: 700; }
+    .result-value { font-size: 1.45rem; font-weight: 800; color: #1a1a1a; }
+    .result-value .unit-sm { font-size: 0.58rem; font-weight: 500; color: #999; margin-left: 2px; }
+    .result-box.accent .result-value { color: #b8a000; }
+
+    .warning-note {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 13px; background: #fffde6; border: 1px solid #ffe082;
+      border-radius: 4px; font-size: 0.71rem; color: #8d7600; margin-top: 12px;
+    }
+
+    /* ── VIZ (beam) ── */
+    .viz-wrap { background: #1a1a1a; border-radius: 6px; padding: 10px; display: flex; justify-content: center; }
+
+    /* ── TANK INPUTS ── */
+    .tank-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 4px; }
+    .tank-field label { display: block; font-size: 0.7rem; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+    .tank-field .field-row { display: flex; align-items: center; gap: 6px; }
+    .tank-field input {
+      width: 100%; padding: 9px 10px; border: 1px solid #ccc; border-radius: 4px;
+      background: #fff; color: #1a1a1a; font-size: 0.95rem; font-weight: 700;
+      text-align: center; outline: none;
+    }
+    .tank-field input:focus { border-color: #FFDE00; box-shadow: 0 0 0 2px rgba(255,222,0,0.25); }
+    .field-unit { font-size: 0.78rem; color: #888; font-weight: 600; white-space: nowrap; }
+    .field-hint { font-size: 0.67rem; color: #aaa; margin-top: 4px; }
+
+    /* ── TANK TYPE TOGGLE ── */
+    .type-toggle { display: flex; gap: 0; margin-bottom: 18px; border: 1px solid #ccc; border-radius: 4px; overflow: hidden; width: fit-content; }
+    .type-btn {
+      padding: 9px 22px; font-size: 0.84rem; font-weight: 600; color: #666;
+      background: #fff; border: none; cursor: pointer; outline: none; transition: all 0.18s;
+    }
+    .type-btn.active { background: #FFDE00; color: #1a1a1a; }
+    .type-btn:not(.active):hover { background: #fafafa; color: #333; }
+    .type-divider { width: 1px; background: #ccc; }
+    .field-group { display: none; }
+    .field-group.visible { display: contents; }
+
+    /* ── STATUS BADGE ── */
+    .status-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .status-badge {
+      display: flex; align-items: center; gap: 10px;
+      padding: 14px 20px; border-radius: 8px; font-size: 1rem; font-weight: 800;
+      min-width: 140px; justify-content: center; flex-shrink: 0;
+    }
+    .status-badge.ok { background: #e8f5e9; color: #2e7d32; border: 2px solid #a5d6a7; }
+    .status-badge.warn { background: #fff3e0; color: #e65100; border: 2px solid #ffcc80; }
+    .status-detail { font-size: 0.78rem; color: #555; line-height: 1.8; }
+    .status-detail strong { color: #1a1a1a; }
+
+    /* ── 3D VIZ ── */
+    .viz3d-wrap { background: #f5f5f5; border-radius: 6px; padding: 10px; display: flex; justify-content: center; border: 1px solid #e0e0e0; }
+
+    /* ── STUTZEN TABLES ── */
+    .stutzen-intro { font-size: 0.73rem; color: #888; margin-bottom: 16px; font-style: italic; }
+    .stutzen-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .stutzen-block h3 {
+      font-size: 0.72rem; font-weight: 700; color: #1a1a1a;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      padding-bottom: 5px; margin-bottom: 8px;
+      border-bottom: 2px solid #FFDE00;
+    }
+    .stutzen-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; }
+    .stutzen-table th {
+      background: #f5f5f5; color: #555; font-weight: 700;
+      padding: 5px 8px; text-align: left; border-bottom: 1px solid #ddd;
+      font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .stutzen-table td { padding: 5px 8px; border-bottom: 1px solid #f0f0f0; color: #333; }
+    .stutzen-table tr:last-child td { border-bottom: none; }
+    .stutzen-table tr:hover td { background: #fffde6; }
+    @media (max-width: 600px) { .stutzen-grid { grid-template-columns: 1fr; } }
+
+    /* ── FLANSCH TAB ── */
+    .fl-select-row { display: flex; gap: 16px; margin-bottom: 18px; }
+    .fl-select-row .fl-group { flex: 1; }
+    .fl-select-row label { display: block; font-size: 0.7rem; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+    .fl-result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+    .flansch-svg-wrap { display: flex; justify-content: center; background: #fafafa; border: 1px solid #eee; border-radius: 6px; padding: 12px; }
+    .fl-input-row { display: flex; gap: 14px; margin-bottom: 16px; flex-wrap: wrap; }
+    .fl-input-group { flex: 1; min-width: 80px; }
+    .fl-input-group label { display: block; font-size: 0.7rem; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+    .fl-input-group input { width: 100%; padding: 9px 10px; border: 1px solid #ccc; border-radius: 4px; background: #fff; color: #1a1a1a; font-size: 0.95rem; font-weight: 700; text-align: center; outline: none; }
+    .fl-input-group input:focus { border-color: #FFDE00; box-shadow: 0 0 0 2px rgba(255,222,0,0.25); }
+    .fl-search-btn { display: block; width: 100%; padding: 11px; background: #FFDE00; border: none; border-radius: 4px; font-size: 0.88rem; font-weight: 700; color: #1a1a1a; cursor: pointer; margin-bottom: 18px; transition: opacity 0.2s; }
+    .fl-search-btn:hover { opacity: 0.85; }
+    .fl-match-box { background: #f9f9f9; border: 1px solid #eee; border-radius: 8px; padding: 18px; display: none; }
+    .fl-match-box.visible { display: block; }
+    .fl-match-header { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; flex-wrap: wrap; }
+    .fl-match-title { font-size: 1.2rem; font-weight: 800; color: #1a1a1a; }
+    .fl-badge { padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+    .fl-badge.exact { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+    .fl-badge.tolerance { background: #fffde6; color: #b8a000; border: 1px solid #ffe082; }
+    .fl-badge.nearest { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
+    .fl-delta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    .fl-delta-cell { text-align: center; background: #fff; border: 1px solid #eee; border-radius: 6px; padding: 10px 8px; }
+    .fl-delta-label { font-size: 0.63rem; color: #888; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; font-weight: 700; }
+    .fl-delta-val { font-size: 1rem; font-weight: 800; }
+    .fl-delta-val.ok { color: #2e7d32; }
+    .fl-delta-val.warn { color: #e65100; }
+    .fl-table-vals { font-size: 0.75rem; color: #888; margin-top: 10px; }
+    @media (max-width: 600px) {
+      .fl-select-row { flex-direction: column; }
+      .fl-delta-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* ── BESTÄNDIGKEIT TAB ── */
+    .bs-search-wrap { position: relative; margin-bottom: 12px; }
+    .bs-search-input {
+      width: 100%; padding: 11px 14px 11px 38px;
+      border: 1px solid #ccc; border-radius: 4px;
+      font-size: 0.9rem; color: #1a1a1a; outline: none;
+      background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 11px center;
+    }
+    .bs-search-input:focus { border-color: #FFDE00; box-shadow: 0 0 0 2px rgba(255,222,0,0.25); }
+    .bs-dropdown {
+      position: absolute; top: calc(100% + 4px); left: 0; right: 0; z-index: 100;
+      background: #fff; border: 1px solid #ddd; border-radius: 4px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12); max-height: 260px; overflow-y: auto; display: none;
+    }
+    .bs-dropdown.open { display: block; }
+    .bs-dd-item {
+      padding: 9px 14px; cursor: pointer; font-size: 0.83rem; border-bottom: 1px solid #f0f0f0;
+    }
+    .bs-dd-item:last-child { border-bottom: none; }
+    .bs-dd-item:hover, .bs-dd-item.active { background: #fffde6; }
+    .bs-dd-name-de { font-weight: 700; color: #1a1a1a; }
+    .bs-dd-name-en { font-size: 0.73rem; color: #888; margin-top: 1px; }
+    .bs-tags { display: flex; flex-wrap: wrap; gap: 7px; min-height: 28px; margin-bottom: 6px; }
+    .bs-tag {
+      display: flex; align-items: center; gap: 6px;
+      background: #FFDE00; color: #1a1a1a; font-size: 0.78rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 20px; white-space: nowrap;
+    }
+    .bs-tag-x {
+      cursor: pointer; font-size: 1rem; line-height: 1; opacity: 0.6;
+    }
+    .bs-tag-x:hover { opacity: 1; }
+    .bs-hint { font-size: 0.72rem; color: #aaa; margin-bottom: 4px; }
+    /* result groups */
+    .bs-result-card { margin-top: 6px; }
+    .bs-group { margin-bottom: 16px; }
+    .bs-group-title { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .bs-group-title .bs-icon { font-size: 1rem; }
+    .bs-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+    .bs-chip {
+      padding: 5px 12px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; border: 1px solid;
+    }
+    .bs-chip.ok    { background: #e8f5e9; color: #2e7d32; border-color: #a5d6a7; }
+    .bs-chip.part  { background: #fffde6; color: #b8a000; border-color: #ffe082; }
+    .bs-chip.bad   { background: #fce4ec; color: #c62828; border-color: #ef9a9a; }
+    .bs-chip.info  { background: #f5f5f5; color: #777; border-color: #ddd; }
+    .bs-empty { color: #aaa; font-size: 0.82rem; font-style: italic; }
+    .bs-no-result { text-align: center; padding: 24px; color: #bbb; font-size: 0.85rem; }
+    @media (max-width: 600px) { .bs-chips { gap: 5px; } }
+
+    /* ── FOOTER ── */
+    footer { background: #f0f0f0; border-top: 1px solid #ddd; color: #666; padding: 26px 24px; margin-top: auto; }
+    .footer-inner { max-width: 800px; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
+    .footer-logo { height: 24px; }
+    .footer-address { font-size: 0.73rem; line-height: 1.7; color: #666; }
+    .footer-address strong { color: #333; }
+    .footer-copy { font-size: 0.63rem; color: #999; width: 100%; border-top: 1px solid #ddd; padding-top: 12px; margin-top: 6px; }
+
+    svg text { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Helvetica, Arial, sans-serif; }
+
+    @media (max-width: 600px) {
+      .results-grid { grid-template-columns: 1fr; }
+      .tank-grid { grid-template-columns: 1fr 1fr; }
+      .control-row { flex-wrap: wrap; }
+      .control-label { min-width: 100%; margin-bottom: 4px; }
+      .footer-inner { flex-direction: column; }
+      .config-layout { flex-direction: column; }
+      .product-image-wrap { width: 100%; height: 130px; }
+      .status-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <svg class="logo-svg" viewBox="0 0 204 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#lc)">
+      <path d="M0.193 0.193h9.251l10.307 21.133L30.06 0.193H64.76v6.613H45.076v5.669h13.386v5.984H45.076v6.143h20.473v7.086H36.098V6.78L23.949 31.689h-8.395L0.193 0.193zm133.858 31.496h-8.569l-3.044-7.087H107.242l-3.044 7.087H67.596V0.193h28.975v6.613H76.571v17.796h13.387v-6.143h-7.087v-5.984h14.173v15.914l12.116-28.198h11.362l13.531 31.496h-.002zm-14.082-13.229l-5.131-11.942-5.131 11.942h10.262z" fill="#FFDE00"/>
+      <path d="M141.771 9.847v3.204h3.38V9.847h1.836V18.2h-1.836v-3.602h-3.38V18.2h-1.835V9.847h1.835z" fill="#1a1a1a"/>
+      <path d="M156.453 14.058c0 2.433-1.555 4.34-4.106 4.34s-4.107-1.907-4.107-4.34c0-2.434 1.544-4.411 4.107-4.411s4.106 1.884 4.106 4.411zm-4.106 2.795c1.555 0 2.269-1.275 2.269-2.795 0-1.602-.714-2.867-2.28-2.867s-2.258 1.251-2.258 2.867c0 1.615.738 2.795 2.269 2.795z" fill="#1a1a1a"/>
+      <path d="M160.291 9.847l1.954 5.744h.024l1.849-5.744h2.584V18.2h-1.72v-5.92h-.024l-2.047 5.92h-1.415l-2.047-5.86h-.024V18.2h-1.72V9.847h2.584z" fill="#1a1a1a"/>
+      <path d="M174.565 9.847v1.544h-4.412v1.789h4.047v1.427h-4.047v2.047h4.505v1.544h-6.34V9.845h6.247v.002z" fill="#1a1a1a"/>
+      <path d="M147.782 27.547c0 2.433-1.555 4.34-4.106 4.34s-4.107-1.907-4.107-4.34c0-2.434 1.544-4.411 4.107-4.411s4.106 1.882 4.106 4.411zm-4.106 2.795c1.555 0 2.268-1.276 2.268-2.795 0-1.603-.713-2.867-2.28-2.867-1.566 0-2.257 1.251-2.257 2.867 0 1.616.738 2.795 2.269 2.795z" fill="#1a1a1a"/>
+      <path d="M154.909 23.336v1.544h-4.036v1.931h3.498v1.427h-3.498v3.451h-1.835v-8.353h5.873-.002z" fill="#1a1a1a"/>
+      <path d="M160.222 23.336l1.86 5.873h.022l1.885-5.873h1.895l-2.773 8.353h-2.071l-2.713-8.353h1.895z" fill="#1a1a1a"/>
+      <path d="M170.34 23.336l3.124 8.353h-1.906l-.631-1.86h-3.123l-.655 1.86h-1.86l3.171-8.353h1.884-.004zm-.971 2.057l-1.089 3.065h2.164l-1.053-3.065h-.024.002z" fill="#1a1a1a"/>
+      <path d="M176.027 23.336v6.809h4.071v1.544h-5.907v-8.353h1.836z" fill="#1a1a1a"/>
+      <path d="M182.58 23.336v5.229c0 1.228.538 1.777 1.72 1.777 1.287 0 1.731-.549 1.731-1.777v-5.229h1.838v5.229c0 2.082-1.204 3.322-3.569 3.322s-3.555-1.24-3.555-3.322v-5.229h1.835z" fill="#1a1a1a"/>
+      <path d="M195.696 23.336v1.544h-4.411v1.789h4.046v1.427h-4.046v2.046h4.503v1.544h-6.339v-8.353h6.247v.003z" fill="#1a1a1a"/>
+      <path d="M203.253 25.827h-1.777c-.058-.842-.549-1.264-1.638-1.264-.678 0-1.276.293-1.276.946 0 .609.351.725 2.222 1.194 1.24.315 2.749.738 2.749 2.504 0 1.58-1.251 2.678-3.473 2.678-1.767 0-3.556-.842-3.556-2.913v-.058h1.778c0 1.182.971 1.545 1.838 1.545s1.638-.28 1.638-1.042c0-.527-.409-.853-1.44-1.111a18 18 0 0 1-1.696-.456c-1.264-.422-1.838-1.136-1.838-2.2 0-1.684 1.592-2.516 3.125-2.516 1.789 0 3.347.796 3.347 2.691l-.003.002z" fill="#1a1a1a"/>
+    </g>
+    <defs><clipPath id="lc"><rect width="203.556" height="32" fill="white"/></clipPath></defs>
+  </svg>
+  <div class="header-divider"></div>
+  <span class="header-title" id="headerTitle">Abstrahlwinkel-Rechner</span>
+</header>
+
+<!-- Tab bar -->
+<div class="tab-bar-wrap">
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab(1)">Abstrahlwinkel</button>
+    <button class="tab-btn" onclick="switchTab(2)">Behälter-Check</button>
+    <button class="tab-btn" onclick="switchTab(3)">Flansche</button>
+    <button class="tab-btn" onclick="switchTab(4)">Beständigkeit</button>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ═══════════════ TAB 1 ═══════════════ -->
+  <div id="tab1" class="tab-pane active">
+    <h1 class="page-title">Abstrahlwinkel-Rechner</h1>
+    <p class="page-subtitle">Berechnung des Abstrahlwinkels und der Spotgrösse für VEGAPULS Füllstandsensoren</p>
+
+    <div class="card">
+      <h2>Konfiguration</h2><br>
+      <div class="config-layout">
+        <div class="config-controls">
+          <div class="control-row">
+            <span class="control-label">Radargerät:</span>
+            <select id="pulsefamily"></select>
+          </div>
+          <div class="control-row">
+            <span class="control-label">Antenne:</span>
+            <select id="pulseantenna"></select>
+          </div>
+          <div class="control-row">
+            <span class="control-label">Distanz:</span>
+            <div class="slider-wrap">
+              <input type="range" id="distSlider" min="0.3" max="15" value="10" step="0.1" />
+              <input type="text" id="distInput" class="num-input" value="10" maxlength="5" />
+              <span class="unit-label">m</span>
+            </div>
+          </div>
+          <div class="info-row">
+            <div class="info-badge">Frequenz: <strong id="infoFreq">–</strong></div>
+            <div class="info-badge">Max. Distanz: <strong id="infoMaxDist">–</strong></div>
+            <div class="info-badge">Antennentyp: <strong id="infoType">–</strong></div>
+          </div>
+        </div>
+        <div class="product-image-wrap">
+          <img id="productImg" src="" alt="Produktbild" />
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Ergebnisse</h2><br>
+      <div class="results-grid">
+        <div class="result-box">
+          <div class="result-label">Abstrahlwinkel</div>
+          <div class="result-value" id="resAngle">–<span class="unit-sm">°</span></div>
+        </div>
+        <div class="result-box accent">
+          <div class="result-label">Durchmesser</div>
+          <div class="result-value" id="resDia">–<span class="unit-sm">m</span></div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Fläche</div>
+          <div class="result-value" id="resArea">–<span class="unit-sm">m²</span></div>
+        </div>
+      </div>
+      <div class="warning-note">⚠ Exzentrizität nicht berücksichtigt — kreisförmige Näherung</div>
+    </div>
+
+    <div class="card">
+      <h2>Abstrahlwinkel-Visualisierung</h2><br>
+      <div class="viz-wrap">
+        <svg id="beamSvg" width="100%" viewBox="0 0 620 320" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="beamGrad" x1="0%" y1="50%" x2="100%" y2="50%">
+              <stop offset="0%" stop-color="#FFDE00" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="#FFDE00" stop-opacity="0.04"/>
+            </linearGradient>
+            <linearGradient id="beamStroke" x1="0%" y1="50%" x2="100%" y2="50%">
+              <stop offset="0%" stop-color="#FFDE00" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#FFDE00" stop-opacity="0.25"/>
+            </linearGradient>
+            <radialGradient id="spotGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFDE00" stop-opacity="0.45"/>
+              <stop offset="80%" stop-color="#FFDE00" stop-opacity="0.08"/>
+              <stop offset="100%" stop-color="#FFDE00" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <g id="beamGroup"></g>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TAB 2 ═══════════════ -->
+  <div id="tab2" class="tab-pane">
+    <h1 class="page-title">Behälter-Check</h1>
+    <p class="page-subtitle">Prüft ob der Radarstrahl bei gegebener Sensorposition die Behälterwand trifft</p>
+
+    <!-- Sensor info (readonly, synced from tab1) -->
+    <div class="card">
+      <h2>Aktiver Sensor</h2><br>
+      <div class="info-row" style="margin-top:0">
+        <div class="info-badge">Gerät: <strong id="t2Device">–</strong></div>
+        <div class="info-badge">Antenne: <strong id="t2Antenna">–</strong></div>
+        <div class="info-badge">Abstrahlwinkel: <strong id="t2Angle">–</strong></div>
+        <div class="info-badge">Frequenz: <strong id="t2Freq">–</strong></div>
+      </div>
+      <p style="font-size:0.72rem; color:#aaa; margin-top:10px;">Sensor im Tab «Abstrahlwinkel» auswählen</p>
+    </div>
+
+    <!-- Tank dimensions -->
+    <div class="card">
+      <h2>Behälterdimensionen</h2><br>
+      <div class="type-toggle">
+        <button class="type-btn active" id="btnRect" onclick="setTankType('rect')">&#9646; Rechteckig</button>
+        <div class="type-divider"></div>
+        <button class="type-btn" id="btnRound" onclick="setTankType('round')">&#9711; Rund</button>
+      </div>
+      <div class="tank-grid">
+        <!-- Rechteckig -->
+        <div class="tank-field field-group visible" id="fgL">
+          <label>Länge (L)</label>
+          <div class="field-row">
+            <input type="number" id="tankL" value="3" min="0.1" step="0.1" />
+            <span class="field-unit">m</span>
+          </div>
+        </div>
+        <div class="tank-field field-group visible" id="fgB">
+          <label>Breite (B)</label>
+          <div class="field-row">
+            <input type="number" id="tankB" value="3" min="0.1" step="0.1" />
+            <span class="field-unit">m</span>
+          </div>
+        </div>
+        <!-- Rund -->
+        <div class="tank-field field-group" id="fgD">
+          <label>Durchmesser (D)</label>
+          <div class="field-row">
+            <input type="number" id="tankD" value="3" min="0.1" step="0.1" />
+            <span class="field-unit">m</span>
+          </div>
+        </div>
+        <!-- Gemeinsam -->
+        <div class="tank-field">
+          <label>Höhe (H)</label>
+          <div class="field-row">
+            <input type="number" id="tankH" value="2" min="0.1" step="0.1" />
+            <span class="field-unit">m</span>
+          </div>
+        </div>
+        <div class="tank-field">
+          <label>Sensor Offset X</label>
+          <div class="field-row">
+            <input type="number" id="sensorOffX" value="0" step="0.01" />
+            <span class="field-unit">m</span>
+          </div>
+          <div class="field-hint">+ = rechts, – = links von Mitte</div>
+        </div>
+        <div class="tank-field">
+          <label>Sensor Offset Y</label>
+          <div class="field-row">
+            <input type="number" id="sensorOffY" value="0" step="0.01" />
+            <span class="field-unit">m</span>
+          </div>
+          <div class="field-hint">+ = hinten, – = vorne von Mitte</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status -->
+    <div class="card">
+      <h2>Ergebnis</h2><br>
+      <div class="status-row">
+        <div class="status-badge ok" id="statusBadge">✓ OK</div>
+        <div class="status-detail" id="statusDetail">–</div>
+      </div>
+    </div>
+
+    <!-- 3D Visualization -->
+    <div class="card">
+      <h2>3D-Visualisierung</h2><br>
+      <div class="viz3d-wrap">
+        <svg id="tankSvg" width="100%" viewBox="0 0 620 420" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <filter id="shadow">
+              <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+            </filter>
+          </defs>
+          <g id="tankGroup"></g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Rohrstutzenmontage Referenz -->
+    <div class="card">
+      <h2>Rohrstutzenmontage — Referenz</h2><br>
+      <p class="stutzen-intro">Maximale Stutzenlänge h in Abhängigkeit des Stutzendurchmessers d (gem. Abb. 26, VEGAPULS Betriebsanleitung)</p>
+
+      <!-- Schematic drawing from VEGAPULS 6X manual, Abb. 26 -->
+      <div style="display:flex; justify-content:center; margin-bottom:20px;">
+        <img src="stutzen-schema.png" alt="Abb. 26: Rohrstutzenmontage bei abweichenden Rohrstutzenmaßen"
+             style="max-width:100%; width:560px; border:1px solid #e0e0e0; border-radius:6px; background:#fff;" />
+      </div>
+
+      <div class="stutzen-grid">
+
+        <div class="stutzen-block">
+          <h3>① Kunststoff-Hornantenne</h3>
+          <table class="stutzen-table">
+            <thead><tr><th>d</th><th>h max</th></tr></thead>
+            <tbody>
+              <tr><td>80 mm &nbsp;(3")</td><td>≤ 400 mm</td></tr>
+              <tr><td>100 mm (4")</td><td>≤ 500 mm</td></tr>
+              <tr><td>150 mm (6")</td><td>≤ 800 mm</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="stutzen-block">
+          <h3>② Gewinde — integriertes Antennensystem</h3>
+          <table class="stutzen-table">
+            <thead><tr><th>d</th><th>h max</th></tr></thead>
+            <tbody>
+              <tr><td>40 mm &nbsp;(1½")</td><td>≤ 150 mm</td></tr>
+              <tr><td>50 mm &nbsp;(2")</td><td>≤ 200 mm</td></tr>
+              <tr><td>80 mm &nbsp;(3")</td><td>≤ 300 mm</td></tr>
+              <tr><td>100 mm (4")</td><td>≤ 400 mm</td></tr>
+              <tr><td>150 mm (6")</td><td>≤ 600 mm</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="stutzen-block">
+          <h3>③ Flansch — gekapseltes Antennensystem</h3>
+          <table class="stutzen-table">
+            <thead><tr><th>d</th><th>h max</th></tr></thead>
+            <tbody>
+              <tr><td>50 mm &nbsp;(2")</td><td>≤ 200 mm</td></tr>
+              <tr><td>80 mm &nbsp;(3")</td><td>≤ 400 mm</td></tr>
+              <tr><td>100 mm (4")</td><td>≤ 500 mm</td></tr>
+              <tr><td>150 mm (6")</td><td>≤ 800 mm</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="stutzen-block">
+          <h3>④ Hornantenne</h3>
+          <table class="stutzen-table">
+            <thead><tr><th>d</th><th>h max</th><th>Empf. Ø Antenne</th></tr></thead>
+            <tbody>
+              <tr><td>40 mm (1½")</td><td>≤ 100 mm</td><td>40 mm (1½")</td></tr>
+              <tr><td>50 mm (2")</td><td>≤ 150 mm</td><td>48 mm (2")</td></tr>
+              <tr><td>80 mm (3")</td><td>≤ 300 mm</td><td>75 mm (3")</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="stutzen-block">
+          <h3>⑤ Flansch — Linsenantenne</h3>
+          <table class="stutzen-table">
+            <thead><tr><th>d</th><th>h max</th></tr></thead>
+            <tbody>
+              <tr><td>100 mm (4")</td><td>≤ 500 mm</td></tr>
+              <tr><td>150 mm (6")</td><td>≤ 800 mm</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TAB 3 ═══════════════ -->
+  <div id="tab3" class="tab-pane">
+    <h1 class="page-title">Flansch-Rechner</h1>
+    <p class="page-subtitle">Anschlussmaße nach DIN EN 1092-1 / ISO 7005-1 &mdash; PN 6 bis PN 40, DN 15 bis DN 400</p>
+
+    <!-- Card A: Vorwärtssuche -->
+    <div class="card">
+      <h2>Vorwärtssuche &mdash; PN &amp; DN → Maße</h2>
+      <div class="fl-select-row">
+        <div class="fl-group">
+          <label for="flPN">Nenndruck PN</label>
+          <select id="flPN">
+            <option value="6">PN 6</option>
+            <option value="10">PN 10</option>
+            <option value="16" selected>PN 16</option>
+            <option value="25">PN 25</option>
+            <option value="40">PN 40</option>
+          </select>
+        </div>
+        <div class="fl-group">
+          <label for="flDN">Nennweite DN</label>
+          <select id="flDN">
+            <option value="15">DN 15</option>
+            <option value="20">DN 20</option>
+            <option value="25">DN 25</option>
+            <option value="32">DN 32</option>
+            <option value="40">DN 40</option>
+            <option value="50">DN 50</option>
+            <option value="65">DN 65</option>
+            <option value="80">DN 80</option>
+            <option value="100" selected>DN 100</option>
+            <option value="125">DN 125</option>
+            <option value="150">DN 150</option>
+            <option value="200">DN 200</option>
+            <option value="250">DN 250</option>
+            <option value="300">DN 300</option>
+            <option value="350">DN 350</option>
+            <option value="400">DN 400</option>
+          </select>
+        </div>
+      </div>
+      <div class="fl-result-grid" id="flResultGrid">
+        <div class="result-box accent">
+          <div class="result-label">Außen-Ø D</div>
+          <div class="result-value" id="flResD">&mdash;<span class="unit-sm">mm</span></div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Lochkreis k</div>
+          <div class="result-value" id="flResK">&mdash;<span class="unit-sm">mm</span></div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Schrauben Anz.</div>
+          <div class="result-value" id="flResN">&mdash;</div>
+        </div>
+        <div class="result-box">
+          <div class="result-label">Schrauben-Ø d2</div>
+          <div class="result-value" id="flResD2">&mdash;<span class="unit-sm">mm</span></div>
+        </div>
+      </div>
+      <div class="flansch-svg-wrap">
+        <svg id="flanschSvg" width="260" height="260" viewBox="0 0 260 260">
+          <text x="130" y="135" text-anchor="middle" fill="#ccc" font-size="13">Werte wählen</text>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Card B: Rückwärtssuche -->
+    <div class="card">
+      <h2>Rückwärtssuche &mdash; Maße → PN &amp; DN</h2>
+      <div class="fl-input-row">
+        <div class="fl-input-group">
+          <label for="flInD">Außen-Ø D (mm)</label>
+          <input type="number" id="flInD" placeholder="z.B. 220" min="50" max="800">
+        </div>
+        <div class="fl-input-group">
+          <label for="flInK">Lochkreis k (mm)</label>
+          <input type="number" id="flInK" placeholder="z.B. 180" min="40" max="700">
+        </div>
+        <div class="fl-input-group">
+          <label for="flInN">Schrauben Anz.</label>
+          <input type="number" id="flInN" placeholder="z.B. 8" min="1" max="32">
+        </div>
+      </div>
+      <button class="fl-search-btn" onclick="updateFlanschRueckwaerts()">Passenden Flansch suchen</button>
+      <div class="fl-match-box" id="flMatchBox">
+        <div class="fl-match-header">
+          <span class="fl-match-title" id="flMatchTitle"></span>
+          <span class="fl-badge" id="flMatchBadge"></span>
+        </div>
+        <div class="fl-delta-grid">
+          <div class="fl-delta-cell">
+            <div class="fl-delta-label">ΔD</div>
+            <div class="fl-delta-val" id="flDeltaD"></div>
+          </div>
+          <div class="fl-delta-cell">
+            <div class="fl-delta-label">Δk</div>
+            <div class="fl-delta-val" id="flDeltaK"></div>
+          </div>
+          <div class="fl-delta-cell">
+            <div class="fl-delta-label">Δn</div>
+            <div class="fl-delta-val" id="flDeltaN"></div>
+          </div>
+          <div class="fl-delta-cell">
+            <div class="fl-delta-label">Score</div>
+            <div class="fl-delta-val" id="flScore"></div>
+          </div>
+        </div>
+        <div class="fl-table-vals" id="flTableVals"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TAB 4 ═══════════════ -->
+  <div id="tab4" class="tab-pane">
+    <h1 class="page-title">Beständigkeitsliste</h1>
+    <p class="page-subtitle">VEGA 2025 &mdash; 756 Substanzen, 17 Werkstoffe. Eine oder mehrere Substanzen wählen, dann Werkstoffempfehlung anzeigen.</p>
+
+    <div class="card">
+      <h2>Substanzauswahl</h2>
+      <div class="bs-search-wrap">
+        <input type="text" id="bsInput" class="bs-search-input" placeholder="Substanz suchen (DE oder EN)…" autocomplete="off">
+        <div class="bs-dropdown" id="bsDropdown"></div>
+      </div>
+      <p class="bs-hint">Substanz anklicken um sie hinzuzufügen. Mehrfachauswahl möglich.</p>
+      <div class="bs-tags" id="bsTags"></div>
+    </div>
+
+    <div class="card bs-result-card" id="bsResultCard" style="display:none">
+      <h2>Werkstoffempfehlung</h2>
+      <div id="bsResult"></div>
+    </div>
+    <div class="card" id="bsPlaceholder">
+      <p class="bs-no-result">⬆ Substanz(en) auswählen um Werkstoffempfehlung zu sehen</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <svg class="footer-logo" viewBox="0 0 134 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g clip-path="url(#fc)">
+          <path d="M0.193 0.193h9.251l10.307 21.133L30.06 0.193H64.76v6.613H45.076v5.669h13.386v5.984H45.076v6.143h20.473v7.086H36.098V6.78L23.949 31.689h-8.395L0.193 0.193zm133.858 31.496h-8.569l-3.044-7.087H107.242l-3.044 7.087H67.596V0.193h28.975v6.613H76.571v17.796h13.387v-6.143h-7.087v-5.984h14.173v15.914l12.116-28.198h11.362l13.531 31.496h-.002zm-14.082-13.229l-5.131-11.942-5.131 11.942h10.262z" fill="#FFDE00"/>
+        </g>
+        <defs><clipPath id="fc"><rect width="134" height="32" fill="white"/></clipPath></defs>
+      </svg>
+    </div>
+    <div class="footer-address">
+      <strong>VEGA Messtechnik AG</strong><br>
+      Barzloostrasse 2<br>
+      8330 Pfäffikon ZH, Schweiz<br>
+      Tel. +41 44 952 40 00<br>
+      info.ch@vega.com
+    </div>
+    <div class="footer-copy">
+      &copy; 2026 by M. von Matt &nbsp;|&nbsp; Basierend auf VEGAPULS Abstrahlwinkel-Daten &nbsp;|&nbsp; Keine offizielle VEGA-Applikation
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────
+// DATA
+// ─────────────────────────────────────────────
+class Antenna {
+  constructor(name, frequency, angle, offset, description, imageUrl) {
+    this.name = name; this.frequency = frequency; this.angle = angle;
+    this.offset = offset; this.description = description; this.imageUrl = imageUrl || null;
+  }
+}
+class Pulse {
+  constructor(name, antennas, maxdist, description, imageUrl) {
+    this.name = name; this.antennas = antennas; this.maxdist = maxdist;
+    this.description = description; this.imageUrl = imageUrl;
+  }
+  calcArea(angle, dist) { return 2 * Math.tan(angle * Math.PI / 360.0) * dist; }
+}
+
+var IMG = "https://www.vega.com/-/media/images/products/sensors/";
+var ant26PP80    = new Antenna("26PP80",    26, 10, 0, "Hornantenne PP 80mm");
+var ant26PV40    = new Antenna("26PV40",    26, 22, 0, "Gewindeantenne PV 40mm");
+var ant26VA40    = new Antenna("26VA40",    26, 20, 0, "Edelstahlantenne 40mm");
+var ant26VA48    = new Antenna("26VA48",    26, 15, 0, "Edelstahlantenne 48mm");
+var ant26VA75    = new Antenna("26VA75",    26, 10, 0, "Edelstahlantenne 75mm");
+var ant26VA95    = new Antenna("26VA95",    26,  8, 0, "Edelstahlantenne 96mm");
+var ant26VA245   = new Antenna("26VA245",   26,  3, 0, "Parabolantenne 245mm");
+var ant26CL23    = new Antenna("26CL23",    26, 18, 0, "Clamp 2 und 3 Zoll");
+var ant26CL4     = new Antenna("26CL4",     26, 10, 0, "Clamp 4 Zoll");
+var ant26RV50    = new Antenna("26RV50",    26, 18, 0, "Rohrverschraubung 50mm");
+var ant26RV80    = new Antenna("26RV80",    26, 10, 0, "Rohrverschraubung 80mm");
+var ant26FL50    = new Antenna("26FL50",    26, 18, 0, "Flansch DN50");
+var ant26FL80    = new Antenna("26FL80",    26, 10, 0, "Flansch DN80");
+var ant80PP80    = new Antenna("80PP80",    80,  3, 0, "Hornantenne 80mm",          IMG+"f-ps64-radarsensor-fuellstandsmessung-80-mounting.png");
+var ant80GW34    = new Antenna("80GW34",    80, 14, 0, "Gewinde 3/4 Zoll",          IMG+"f-ps64-radarsensor-fuellstandsmessung-vegapuls64-g075-1.png");
+var ant80GW1     = new Antenna("80GW1",     80, 10, 0, "Gewinde 1 Zoll",            IMG+"f-ps64-radarsensor-fuellstandsmessung-vegapuls64-g075-1.png");
+var ant80GW112   = new Antenna("80GW112",   80,  7, 0, "Gewinde 1 1/2 Zoll",       IMG+"f-ps64-radarsensor-fuellstandsmessung-vegapuls64-g075-1.png");
+var ant80GW112HT = new Antenna("80GW112HT",80, 10, 0, "Gewinde G 1 1/2 Zoll Hochtemp", IMG+"f-ps6x-radarsensor-fuellstandsmessung-hochtemperatur.png");
+var ant80PVGW112 = new Antenna("80PGW112",  80,  8, 0, "Kunststoff-Gewindeantenne 1 1/2");
+var ant80PV80    = new Antenna("80PV80",    80,  4, 0, "PVDF 80mm");
+var ant80FL25    = new Antenna("80FL25",    80, 10, 0, "Flansch DN25",              IMG+"f-ps64-radar-sensor-level-measurement-vegapuls64-flange-1.png");
+var ant80FL50    = new Antenna("80FL50",    80,  6, 0, "Flansch DN50",              IMG+"f-ps64-radar-sensor-level-measurement-vegapuls64-flange-1.png");
+var ant80FL80    = new Antenna("80FL80",    80,  3, 0, "Flansch DN80",              IMG+"f-ps64-radar-sensor-level-measurement-vegapuls64-flange-1.png");
+var ant80HYG     = new Antenna("80HYG",     80,  6, 0, "Div. Hygieneanschl\u00fcsse", IMG+"ps6x-radar-sensor-level-measurement-vegapuls6x-hygienic.png");
+var ant6STAB     = new Antenna("6STAB",      6, 24, 0, "Stabantenne");
+var ant6FREE     = new Antenna("6FREE",      6, 38, 0, "Freistrahlend");
+var ant6VA75     = new Antenna("6VA75",      6, 38, 0, "Edelstahlantenne 75mm");
+var ant6VA96     = new Antenna("6VA96",      6, 30, 0, "Edelstahlantenne 95mm");
+var ant6VA145    = new Antenna("6VA145",     6, 20, 0, "Edelstahlantenne 145mm");
+var ant6VA196    = new Antenna("6VA196",     6, 17, 0, "Edelstahlantenne 196mm");
+var ant6VA242    = new Antenna("6VA242",     6, 14, 0, "Edelstahlantenne 242mm");
+var ant79PP80    = new Antenna("79PP80",    79, 3.5, 0, "Hornantenne PP 80mm");
+var ant79VA80    = new Antenna("79VA80",    79,  4, 0, "Linsenantenne VA 80mm");
+var ant80VA80    = new Antenna("80VA80",    80,  3, 0, "Linsenantenne VA 80mm",     IMG+"f-ps64-radarsensor-fuellstandsmessung-80-mounting.png");
+var ant79GW112   = new Antenna("79GW112",   79,  7, 0, "Gewinde 1 1/2 Zoll");
+var ant80GW1HYG  = new Antenna("80GW1HYG", 80, 13, 0, "Gewinde G1 f\u00fcr Hygieneadapter");
+var ant80GW1P42  = new Antenna("80GW1P42",  80, 12, 0, "Gewinde G1");
+var ant80GW34P42 = new Antenna("80GW34P42", 80, 14, 0, "Gewinde G 3/4");
+var ant80INTG112 = new Antenna("80INTG112", 80,  8, 0, "Integriert G 1 1/2");
+var ant80INT80   = new Antenna("80INT80",   80,  4, 0, "Integriert 80mm");
+
+var pulses = [
+  new Pulse("PSA23",  [ant80INTG112], 3,  "Vegapuls Air 23",      IMG+"f-vegapuls-air-23-t.png"),
+  new Pulse("PSA41",  [ant80PVGW112], 15, "Vegapuls Air 41",      IMG+"f-vegapuls-air-41.png"),
+  new Pulse("PSA42",  [ant80INT80],   30, "Vegapuls Air 42",      IMG+"f-vegapuls-air-42.png"),
+  new Pulse("PS11",   [ant80PVGW112], 8,  "Vegapuls 11 / C11",    IMG+"devices2020/f-vegapuls-c11-g.png"),
+  new Pulse("PS2131", [ant80PVGW112], 15, "Vegapuls 21/31/C21/C22",IMG+"devices2020/f-vegapuls-c11-g.png"),
+  new Pulse("PSC23",  [ant80PV80],    30, "Vegapuls C23",         IMG+"devices2020/f-vegapuls-c23.png"),
+  new Pulse("WLS61",  [ant26PP80],    8,  "Vegapuls WL S 61",     IMG+"f-ps61-radarsensor-fuellstandsmessung-vegapuls61-g-v01.png"),
+  new Pulse("WL61",   [ant26PP80],    15, "Vegapuls WL 61",       IMG+"f-ps61-radarsensor-fuellstandsmessung-vegapuls61-g-v01.png"),
+  new Pulse("PS42",   [ant80GW1HYG, ant80GW1P42, ant80GW34P42], 15, "Vegapuls 42", IMG+"devices2020/f-vegapuls-c11-g.png"),
+  new Pulse("PS61",   [ant26PP80, ant26PV40], 35, "Vegapuls 61",  IMG+"f-ps61-radarsensor-fuellstandsmessung-vegapuls61-g-v01.png"),
+  new Pulse("PS62",   [ant26VA40, ant26VA48, ant26VA75, ant26VA95, ant26VA245], 35, "Vegapuls 62", IMG+"f-ps62-radarsensor-fuellstandsmessung-vegapuls62-horn-40_flansch-v01.png"),
+  new Pulse("PS63",   [ant26CL23, ant26CL4, ant26RV50, ant26RV80, ant26FL50, ant26FL80], 35, "Vegapuls 63", IMG+"f-ps63-radarsensor-fuellstandsmessung-vegapuls63-dn50-v01.png"),
+  new Pulse("PS64",   [ant80PP80, ant80GW34, ant80GW112, ant80FL50, ant80FL80, ant80HYG], 30, "Vegapuls 64", IMG+"f-ps64-radarsensor-fuellstandsmessung-vegapuls64-g075-1.png"),
+  new Pulse("PS65",   [ant6STAB], 10, "Vegapuls 65",             IMG+"f-ps65-radarsensor-fuellstandsmessung-vegapuls65-gewinde.png"),
+  new Pulse("PS66",   [ant6FREE, ant6VA75, ant6VA96, ant6VA145, ant6VA196, ant6VA242], 20, "Vegapuls 66", IMG+"f-ps66-radarsensor-fuellstandsmessung-vegapuls66-horn-96_dn100-v01.png"),
+  new Pulse("PS67",   [ant26PP80], 15, "Vegapuls 67",            IMG+"f-ps67-radar-sensor-level-measurement-vegapuls67-horn-antenna-flange.png"),
+  new Pulse("PSSR68", [ant26VA40, ant26VA48, ant26VA75, ant26VA95, ant26VA245], 35, "Vegapuls SR 68", IMG+"f-ps68-radarsensor-fuellstandsmessung-vegapuls68-horn-95_schwenkhalterung.png"),
+  new Pulse("PS68",   [ant26VA40, ant26VA48, ant26VA75, ant26VA95, ant26VA245], 75, "Vegapuls 68", IMG+"f-ps68-radarsensor-fuellstandsmessung-vegapuls68-horn-95_schwenkhalterung.png"),
+  new Pulse("PS69",   [ant79GW112, ant79PP80, ant79VA80], 120, "Vegapuls 69", IMG+"f-ps69-radarsensor_fuellstandsmessung_schwenkhalterung-v01.png"),
+  new Pulse("PS6X",   [ant80GW34, ant80GW1, ant80GW112, ant80GW112HT, ant80PP80, ant80FL25, ant80FL50, ant80FL80, ant80VA80], 120, "Vegapuls 6X", IMG+"f-ps64-radarsensor-fuellstandsmessung-vegapuls64-g075-1.png"),
+];
+
+// ─────────────────────────────────────────────
+// BESTÄNDIGKEIT DATA (VEGA 2025, 756 Substanzen)
+// Materialien [0..16]: Sapphire|1.4571|Hastelloy|Tantal|FKM|EPDM|FFKM|NBR|PTFE|PFA|FEP|PEEK|ECTFE|PVDF|PP|PA|PE
+// Ratings: + beständig, o bedingt, – nicht, / keine Info
+// ─────────────────────────────────────────────
+var BESTAND_DATA=[
+{de:"Abgase - fluorwasserstoffhaltig",en:"Exhaust gases - containing hydrogen fluoride",r:"–/––+++++––o–++//"},
+{de:"Abgase - kohlendioxidhaltig",en:"Exhaust gases - containing carbon dioxide",r:"+/––+++++––o–++//"},
+{de:"Abgase - kohlenmonoxidhaltig",en:"Exhaust gases - containing carbon monoxide",r:"+++–+++++––+–+++/"},
+{de:"Abgase - nitrosehaltig",en:"Exhaust gases - containing nitrous compounds",r:"+++––++/+––+–++o/"},
+{de:"Abgase - salzsäurehaltig",en:"Exhaust gases - containing hydrochloric acid",r:"–/o–+++++––/–++o/"},
+{de:"Abgase - schwefeldioxidhaltig (trocken)",en:"Exhaust gases - containing sulphur dioxide (dry)",r:"+++–+++/+––+–++//"},
+{de:"Abgase - schwefelsäurehaltig - (Schwefeltrioxid feucht)",en:"Exhaust gases - containing sulphuric acid - (sulphur trioxide",r:"+++–+++/+––o–++o/"},
+{de:"Abgase - schwefeltrioxidhaltig (trocken)",en:"Exhaust gases - containing sulphur trioxide (dry)",r:"+++–+++/+––+–+++/"},
+{de:"Abwasser",en:"Waste water",r:"++++++++++++–+–––"},
+{de:"Acetaldehyd",en:"Acetaldehyde",r:"++++o/+o++++++///"},
+{de:"Acetamid",en:"Acetamide",r:"––––o++++++++++o–"},
+{de:"Acetessigester",en:"Acetoacetate",r:"–+++o/+o–––––––––"},
+{de:"Aceton",en:"Acetone",r:"++++o++o+++++o+/+"},
+{de:"Acetophenon",en:"Acetophenone",r:"++++o++o++++////–"},
+{de:"Acetylaceton",en:"Acetylactone",r:"++++o++o–––––––––"},
+{de:"Acetylchlorid",en:"Acetyl chloride",r:"–++++o+o++++///+–"},
+{de:"Acetylen",en:"Acetylene",r:"++++++++–––+–––––"},
+{de:"Acronaldispersionen (Polyacrylsäureester für Klebstoffe)",en:"Acronal dispersions (polyacrylate for adhesives)",r:"–+–––+–o+–––––+/–"},
+{de:"Acronallösungen",en:"Acronal solutions",r:"–––––––––––––––––"},
+{de:"Acrylnitril",en:"Acrylonitrile",r:"–+++oo+o/+++++//+"},
+{de:"Acrylsäureethylester",en:"Ethyl acrylate",r:"––––o/+o+++–++/+–"},
+{de:"Adipinsäure",en:"Adipic acid",r:"+++++++++++–/++o+"},
+{de:"Akkusäure (20 %-ige Schwefelsäure, wässrig)",en:"Battery acid (20% sulphuric acid, aqueous)",r:"–+–––++/+––/–++o–"},
+{de:"Alaune",en:"Alum",r:"++/–+++++++++++o–"},
+{de:"Albumin",en:"Albumin",r:"–+–––+–++–––––++–"},
+{de:"Alkalilauge, Ätznatronlösung",en:"Lye, caustic soda solution",r:"+–––o++/+––––+–––"},
+{de:"Allylalkohol",en:"Allyl alcohol",r:"–+–––++++––+–+++–"},
+{de:"Aluminiumacetat, wässrig",en:"Aluminium acetate, aqueous",r:"–+++o++++++–++++–"},
+{de:"Aluminiumchlorid, wässrig",en:"Aluminium chloride, aqueous",r:"+o/++++++++++++/+"},
+{de:"Aluminiumfluorid, wässrig",en:"Aluminium fluoride, aqueous",r:"–++–++++++++++++–"},
+{de:"Aluminiumnitrat, wässrig",en:"Aluminium nitrate, aqueous",r:"–++–++++++++++++–"},
+{de:"Aluminiumphosphat, wässrig",en:"Aluminium phosphate, aqueous",r:"––––++++–––––––––"},
+{de:"Aluminiumsulfat",en:"Aluminium sulfate",r:"+/+++++++++++++++"},
+{de:"Aluminumbromid",en:"Aluminium bromide",r:"––––++++–––––––––"},
+{de:"Ameisensäure",en:"Formic acid",r:"+–––––––+++/+++o–"},
+{de:"Ameisensäure (max. 10%/85°C)",en:"Formic acid (max. 10%/85°C)",r:"++++o++o––––––––+"},
+{de:"Ameisensäuremethylester",en:"Formic acid methyl ester",r:"+––––/+o–––––––––"},
+{de:"Amine-Gemisch",en:"Amine mixture",r:"–+++o/oo–––––––––"},
+{de:"Aminoessigsäure (Glykokoll)",en:"Aminoacetic acid (glycine)",r:"–+–––+–/+––––++/–"},
+{de:"Ammoniak",en:"Ammonia",r:"++/+oooo+++++++/+"},
+{de:"Ammoniaklösung",en:"Ammonia solution",r:"+–––––––+++–+++/–"},
+{de:"Ammoniumacetat - wässrig",en:"Ammonium acetate, aqueous",r:"–+–––++++––+–++––"},
+{de:"Ammoniumcarbonat, wässrig",en:"Ammonium carbonate, aqueous",r:"+/++o++/+++++++++"},
+{de:"Ammoniumchlorid",en:"Ammonium chloride",r:"+/++o++++++++++/+"},
+{de:"Ammoniumcitrat - wässrig",en:"Ammonium citrate, aqueous",r:"–+–––++++–––––+/–"},
+{de:"Ammoniumfloursilikat - wässrig",en:"Ammonium fluorosilicate, aqueous",r:"–+–––++++–––––+/–"},
+{de:"Ammoniumfluorid - wässrig",en:"Ammonium fluoride, aqueous",r:"–/–––+/++––+–++––"},
+{de:"Ammoniumformiat - wässrig",en:"Ammonium formate, aqueous",r:"–+–––++++–––––++–"},
+{de:"Ammoniumnitrat",en:"Ammonium nitrate",r:"++++–++++++++++/+"},
+{de:"Ammoniumoxalat - wässrig",en:"Ammonium oxalate, aqueous",r:"–+–––++++–––––+/–"},
+{de:"Ammoniumpersulfat",en:"Ammonium persulphate",r:"+/–+–++o+++–+++o–"},
+{de:"Ammoniumphosphat",en:"Ammonium phosphate",r:"++++–++++++++++o+"},
+{de:"Ammoniumrhodanid - wässrig",en:"Ammonium thiocyanate - aqueous",r:"–+–––+–++––+––++–"},
+{de:"Ammoniumsalze",en:"Ammonium salt",r:"––––o+++–––+–––––"},
+{de:"Ammoniumsulfat",en:"Ammonium sulphate",r:"++/+o++++++++++++"},
+{de:"Ammoniumsulfid",en:"Ammonium sulphide",r:"–++–o++++++++++++"},
+{de:"Amylacetat",en:"Amyl acetate",r:"–+++o++o+++++++++"},
+{de:"Amylalkohol",en:"Amyl alcohol",r:"+++++++o+++++++/+"},
+{de:"Amylborat",en:"Amyl borate",r:"–––––o++–––––––––"},
+{de:"Amylchlorid",en:"Amyl chloride",r:"–/+++o+o–––+–––––"},
+{de:"Amylchlornaphthalin",en:"Amyl chloronaphtalene",r:"––––+o+o–––––––––"},
+{de:"Amylnaphthalin",en:"Amyl naphtalene",r:"––––+o+o–––––––––"},
+{de:"Ananassaft",en:"Pineapple juice",r:"++++––––+++++++++"},
+{de:"Anilin",en:"Aniline",r:"++/++++o++++/+++o"},
+{de:"Anilinchlorhydrat - wässrig",en:"Aniline chlorohydrate - aqueous",r:"–o–––++/+––––+/o–"},
+{de:"Anilinfarbstoffe",en:"Aniline dye",r:"++/+//+o–––––––––"},
+{de:"Anilinhydrochlorid",en:"Aniline hydrochloride",r:"+–+–//+/–––––––––"},
+{de:"Anisol",en:"Anisole",r:"–+–––/+/+–––––o+–"},
+{de:"Anthracenöl",en:"Anthracene oil",r:"–+–––o+o+–––––o+–"},
+{de:"Anthrachinonsulfonsäure - wässrig",en:"Anthraquinonesulfonic acid - aqueous",r:"–/–––++/+–––––+/–"},
+{de:"Antifrogen-N",en:"Antifrogen-N",r:"++–––+–++–––––++–"},
+{de:"Antimonchlorid - wässrig",en:"Antimony chloride - aqueous",r:"–o–––++/+––+–++o–"},
+{de:"Apfelsaft, Apfelmus",en:"Apple juice, applesauce",r:"++––––––+––++++++"},
+{de:"Apfelsäure",en:"Malic acid",r:"+++++–++–––+–––––"},
+{de:"Apfelsinensaft",en:"Orange juice",r:"+–––––––+––+–––––"},
+{de:"Apfelwein",en:"Cider",r:"++–––+–++––––+++–"},
+{de:"Aprikosensaft",en:"Apricot juice",r:"++––––––+––+–––––"},
+{de:"Arabinsäure - wässrig",en:"Arabic acid - aqueous",r:"–+–––++++–––––+––"},
+{de:"Argon",en:"Argon",r:"++++++++–––+––––+"},
+{de:"Arsenige Säure - wässrig",en:"Arsenious acid, aqueous",r:"–+–––++++–––––+––"},
+{de:"Arsensäure, wässrig",en:"Arsenic acid, aqueous",r:"+++++++++++–+++/+"},
+{de:"Arsentrichlorid - wässrig",en:"Arsenic trichloride - aqueous",r:"–/–––++++–––––+o–"},
+{de:"Arylsilikate - wässrig",en:"Acrylate silicates - aqueous",r:"–+–––/+/+––––––––"},
+{de:"Ascorbinsäure - wässrig",en:"Ascorbic acid - aqueous",r:"–––––++++–––––+––"},
+{de:"Asparginsäure - wässrig",en:"Aspartic acid - aqueous",r:"–+–––++++–––––++–"},
+{de:"Asphalt",en:"Asphalt",r:"+++++o+/+++–++/+–"},
+{de:"ASTM-Kraftstoff A",en:"ASTM fuel A",r:"++–––o+/+–––––/+–"},
+{de:"ASTM-Kraftstoff B",en:"ASTM fuel B",r:"++–––o+/+–––––/+–"},
+{de:"ASTM-Kraftstoff C",en:"ASTM fuel C",r:"++–––o+/+–––––/+–"},
+{de:"ASTM-Öl Nr. 1",en:"ASTM oil no. 1",r:"++–––o+++–––––/+–"},
+{de:"ASTM-Öl Nr. 2",en:"ASTM oil no. 2",r:"++–––o+/+–––––/+–"},
+{de:"ASTM-Öl Nr. 3",en:"ASTM oil no. 3",r:"++–––o+/+–––––/+–"},
+{de:"ATE-Bremsflüssigkeit",en:"ATE brake fluid",r:"++–––++o+––+––/+–"},
+{de:"Äther",en:"Ether",r:"+–––––––+++–++++–"},
+{de:"Ätherische Öle",en:"Ethereal oils",r:"++–––o+o+–––––oo–"},
+{de:"Bariumchlorat - wässrig",en:"Barium chlorate - aqueous",r:"–+–––++++–––––+o–"},
+{de:"Bariumchlorid, wässrig",en:"Barium chloride, aqueous",r:"+++++++++++–++++–"},
+{de:"Bariumhydroxid, wässrig",en:"Barium hydroxide, aqueous",r:"+++++++++++–+++/+"},
+{de:"Bariumsalze",en:"Barium salt",r:"+–––++++–––+––––+"},
+{de:"Bariumsulfid",en:"Barium sulphide",r:"–+–o+++++++–////+"},
+{de:"Baumwollsamenöl",en:"Cottonseed oil",r:"++–––o+/+––––+o––"},
+{de:"Beizlösung",en:"Caustic solution",r:"+++–/o+o–––––––––"},
+{de:"Benzaldehyd - wässrig",en:"Benzaldehyde - aqueous",r:"++–––++/+––+–/+/–"},
+{de:"Benzidinsulfonsäuren - wässrig",en:"Benzidine sulfonic acids - aqueous",r:"–+–––++++–––––++–"},
+{de:"Benzin, Super",en:"Petrol, super",r:"+++++o++–––+–––––"},
+{de:"Benzin, unverbleit",en:"Petrol, unleaded",r:"+–––+–––/+++++//–"},
+{de:"Benzin, verbleit",en:"Petrol, leaded",r:"+–––+–––++++++o+–"},
+{de:"Benzoesäure - wässrig (gesättigt)",en:"Benzoic acid - aqueous (saturated)",r:"++–––++++––+–++o–"},
+{de:"Benzol",en:"Benzene",r:"++–––o+o+––+–/o+–"},
+{de:"Benzolsulfonsäure - wässrig",en:"Benzenesulfonic acid - aqueous",r:"++–––++++––o–++––"},
+{de:"Benzylalkohol",en:"Benzyl alcohol",r:"++–––++o+––+–++/–"},
+{de:"Benzylbutylphtalat - wässrig",en:"Benzyl butyl phthalate - aqueous",r:"–+–––o+o+–––––/+–"},
+{de:"Bergamottöl",en:"Bergamot oil",r:"++–––o–o+–––––oo–"},
+{de:"Bernsteinsäure - wässrig",en:"Succinic acid - aqueous",r:"–+–––++++––––++––"},
+{de:"Bienenwachs",en:"Beeswax",r:"++–––+–++–––––+o–"},
+{de:"Bier",en:"Beer",r:"+–––––––+++++++++"},
+{de:"Bisulfit (Natriumbisulfit) - wässrig",en:"Bisulfite (sodium bisulfite) - aqueous",r:"++–––++/+––+–++/–"},
+{de:"Bitumen",en:"Bitumen",r:"+–––––––++++++/+–"},
+{de:"Blausäure - wässrig",en:"Hydrocyanic acid - aqueous",r:"++–––/+/+––––++o–"},
+{de:"Bleiacetat - wässrig",en:"Lead acetate - aqueous",r:"++–––++/+––+–+++–"},
+{de:"Bleinitrat - wässrig",en:"Lead nitrate - aqueous",r:"–+–––++++–––––+––"},
+{de:"Bleitetraethyl (Tetraethylblei)",en:"Tetraethyl lead",r:"–+––+o+o++++++++–"},
+{de:"Bohröle (Schneidöle)",en:"Drilling fluids (cutting oils)",r:"++–––o+/+–––––//–"},
+{de:"Borax - wässrig",en:"Borax - aqueous",r:"–+–––++++––+–+++–"},
+{de:"Borfluorwasserstoffsäure (Fluorborsäure)",en:"Boron hydrofluoric acid (fluoroboric acid)",r:"–o–––+/++––––++o–"},
+{de:"Borsäure - wässrig",en:"Boric acid - aqueous",r:"++–––++++––+–+/o–"},
+{de:"Brennspiritus",en:"Alcohol, denatured",r:"+++++++++++–+++o+"},
+{de:"Brom (flüssig)",en:"Bromine (liquid)",r:"+/–––o+o+––o–+oo–"},
+{de:"Bromwasserstoffsäure - wässrig",en:"Hydrobromic acid - aqueous",r:"+o–––++o+––o–++o–"},
+{de:"Butadien (gasförmig)",en:"Butadiene (gaseous)",r:"++–––/+/+––+–+++–"},
+{de:"Butan (gasförmig und flüssig)",en:"Butane (gaseous and liquid)",r:"++–––o+++––+–oo+–"},
+{de:"Butandiol - wässrig (10 %)",en:"Butanediol - aqueous (10%)",r:"++–––+/++––+–+/+–"},
+{de:"Butanol (Butylalkohol)",en:"Butanol (butyl alcohol)",r:"++–––++/+––+–+++–"},
+{de:"Butindiol",en:"Butanediol",r:"–/–––/–/+––+––++–"},
+{de:"Butoxyl (Methoxybutylacetat)",en:"Butoxyl (methoxybutyl acetate)",r:"–+–––/–++–––––+––"},
+{de:"Butter",en:"Butter",r:"++–––+–++––––+++–"},
+{de:"Buttermilch",en:"Buttermilk",r:"++–––+–++–––––/o–"},
+{de:"Buttersäure - wässrig",en:"Butyric acid - aqueous",r:"++–––///+––+–+o/–"},
+{de:"Butylacetat",en:"Butyl acetate",r:"++–––++o+––+–+o+–"},
+{de:"Butylalkohol (Butanol)",en:"Butyl alcohol (butanol)",r:"++–––++/+––+–+++–"},
+{de:"Butylen (flüssig)",en:"Butylene (liquid)",r:"++–––/+++––––+++–"},
+{de:"Butylphtalat",en:"Butyl phthalate",r:"–+–––o+o+–––––/+–"},
+{de:"Calciumbisulfit - wässrig",en:"Calcium bisulfite - aqueous",r:"–+–––++++––+––+o–"},
+{de:"Calciumchlorid - wässrig",en:"Calcium chloride - aqueous",r:"–/–––++++––+–++/–"},
+{de:"Calciumhydroxid (gel. Kalk) - wässrig - (Kalkmilch)",en:"Calcium hydroxide (lime solute) - aqueous - (lime milk)",r:"–+–––++++––+–+/+–"},
+{de:"Calciumhypochlorit (Chlorkalk) - wässrig",en:"Calcium hypochlorite (chlorinated lime) - aqueous",r:"+/–––++o+––+–++o–"},
+{de:"Calciumnitrat - wässrig",en:"Calcium nitrate - aqueous",r:"+/–––++++––+–+++–"},
+{de:"Caprylaldehyd (Hexanal)",en:"Caprylaldehyde (hexanal)",r:"––––o/+––––––––––"},
+{de:"Carbitol",en:"Carbitol",r:"––––//+/–––––––––"},
+{de:"Carbolineum (Teeröl; Pflanzenschutzmittel)",en:"Carbolineum (creosote; pesticides)",r:"++–––/+/+–––––o+–"},
+{de:"Carbolsäure (Phenol)",en:"Carbolic acid (phenol)",r:"–++++o+o+++/++/o–"},
+{de:"Caro’sche Säure - wässrig",en:"Caro's acid - aqueous",r:"–o–––o–o+–––––oo–"},
+{de:"Cellosolve (Glykolethylether)",en:"Cellosolve (glycol ethyl ether)",r:"–+–––o+o+––––+o+–"},
+{de:"Celluloselacke",en:"Cellulose lacquers",r:"–+–––/+o+–––––/+–"},
+{de:"Cetan (Hexadecan)",en:"Cetan (hexadecan)",r:"––––+o++–––––––––"},
+{de:"Champheröl",en:"Campher oil",r:"–+–––o/++–––––o––"},
+{de:"Chlor (flüssig)",en:"Chlorine (liquid)",r:"–+–––o+o+––o–+oo–"},
+{de:"Chlor (gasförmig) - feucht (Chlorwasser)",en:"Chlorine (gas) - wet (chlorine water)",r:"+o–––o/o+––o–/oo–"},
+{de:"Chlor (gasförmig) - trocken",en:"Chlorine (gas) - dry",r:"++–––o+o+––+–+oo–"},
+{de:"Chloraceton",en:"Chloroacetone",r:"+–––o++o–––––––––"},
+{de:"Chloralhydrat (Chloral) - wässrig",en:"Chloral hydrate (chloral) - aqueous",r:"–/–––/+o+––+–ooo–"},
+{de:"Chlorbenzol",en:"Chlorobenzene",r:"+/+++o+o++++++/+o"},
+{de:"Chlorbleichlauge (max.10%/85°C)",en:"Sodium hypochlorite (bleach) (max. 10%/85°C)",r:"+/o++/+/––––––––o"},
+{de:"Chlorbrommethan",en:"Bromochloromethane",r:"+++++/+o–––––––––"},
+{de:"Chlorbutadien (Chloropren)",en:"Chlorobutadiene (chloroprene)",r:"+++–+o+o–––––––––"},
+{de:"Chlordioxid",en:"Chlorine dioxide",r:"+/o++o+o–––––––––"},
+{de:"Chlordiphenyl",en:"Chlorodiphenyl",r:"–+–––/–++–––––+––"},
+{de:"Chloressigsäure",en:"Chloroacetic acid",r:"+//+o/+o+++++++o+"},
+{de:"Chloressigsäureethylester",en:"Chloroacetic acid ethyl ester",r:"+–––+o+o–––––––––"},
+{de:"Chlorethanol (Ethylenchlorhydrin)",en:"Chloroethanol (ethylene chlorohydrin)",r:"–+–––o+o+––/–++/–"},
+{de:"Chlorgas",en:"Chlorine gas",r:"+/–++o+o–––/–––––"},
+{de:"Chlorhaltige Lösungsmittel",en:"Chloric solvent",r:"+–––+o+o–––––––––"},
+{de:"Chlorkalk (Calciumhypochlorit) - wässrig",en:"Chlorine lime (calcium hypochlorite) - aqueous",r:"+/–––++o+––+–++o–"},
+{de:"Chlormethan (Methylchlorid)",en:"Chloromethane (methyl chloride)",r:"–+–––o+o+––+–oo/–"},
+{de:"Chlornaphthalin",en:"Chloronaphthalene",r:"+–––+o+o–––––––––"},
+{de:"Chloroform (Trichlormethan)",en:"Chloroform (trichlormethane)",r:"++/++o+o++++/++/o"},
+{de:"Chlorphenol (O-Chlorphenol)",en:"Chlorophenol (O-chlorophenol)",r:"+++++o+o–––––––––"},
+{de:"Chlorphenoxyessigsäure",en:"Chlorophenoxyacetic acid",r:"–+–––+–++–––––+––"},
+{de:"Chlorsäure - wässrig",en:"Chloric acid - aqueous",r:"–o–––/+o+––––+oo–"},
+{de:"Chlorsulfonsäure",en:"Chlorosulphuric acid",r:"+/++oo+o+++o++ooo"},
+{de:"Chlortoluol",en:"Chlortoluol",r:"+++++o+o+++–++oo–"},
+{de:"Chlorwasser (Chlor - feucht)",en:"Chlorine water (chlorine - moist)",r:"+o–––o/o+––o–/oo–"},
+{de:"Chlorwasserstoffgas",en:"Hydrogen chloride gas",r:"++–––/+/+––+–++o–"},
+{de:"Chlorxylenol",en:"Chloroxylenol",r:"–+–––o+o+––––––––"},
+{de:"Cholinchlorid - wässrig",en:"Choline chloride - aqueous",r:"–––––+–++–––––/––"},
+{de:"Chromalaun",en:"Chrome alum",r:"+/++++++––––––––+"},
+{de:"Chromsäure (50%)",en:"Chromic acid (50%)",r:"+oo++/+o++++++/oo"},
+{de:"Chromsulfat - wässrig",en:"Chromium sulphate - aqueous",r:"–/–––++++–––––+/–"},
+{de:"Citral (Citronellöl)",en:"Citral (lemon grass oil)",r:"–+–––o–o+–––––o+–"},
+{de:"Cola-Essenz (Coca-Cola)",en:"Cola essence (Coca-Cola)",r:"++++o++o–––––––––"},
+{de:"Cyankali (Kaliumcyanid) - wässrig",en:"Potassium cyanide - aqueous",r:"++–––++++––+–+++–"},
+{de:"Cyclanone (Fettalkoholsulfonat)",en:"Cyclanone (fatty alcohol sulfonate)",r:"–+–––+–++–––––++–"},
+{de:"Cyclohexan",en:"Cyclohexane",r:"–++++o++++++++/++"},
+{de:"Cyclohexanol",en:"Cyclohexanol",r:"–++++o++++++++/++"},
+{de:"Cyclohexanon",en:"Cyclohexanone",r:"–+++o/+o++++++/+–"},
+{de:"Cymol",en:"Cymene",r:"–+–––o–o+–––––o+–"},
+{de:"Decane",en:"Decane",r:"––––+o++–––––––––"},
+{de:"Dekahydronaphtalin (Dekalin)",en:"Decahydronaphthalene (decalin)",r:"–+–––o+o+–––––/+–"},
+{de:"Desmodur T",en:"Desmodur T",r:"–+–––o–o+––––––––"},
+{de:"Desmophen",en:"Desmophen",r:"–+–––+–++––––––––"},
+{de:"Dextrin - wässrig",en:"Dextrin - aqueous",r:"–+–––++++––––+++–"},
+{de:"Dextrose (Glukose) - wässrig",en:"Dextrose (glucose) - aqueous",r:"–+–––++++––+––++–"},
+{de:"Diacetonalkohol - wasserfrei",en:"Diacetone alcohol - anhydrous",r:"–+–––++o+––––––/–"},
+{de:"Dibenzylsebacat",en:"Dibenzylsebacat",r:"––––//+o–––––––––"},
+{de:"Dibromdifluormethan",en:"Dibromdifluormethane",r:"–––––/+o–––––––––"},
+{de:"Dibromethylbenzol",en:"Dibromethylbenzene",r:"––––+o+o–––––––––"},
+{de:"Dibutylamin",en:"Dibutylamine",r:"––––oo/o–––––––––"},
+{de:"Dibutylether",en:"Dibutyl ether",r:"––––oo+o–––+––––o"},
+{de:"Dibutylphthalat (Palatinol C)",en:"Dibutyl phthalate (palatinol C)",r:"–+++o/+o–––+––––/"},
+{de:"Dibutylsebacat",en:"Dibutyl sebacate",r:"––––//+o––––––––+"},
+{de:"Dichlorbenzol",en:"Dichlorobenzene",r:"+–––+o+o+++/++/+/"},
+{de:"Dichlorbutan (Tetramethylenchlorid)",en:"Dichlorobutane",r:"+–––+o+/–––––––––"},
+{de:"Dichlorethylen",en:"Dichloroethylene",r:"++–––o+o+––+–+o+–"},
+{de:"Dichlorisopropylether",en:"Dichlordiisopropylether",r:"+–––oo+o–––––––––"},
+{de:"Dichlormethan (Methylenchlorid)",en:"Dichloromethane (methylene chloride)",r:"++–––o+o+––/–ooo–"},
+{de:"Dicyclohexylamin",en:"Dicyclohexylamine",r:"––––oo–o–––––––––"},
+{de:"Dicyclohexylammoniumnitrit",en:"Dicyclohexylammonium nitrite",r:"–+–––++++––––––––"},
+{de:"Dieselkraftstoff",en:"Diesel fuel",r:"+++++o++++++++++/"},
+{de:"Dieselöl",en:"Diesel oil",r:"++–––o+/+––+–+/+–"},
+{de:"Diethylamin",en:"Diethylamine",r:"––––oo+o+++++o++–"},
+{de:"Diethylenglykol",en:"Diethylenglycol",r:"++++++++++++++++–"},
+{de:"Diethylether (Ether)",en:"Diethyl ether (ether)",r:"–+–––o+o+––+–+o+–"},
+{de:"Diethylsebacat",en:"Diethyl sebacate",r:"––––+++o–––––––––"},
+{de:"Difluordibrommethan",en:"Difluoro-dibromomethane",r:"–––––/–o–––––––––"},
+{de:"Diisobutylen",en:"Diisobutylene",r:"–++++o+/–––––––––"},
+{de:"Diisobutylketon",en:"Diisobutyl ketone",r:"++++o++o++++/o/+/"},
+{de:"Diisooctylsebacat",en:"Diisooctyl sebacate",r:"––––/o+o–––––––––"},
+{de:"Diisopropylketon",en:"Diisopropyl ketone",r:"++++o++o–––––––––"},
+{de:"Dimethylamin",en:"Dimethylamine",r:"–+–––/+o+––+–o/o–"},
+{de:"Dimethylether (Methylether)",en:"Dimethylether (methyl ether)",r:"–+++++++++++++o++"},
+{de:"Dimethylformamid (DMF)",en:"Dimethyl formamide (DMF)",r:"––––o++o++++/o+//"},
+{de:"Dimethylhydrazin",en:"Dimethyl hydrazine",r:"––––o++o–––––––––"},
+{de:"Dimethylphthalat",en:"Dimethyl phthalate",r:"––––//+o––––––––+"},
+{de:"Dimethylsulfoxid (DMSO)",en:"Dimethyl sulfoxide (DMSO)",r:"––––––+–+––/–o–/–"},
+{de:"Dinitrotoluol",en:"Dinitrotoluol",r:"––––oo+o–––––––––"},
+{de:"Dioctylphthalat (DOP)",en:"Dioctyl phthalate (DOP)",r:"––––+++o–––+––––/"},
+{de:"Dioctylsebacat (DOS)",en:"Dioctyl sebacate (DOS)",r:"––––+++o–––––––––"},
+{de:"Dioxan",en:"Dioxane",r:"++++o/+o+++++o/++"},
+{de:"Dioxolan",en:"Dioxolane",r:"––––o/+o–––––––––"},
+{de:"Diphenyl",en:"Diphenyl",r:"+++++o+o–––––––––"},
+{de:"Diphenylether",en:"Diphenyl ether",r:"––––+o+o++++++o++"},
+{de:"Dissousgas (Acetylen + Aceton)",en:"Dissousgas (acetylene + acetone)",r:"–+–––+–o+–––––/+–"},
+{de:"Distickstoffmonoxyd (Lachgas, Stickoxydul)",en:"Dinitrogen monoxide (laughing gas, nitrous oxide)",r:"–+–––++++––+–+++–"},
+{de:"Dodecylalkohol",en:"Dodecyl alcohol",r:"+++–++++–––––––––"},
+{de:"Druckluftversorgung",en:"Compressed-air supply",r:"+++++o++––––––––+"},
+{de:"Edelgase",en:"Noble gases",r:"+/+++++++++++++++"},
+{de:"Eisen(II)Sulfat, wässrig",en:"Iron(II)sulphate, aqueous",r:"++/+++++–––+––––+"},
+{de:"Eisen(III)Chlorid, wässrig",en:"Iron(III)chloride, aqueous",r:"+oo+++++–––/––––+"},
+{de:"Eisenchlorid",en:"Iron chloride",r:"+o––+++++++++++++"},
+{de:"Eisennitrat",en:"Iron nitrate",r:"++–++++++++++++++"},
+{de:"Eiweißlösungen",en:"Protein solutions",r:"++–––+–++–––––++–"},
+{de:"Entwicklerbad",en:"Developing bath",r:"–+––+/++–––––––––"},
+{de:"Epichlorhydrin",en:"Epichlorohydrin",r:"––––oo+o–––+–––––"},
+{de:"Epoxidharze",en:"Epoxide resin",r:"++++o++–––––––––+"},
+{de:"Erdgas",en:"Natural gas",r:"+++++o++–––+––––+"},
+{de:"Erdnußöl",en:"Peanut oil",r:"+++++o++–––+––––/"},
+{de:"Erdöl",en:"Crude oil",r:"+++++o++++++/+/+o"},
+{de:"Essig",en:"Vinegar",r:"++++o++o+++++++/+"},
+{de:"Essigester (Ethylacetat)",en:"Ethyl acetate",r:"++–––//o+––+–/o/–"},
+{de:"Essigsäure",en:"Acetic acid",r:"///+oo+o+++o+++o+"},
+{de:"Essigsäure (max.6%/85°C)",en:"Acetic acid (max. 6%/85°C)",r:"++++o++–––––––––+"},
+{de:"Essigsäureanhydrid",en:"Acetic anhydride",r:"+–––o++o+++–+o/o/"},
+{de:"Essigsaures Kali",en:"Acetic potassium",r:"–+++o++/–––––––––"},
+{de:"Essigsaures Natron",en:"Acetic soda",r:"––––o++/–––––––––"},
+{de:"Ethan",en:"Ethane",r:"+++++o++–––+–––––"},
+{de:"Ethanol (Ethylalkohol)",en:"Ethanol (ethyl alcohol)",r:"++++o+++++++++/o+"},
+{de:"Ethanolamin (Colamin)",en:"Ethanolamine (colamine)",r:"––––o/+/–––––––––"},
+{de:"Ether (Diethylether)",en:"Ether (Diethyl ether)",r:"++–––o+o+––+–+o+–"},
+{de:"Ethylacetat",en:"Ethyl acetate",r:"+–––o/+o+++++o/+–"},
+{de:"Ethylacrylsäure",en:"Ethyl acrylic acid",r:"–––––/–o–––––––––"},
+{de:"Ethylalkohol - Gärungsmaische",en:"Ethyl alcohol - fermented mash",r:"++–––++++––+–++/–"},
+{de:"Ethylalkohol - vergällt o abh. von Vergällungsmittel",en:"Ethyl alcohol - denatured or dep. on denaturant",r:"++–––/+/+––+––+/–"},
+{de:"Ethylalkohol + Essigsäure",en:"Ethyl alcohol + acetic acid",r:"++–––++/+––+–++o–"},
+{de:"Ethylbenzoat",en:"Ethyl benzoate",r:"––––+o+o–––––––––"},
+{de:"Ethylbenzol",en:"Ethyl benzene",r:"––––+++o+++–///+–"},
+{de:"Ethylbromid",en:"Ethyl bromide",r:"––––+o+/–––––––––"},
+{de:"Ethylcellulose",en:"Ethyl cellulose",r:"––––o/+/–––––––––"},
+{de:"Ethylchlorid",en:"Ethyl chloride",r:"+–––+++++++–++//–"},
+{de:"Ethylcyclopentan",en:"Ethyl cyclopentane",r:"––––+o++–––––––––"},
+{de:"Ethylen",en:"Ethylene",r:"+++++o++–––+–––––"},
+{de:"Ethylenbromid - wasserfrei",en:"Ethyl bromide - anhydrous",r:"–+–––o+o+––o–+o+–"},
+{de:"Ethylenchlorhydrin",en:"Ethylene chlorohydrine",r:"––––+/+o+++–++/o–"},
+{de:"Ethylenchlorid",en:"Ethylene chloride",r:"––––/o+o–––––––––"},
+{de:"Ethylendiamin",en:"Ethylene diamine",r:"––––o+o++++++++o–"},
+{de:"Ethylendibromid",en:"Ethylene dibromide",r:"––––+o+o–––––––––"},
+{de:"Ethylendichlorid",en:"Ethylene dichloride",r:"––––+o+o–––––––––"},
+{de:"Ethylenglycol",en:"Ethylene glycol",r:"++++++++++++++++–"},
+{de:"Ethylenoxid",en:"Ethylene oxide",r:"––––oooo++++++/+–"},
+{de:"Ethylether",en:"Ethyl ether",r:"––––oo+o++++++o+–"},
+{de:"Ethylformiat",en:"Ethyl formate",r:"–+–––/+o+––––+/+–"},
+{de:"Ethylmercaptan",en:"Ethyl mercaptane",r:"––––/–+o–––––––––"},
+{de:"Ethylpentachlorbenzol",en:"Ethyl pentachloride benzene",r:"––––+o+o–––––––––"},
+{de:"Ethylsilikat",en:"Ethyl silicate",r:"––––++++–––––––––"},
+{de:"Färbereinetzmittel (Nekal BX)",en:"Dyeing wetting agents (nekal BX)",r:"–+–––+/++–––––+––"},
+{de:"Ferricyankalium (Kaliumferricyanid)",en:"Potassium ferricyanide",r:"–+–––++++––+–+++–"},
+{de:"Fettalkohole",en:"Fatty alcohols",r:"–+–––/+++–––––/+–"},
+{de:"Fettalkoholsulfate (sulfatierte Fette) - wässrig",en:"Fatty alcohol sulfates (sulfated fats) - aqueous",r:"–+–––/+++––––++/–"},
+{de:"Fette, fette Öle",en:"Fats, fatty oils",r:"++++–o+/+––+–+/+–"},
+{de:"Fettsäuren",en:"Fatty acids",r:"+++++o+/++++++++/"},
+{de:"Fichtennadelöl",en:"Pine needle oil",r:"++++–o+/+–––––+––"},
+{de:"Firnisse",en:"Varnishes",r:"–+–––o+/+–––––o+–"},
+{de:"Fixiersalz",en:"Fixing salt",r:"–+––++++–––––––––"},
+{de:"Fluor (feucht)",en:"Fluorine (wet)",r:"–/–––ooo/––o–ooo–"},
+{de:"Fluor (trocken)",en:"Fluorine (dry)",r:"–+–––o/o+––o–/oo–"},
+{de:"Fluorborsäure (Borfluorwasserstoffsäure)",en:"Fluoroboric acid (boron hydrofluoric acid)",r:"–o–––+/++––––++o–"},
+{de:"Fluorkieselsäure",en:"Fluorosilicic acid",r:"––––+++/+++–+++o+"},
+{de:"Fluorkohlenstoffe (Frigen)",en:"Fluorocarbons (Freon)",r:"+–––––––+––+–/–+–"},
+{de:"Flüssig-Petroleum-Gas (LPG)",en:"Liquid petroleum gas (LPG)",r:"+++++o++–––––––––"},
+{de:"Flusssäure (45%)",en:"Hydrofluoric acid (45%)",r:"+–––––––+++–+++o–"},
+{de:"Formaldehyd",en:"Formaldehyde",r:"++/–o/+o–––+––––+"},
+{de:"Formaldehyd (40%)",en:"Formaldehyde (40%)",r:"+–––––––+++–+++/–"},
+{de:"Foto - Emulsionen, Entwickler, Fixierbäder",en:"Photo - emulsions, developers, fixing baths",r:"–––––/+/+––––++––"},
+{de:"Freon TF (Freon 113)",en:"Freon TF (Freon 113)",r:"+++––oo++––+–+o+–"},
+{de:"Frigen 12 B1 (Freon 12 B1)",en:"Frigene 12 B1 (Freon 12 B1)",r:"+++––o+++––+–+o+–"},
+{de:"Frigen 13",en:"Frigene 13",r:"+++––o/++––+–oo––"},
+{de:"Frigen 13 B 1 (Halon 1301)",en:"Frigene 13 B 1 (Halon 1301)",r:"+++––o+++––––/o+–"},
+{de:"Frigen 22",en:"Frigene 22",r:"+++––o/o+––+–oo+–"},
+{de:"Frigen 23",en:"Frigene 23",r:"+++––oo++––––/o––"},
+{de:"Frigen 502",en:"Frigene 502",r:"+++––o/o+––+–//+–"},
+{de:"Frigenersatz HFCKW 123",en:"Frigene substitute HFCKW 123",r:"+++––ooo+––––––––"},
+{de:"Frigenersatz HFCKW 134a",en:"Frigene substitute HFCKW 134a",r:"+++–––o–+––+–––––"},
+{de:"Frostschutzmittel KFZ",en:"Antifreeze, automotive",r:"+–+––++/+––+–++––"},
+{de:"Fruchtsäfte",en:"Fruit juices",r:"+++––/–/+––+––//–"},
+{de:"Fumarsäure",en:"Fumaric acid",r:"––––+–++–––––––––"},
+{de:"Furfural (Furanaldehyd)",en:"Furfural (furanaldehyde)",r:"+/++o/+o+++–+/o/–"},
+{de:"Furfurylalkohol",en:"Furfuryl alcohol",r:"–––––/+o–––+––––+"},
+{de:"Furylcarbinol",en:"Furyl carbinol",r:"–––––/+o–––––––––"},
+{de:"Galvanik-Bad (Chrom)",en:"Galvanic bath, chromium",r:"––––+o+o––––––––+"},
+{de:"Gaswasser",en:"Ammonia water",r:"–+––––––+––––––––"},
+{de:"Gelatine, wässrig",en:"Gelatin, aqueous",r:"++–––o–++––––––––"},
+{de:"Gerbsäure",en:"Tannic acid",r:"+++++/+/+++++++++"},
+{de:"Glucose",en:"Glucose",r:"++++++++–––+––––+"},
+{de:"Glycerin",en:"Glycerol",r:"+++++++++++++++++"},
+{de:"Glycerintriacetat",en:"Glycerol triacetate",r:"––––o++/–––––––––"},
+{de:"Glykokoll (Aminoessigsäure) - wässrig",en:"Glycine (amino acetic acid) - aqueous",r:"–+–––+–/+––––++/–"},
+{de:"Glykol",en:"Glycol",r:"+++++++++++++++++"},
+{de:"Glykolethylether (Cellosolve)",en:"Glycol ethyl ether (cellosolve)",r:"–+–––o+o+––––+o+–"},
+{de:"Glykolsäure - wässrig",en:"Glycolic acid - aqueous",r:"–/–––++++––+–++o–"},
+{de:"Haarshampoo",en:"Hair shampoo",r:"++++–/–/+–––––/+–"},
+{de:"Harnstoff, wässrig",en:"Urea, aqueous",r:"++/++++++++++++++"},
+{de:"Hefe, wässrig",en:"Yeast, aqueous",r:"+++++++++++++++++"},
+{de:"Heizöl, leicht",en:"Fuel oil, light",r:"+++++o++++++++++/"},
+{de:"Heizöl, schwer",en:"Fuel oil, heavy",r:"+++++o+o++++++++o"},
+{de:"Helium",en:"Helium",r:"++++++++–––+––––+"},
+{de:"Heptan",en:"Heptane",r:"+//++o++++++++/+/"},
+{de:"Hexaldehyd",en:"Hexaldehyde",r:"––––o++o–––––––––"},
+{de:"Hexamethylentetramin - wässrig",en:"Hexamethylenetetramine - aqueous",r:"–+–––++++–––––++–"},
+{de:"Hexan",en:"Hexane",r:"+++++o++++++++/+/"},
+{de:"Hexylalkohol",en:"Hexyl alcohol",r:"+++++o+++++–+++/+"},
+{de:"Himbeer-Essenz",en:"Raspberry essence",r:"+++++++o–––––––––"},
+{de:"Hochofengas",en:"Blast furnace gas",r:"––––+o+o–––––––––"},
+{de:"Holzessig",en:"Pyroligneous acid",r:"––––o/+o–––––––––"},
+{de:"Holzteer, Holzöl (Imprägnieröle)",en:"Wood tar, wood oil (impregnating oil)",r:"++–––o+o+–––––o––"},
+{de:"Huminsäuren",en:"Humic acids",r:"–+–––+–++––+––+o–"},
+{de:"Hydraulikfl. (Wasser in Öl, HSB)",en:"Hydraulic fluid (water in oil, HSB)",r:"++–––o+/+–––––++–"},
+{de:"Hydraulikfl. Mineralöle (H, H-L, H-LP)",en:"Hydraulic fluid, mineral oils (H, H-L, H-LP)",r:"++–––o+/+–––––++–"},
+{de:"Hydraulikfl. Phosphorsäureester (HSD)",en:"Hydraulic fluid, phosphoric esters (HSD)",r:"++–––/+o+–––––oo–"},
+{de:"Hydraulikfl. Polyglykol-Wasser (HSC)",en:"Hydraulic fluid, polyglycol water (HSC)",r:"++–––++++–––––++–"},
+{de:"Hydraulikfl. Wasser-Öl-Emulsionen (HSA)",en:"Hydraulic fluid, water-oil emulsions (HSA)",r:"++–––o+/+–––––++–"},
+{de:"Hydrazin",en:"Hydrazine",r:"–//–o++o–––+–––––"},
+{de:"Hydrazinhydrat - wässrig",en:"Hydrazine hydrate - aqueous",r:"–o–––++o+––+–/o––"},
+{de:"Hydrochinon",en:"Hydroquinone",r:"––––/o+o+++++++o–"},
+{de:"Hydroxylaminsulfat - wässrig",en:"Hydroxylamine sulphate - aqueous",r:"–+–––++++–––––++–"},
+{de:"Imprägnieröle (Holzteer)",en:"Impregnating oils (wood tar)",r:"++–––o+o+–––––o––"},
+{de:"Isobutanol",en:"Isobutanol",r:"++–––++/+––+–+++–"},
+{de:"Isobutylalkohol",en:"Isobutyl alcohol",r:"+++++++o+++–+++o+"},
+{de:"Isododecan",en:"Isododecane",r:"+++++o++–––––––––"},
+{de:"Isooctan",en:"Isooctane",r:"+++++o+++++++++++"},
+{de:"Isooctanol",en:"Isooctanol",r:"+–––++++–––––––––"},
+{de:"Isophoron",en:"Isophorone",r:"––––o++o–––––––––"},
+{de:"Isopropanol",en:"Isopropanol",r:"+++++++/+++++++/+"},
+{de:"Isopropylacetat",en:"Isopropyl acetate",r:"––––o/+o+++++//+–"},
+{de:"Isopropylbenzol",en:"Isopropyl benzene",r:"+++++o+o+++–++/+–"},
+{de:"Isopropylchlorid",en:"Isopropyl chloride",r:"––––+o+o–––––––––"},
+{de:"Isopropylether",en:"Isopropyl ether",r:"++++oo+/++++++o+o"},
+{de:"Jod",en:"Iodine",r:"+//++/+/+++/++/o+"},
+{de:"Jod+Jodkalium - wässrig",en:"Iodine + potassium iodide - aqueous",r:"+/–––/+/+––/–+/o–"},
+{de:"Jodtinktur",en:"Tincture of iodine",r:"+/–––///+––/–+/o–"},
+{de:"Kaffee",en:"Coffee",r:"++++++++–––+––––+"},
+{de:"Kalilauge (50%)",en:"Caustic potash (50%)",r:"///oo++/–––+––––/"},
+{de:"Kalilauge (max. 10%/85°C)",en:"Caustic potash (max. 10%/85°C)",r:"+///o++/–––+––––+"},
+{de:"Kaliumacetat (essigsaures Kali)",en:"Potassium acetate (acetic potash)",r:"–+++o++/–––––––––"},
+{de:"Kaliumacetat, wässrig",en:"Potassium acetate, aqueous",r:"–+++o++o+++–+++/–"},
+{de:"Kalium–Aluminiumsulfat (Alaun) - wässrig",en:"Potassium aluminum sulfate (alum) - aqueous",r:"–+–––++++––+–+++–"},
+{de:"Kaliumbromat - wässrig",en:"Potassium bromate - aqueous",r:"–+–––++++––+–++––"},
+{de:"Kaliumbromid - wässrig",en:"Potassium bromide - aqueous",r:"–/–––++++––+–++o–"},
+{de:"Kaliumcarbonat (Pottasche) - wässrig",en:"Potassium carbonate (potash) - aqueous",r:"–+–––++++––+–o+/–"},
+{de:"Kaliumchlorat - wässrig",en:"Potassium chlorate - aqueous",r:"–/–––/+/+––+–/+/–"},
+{de:"Kaliumchlorid, wässrig",en:"Potassium chloride, aqueous",r:"+/+++++++++++++++"},
+{de:"Kaliumchromat - wässrig",en:"Potassium chromate - aqueous",r:"–/–––++/+––––++o–"},
+{de:"Kaliumcyanid, wässrig",en:"Potassium cyanide, aqueous",r:"++/+++++––––––––+"},
+{de:"Kaliumdichromat",en:"Potassium dichromate",r:"–+/++++++++++++/–"},
+{de:"Kaliumhydrogenfluorid - wässrig",en:"Potassium hydrogen fluoride - aqueous",r:"–+–––+–++–––––+o–"},
+{de:"Kaliumhydroxid (Kalilauge) - wässrig",en:"Potassium hydroxide (caustic potash) - aqueous",r:"++–––++o+––+–o+/–"},
+{de:"Kaliumhypochlorit - wässrig",en:"Potassium hypochlorite - aqueous",r:"+/–––++o+––+–+/o–"},
+{de:"Kaliumjodid - wässrig",en:"Potassium iodide - aqueous",r:"–/–––++++––––++––"},
+{de:"Kaliumkupfercyanid",en:"Potassium copper cyanide",r:"––––++++–––––––––"},
+{de:"Kaliumnitrat",en:"Potassium nitrate",r:"+//++++++++++++/+"},
+{de:"Kaliumnitrit - wässrig",en:"Potassium nitrite - aqueous",r:"–+–––++++––+–+++–"},
+{de:"Kaliumperchlorat, wässrig",en:"Potassium perchlorate, aqueous",r:"+++/+++o+++++++++"},
+{de:"Kaliumpermanganat - wässrig",en:"Potassium permanganate - aqueous",r:"++–––o+o+––+–+/o–"},
+{de:"Kaliumperoxid - wässrig",en:"Potassium peroxide - aqueous",r:"–+–––o+o+––+––/o–"},
+{de:"Kaliumpersulfat - wässrig",en:"Potassium persulfate - aqueous",r:"–+–––++o+––+–/+o–"},
+{de:"Kaliumphosphate - wässrig",en:"Potassium phosphates - aqueous",r:"–+–––++++––+–++/–"},
+{de:"Kaliumsalze",en:"Potassium salts",r:"––––++++–––––––––"},
+{de:"Kaliumsulfat",en:"Potassium sulphate",r:"++/+++++–––/––––+"},
+{de:"Kaliumsulfid - wässrig",en:"Potassium sulphide - aqueous",r:"–+–––++++––+–/+/–"},
+{de:"Kaliumsulfit",en:"Potassium sulphite",r:"–+/+++++––––––––+"},
+{de:"Kalkbleiche",en:"Lime bleach",r:"––––++++–––––––––"},
+{de:"Kalziumacetat",en:"Calcium acetate",r:"––––o++/–––––––––"},
+{de:"Kalziumacetat, wässrig",en:"Calcium acetate, aqueous",r:"––––o+++–––––––––"},
+{de:"Kalziumbisulfit",en:"Calcium bisulphite",r:"––––+o++–––––––––"},
+{de:"Kalziumcarbonat",en:"Calcium carbonate",r:"––––++++–––––––––"},
+{de:"Kalziumchlorid, wässrig",en:"Calcium chloride, aqueous",r:"––––++++–––+–––––"},
+{de:"Kalziumcyanid",en:"Calcium cyanide",r:"–––––+++–––––––––"},
+{de:"Kalziumhydroxid, wässrig",en:"Calcium hydroxide, aqueous",r:"––––o+++–––––––––"},
+{de:"Kalziumhypochlorid",en:"Calcium hypochloride",r:"––––+++o–––––––––"},
+{de:"Kalziumhypochlorit",en:"Calcium hypochlorite",r:"––––+++o–––––––––"},
+{de:"Kalziumnitrat (Kalksalpeter)",en:"Calcium nitrate",r:"+–––++++–––––––––"},
+{de:"Kalziumphosphat, wässrig",en:"Calcium phosphate, aqueous",r:"––––++++–––––––––"},
+{de:"Kalziumsalze",en:"Calcium salt",r:"––––++++–––––––––"},
+{de:"Kalziumsilikat",en:"Calcium silicate",r:"––––++++–––––––––"},
+{de:"Kalziumsulfid",en:"Calcium sulphide",r:"––––++++–––––––––"},
+{de:"Kalziumsulfit",en:"Calcium sulphite",r:"––––++++–––––––––"},
+{de:"Kalziumthiosulfat",en:"Calcium thiosulphate",r:"––––+++/–––––––––"},
+{de:"Kerosin , Flugbenzin",en:"Kerosene",r:"+++–+o++++++/+/++"},
+{de:"Kiefernnadelöl (Fichtennadelöl)",en:"Pine oil (pine needle oil)",r:"++++–o+/+–––––+––"},
+{de:"Kieselfluorwasserstoffsäure (Kieselflußsäure)",en:"Fluorosilicic acid (Hydrofluorosilicic acid)",r:"//–––/+/+––––++o–"},
+{de:"Knochenöl",en:"Neatsfoot oil",r:"++++–o+/+–––––++–"},
+{de:"Kobaltchlorid",en:"Cobalt chloride",r:"––––++++–––––––––"},
+{de:"Kochsalz (Natriumchlorid)",en:"Table salt (sodium chloride)",r:"+/++–++++––+–+++–"},
+{de:"Kochsalzlösung",en:"Saline solution",r:"+/+++++++++–+++++"},
+{de:"Kohlendioxid",en:"Carbon dioxide",r:"+++/++++–––+––––+"},
+{de:"Kohlenmonoxid, trocken",en:"Carbon monoxide, dry",r:"+++/++++–––––––––"},
+{de:"Kohlensäure",en:"Carbonic acid",r:"+++/+++++++++++++"},
+{de:"Kokosfett",en:"Coconut butter",r:"+++++o++–––+––––/"},
+{de:"Kokosnußöl",en:"Coconut oil",r:"++++–o+/+––+–+/+–"},
+{de:"Königswasser",en:"Aqua regia",r:"+oo+oo/o+++o+/ooo"},
+{de:"Kreosol (Methylbrenzcatechin)",en:"Creosol (methylcatechol)",r:"–++++o+o––––––––+"},
+{de:"Kupferacetat, wässrig",en:"Copper acetate, aqueous",r:"–+++o++o–––+–––––"},
+{de:"Kupferchlorid, wässrig",en:"Copper chloride, aqueous",r:"+oo++++++++++++o–"},
+{de:"Kupfercyanid",en:"Copper cyanide",r:"–+––++++++++++++–"},
+{de:"Kupfersalze",en:"Copper salt",r:"––––++++––––––––+"},
+{de:"Kupfersulfat, wässrig",en:"Copper sulphate, aqueous",r:"++/+++++++++++++–"},
+{de:"Lachgas",en:"Laughing gas",r:"+++++/+++++–+++++"},
+{de:"Lacke",en:"Lacquers",r:"+++++o+/–––+–––––"},
+{de:"Lacklösungsmittel",en:"Lacquer solvent",r:"++++oo+o–––––––––"},
+{de:"Lactam-Aminosäuren",en:"Lactam amino acid",r:"––––o/+o–––––––––"},
+{de:"Lavendelöl",en:"Lavender oil",r:"+++++o+o––––––––+"},
+{de:"Lebensmittelfette und -öle",en:"Food fats and oils",r:"+++++o+/+––+–+/+–"},
+{de:"Lebertran",en:"Cod liver oil",r:"+++++o+++++–+++++"},
+{de:"Leichtöl (Rohbenzol)",en:"Light oil (crude benzene)",r:"+++++o++–––––––––"},
+{de:"Leinöl",en:"Linseed oil",r:"+++++o+++++++++++"},
+{de:"Leuchtgas",en:"Illuminating gas",r:"+++++o++–––+––––+"},
+{de:"Linolsäure",en:"Linoleic acid",r:"+–––/o+/–––––––––"},
+{de:"Lithiumchlorid - wässrig",en:"Lithium chloride - aqueous",r:"–/–––++++––––++/–"},
+{de:"Lysol",en:"Lysol",r:"–+–––o+o+––+–//o–"},
+{de:"Magnesiumchlorid, wässrig",en:"Magnesium chloride, aqueous",r:"+/++++++++++++++–"},
+{de:"Magnesiumhydroxid, wässrig",en:"Magnesium hydroxide, aqueous",r:"––––++++++++++++–"},
+{de:"Magnesiumsalze",en:"Magnesium salt",r:"––––++++–––+––––+"},
+{de:"Magnesiumsulfat, wässrig",en:"Magnesium sulphate, aqueous",r:"++/++++++++++++++"},
+{de:"Maiskeimöl",en:"Corn germ oil",r:"+++++o+/+––+–+/+–"},
+{de:"Maisöl",en:"Corn oil",r:"+++++o++––––––––/"},
+{de:"Maleinsäure, wässrig",en:"Maleic acid, aqueous",r:"++/++++++++++++/+"},
+{de:"Maleinsäureanhydrid",en:"Maleic anhydride",r:"–+++o/+o–––––––––"},
+{de:"Manganchlorid - wässrig",en:"Manganese chloride - aqueous",r:"+/–––++++–––––++–"},
+{de:"Mangansulfat - wässrig",en:"Manganese sulphate - aqueous",r:"++–––++++––––+++–"},
+{de:"Melasse, Melassewürze",en:"Molasses, molasses flavouring",r:"–+–––++++––+–+++–"},
+{de:"Mercaptane",en:"Mercaptans",r:"–+–––o+o+––––/–+–"},
+{de:"Mersole (Alkansulfonsäurechloride)",en:"Mersols (alkane sulfonic acid chlorides)",r:"–/–––/–++–––––/––"},
+{de:"Mesityl-Oxid",en:"Mesitylene oxide",r:"––––o/+o–––––––––"},
+{de:"Methacrylsäure",en:"Methacrylic acid",r:"––––o/+o–––––––––"},
+{de:"Methan",en:"Methane",r:"+/+/+o++–––+––––+"},
+{de:"Methanol (Methylalkohol)",en:"Methanol (methyl alcohol)",r:"+/+/o++++++++++o+"},
+{de:"Methoxybutanol",en:"Methoxybutanol",r:"–+–––++++––+––+––"},
+{de:"Methyl Cellosolve",en:"Methyl cellosolve",r:"––––o/+o––––––––+"},
+{de:"Methylacetat",en:"Methyl acetate",r:"–/++o/+o+++++o/++"},
+{de:"Methylacetoacetat",en:"Methyl acetoacetate",r:"––––o/+o–––––––––"},
+{de:"Methylacrylat",en:"Methyl acrylate",r:"––––o/+o–––––––––"},
+{de:"Methylacrylsäure",en:"Methyl acrylic acid",r:"––––o/+o–––––––––"},
+{de:"Methylalkohol (Methanol)",en:"Methyl alcohol (methanol)",r:"+/+/o++++++++++o+"},
+{de:"Methylamin - wässrig",en:"Methylamine - aqueous",r:"–/–––/oo+––+–o+/–"},
+{de:"Methylanilin",en:"Methyl aniline",r:"––––/–+o–––+–––––"},
+{de:"Methylbenzoat",en:"Methyl benzoate",r:"––––+o+o–––––––––"},
+{de:"Methylbromid",en:"Methyl bromide",r:"––––+o+/––––––––/"},
+{de:"Methylbutylketon",en:"Methyl butyl ketone",r:"––––o++o+++–///+–"},
+{de:"Methylcarbonat",en:"Methyl carbonate",r:"––––+o+o–––––––––"},
+{de:"Methylcellulose",en:"Methyl cellulose",r:"––––o/+/–––––––––"},
+{de:"Methylchlorid",en:"Methyl chloride",r:"–/+++o+o–––+––––/"},
+{de:"Methylchloroform",en:"Methyl chloroform",r:"––––+o+o+++–+o//–"},
+{de:"Methylcyclopentan",en:"Methyl cyclopentane",r:"––––+o+o–––––––––"},
+{de:"Methyl-D-Bromid",en:"Methyl-D-bromide",r:"––––+–+o–––––––––"},
+{de:"Methylenchlorid",en:"Methylene chloride",r:"+//+/o+o++++/o///"},
+{de:"Methylendichlorid",en:"Methylene dichloride",r:"––––/o+o–––––––––"},
+{de:"Methylethylketon",en:"Methyl ethyl ketone",r:"–+–––/+o+––/–oo/–"},
+{de:"Methylethylketonperoxid",en:"Methyl ethyl ketone peroxide",r:"––––oo+o–––+–––––"},
+{de:"Methylformiat",en:"Methyl formate",r:"–++––/+o–––––––––"},
+{de:"Methylglykol",en:"Methyl glycol",r:"+–––o/–o++++++++–"},
+{de:"Methylisobutylketon, MIBK",en:"Methyl isobutyl ketone (MIBK)",r:"––––oo+o++++/+/+–"},
+{de:"Methylisopropylketon",en:"Methyl isopropyl ketone",r:"––––oo+o–––––––––"},
+{de:"Methylmethacrylat",en:"Methyl methacrylate",r:"––––oo+o+++–//o+–"},
+{de:"Methyloleat",en:"Methyl oleate",r:"––––+/+o–––––––––"},
+{de:"Methylsalicylat",en:"Methyl salicylate",r:"–––––/+o–––––––––"},
+{de:"Milch",en:"Milk",r:"+++++++++++++++++"},
+{de:"Milchsäure, heiß",en:"Lactic acid, hot",r:"+//++o+o+++++++/+"},
+{de:"Milchsäure, kalt",en:"Lactic acid, cold",r:"++/++++–+++++++/+"},
+{de:"Mineralöl",en:"Mineral oil",r:"+++++o++++++++++/"},
+{de:"Mineralwasser",en:"Mineral water",r:"+/–––+–++––+–+++–"},
+{de:"Monobrombenzol",en:"Mono bromobenzene",r:"+–––+o+o––––––––o"},
+{de:"Monoethanolamin",en:"Monoethanolamine",r:"––––o/+o––––––––+"},
+{de:"Monomethylanilin",en:"Mono methyl aniline",r:"+–––/–+o–––––––––"},
+{de:"Monomethylhydrazin",en:"Mono methylhydrazine",r:"–––––++/–––––––––"},
+{de:"Mononitrotoluol",en:"Mono nitrotoluol",r:"––––oo+o–––––––––"},
+{de:"Monovinylacetylen",en:"Mono vinylacetylene",r:"––––++++–––––––––"},
+{de:"Morpholin - rein",en:"Morpholine - pure",r:"–+–––//o+––+–++––"},
+{de:"Naphthalin",en:"Naphtalene",r:"+++++o+o–––+––––/"},
+{de:"Naphthensäuren",en:"Naphtenic acid",r:"+++++o+/–––+–––––"},
+{de:"Naptha",en:"Naptha",r:"––––+o+/++++/+/++"},
+{de:"Natriumacetat, wässrig",en:"Sodium acetate, aqueous",r:"–+/+o++o+++++++/+"},
+{de:"Natriumarsenate und Natriumarsenite",en:"Sodium arsenate and sodium arsenite",r:"–+–––++++–––––+––"},
+{de:"Natriumbenzoat - wässrig",en:"Sodium benzoate - aqueous",r:"–+–––++++––––+++–"},
+{de:"Natriumbicarbonat (Natron)",en:"Sodium bicarbonate (natron)",r:"++/++++++++++++/+"},
+{de:"Natriumbisulfat - wässrig",en:"Sodium bisulfate - aqueous",r:"+/–––++++––+–+++–"},
+{de:"Natriumbisulfit, wässrig",en:"Sodium bisulphite, aqueous",r:"+//++++++++–+++/+"},
+{de:"Natriumborat, wässrig (Borax)",en:"Sodium borate, aqueous (borax)",r:"–/+/++++–––––––––"},
+{de:"Natriumbromat - wässrig",en:"Sodium bromate - aqueous",r:"–+–––++++––––++/–"},
+{de:"Natriumbromid - wässrig",en:"Sodium bromide - aqueous",r:"–/–––++++––+–++o–"},
+{de:"Natriumcarbonat, wässrig (Soda)",en:"Sodium carbonate, aqueous (soda)",r:"+++/+++++++++++/+"},
+{de:"Natriumchloracetate",en:"Sodium chloroacetate",r:"–+–––++++–––––+––"},
+{de:"Natriumchlorat - wässrig",en:"Sodium chlorate - aqueous",r:"+/–––/+/+––+–++/–"},
+{de:"Natriumchlorid (Kochsalz) - wässrig",en:"Sodium chloride (common salt) - aqueous",r:"+/++–++++––+–+++–"},
+{de:"Natriumchlorit - wässrig",en:"Sodium chlorite - aqueous",r:"+/–––/+o+––––+/o–"},
+{de:"Natriumchromat - wässrig",en:"Sodium chromate - aqueous",r:"–/–––++/+––/–++o–"},
+{de:"Natriumcyanid, wässrig",en:"Sodium cyanide, aqueous",r:"–––/++++++++++++–"},
+{de:"Natriumdodecylbenzolsulfonat - wässrig",en:"Sodium dodecyl benzene sulfonate - aqueous",r:"–+–––+–++–––––/+–"},
+{de:"Natriumfluorid - wässrig",en:"Sodium fluoride - aqueous",r:"–+–––++++––––+++–"},
+{de:"Natriumglutamat - wässrig",en:"Sodium glutamate - aqueous",r:"–+–––++++–––––+––"},
+{de:"Natriumhydrogencarbonat - wässrig",en:"Sodium bicarbonate - aqueous",r:"–+–––++++––+–+++–"},
+{de:"Natriumhydroxid - wässrig",en:"Sodium hydroxide - aqueous",r:"++–––++o+––+–o++–"},
+{de:"Natriumhypochlorit (Chlorbleichlauge) - wässrig",en:"Sodium hypochlorite (chlorine bleach) - aqueous",r:"+/–––++o+––+–//o–"},
+{de:"Natriumjodid - wässrig",en:"Sodium iodide - aqueous",r:"–/–––++++––––++––"},
+{de:"Natriummercaptobenzthiazol",en:"Sodium mercaptobenzothiazole",r:"–+–––/+/+–––––+––"},
+{de:"Natriummetaphosphat (Calgon)",en:"Sodium metaphosphate (calgon)",r:"––––++++–––––––––"},
+{de:"Natriummetasilikat",en:"Sodium metasilicate",r:"––––++++–––––––––"},
+{de:"Natriumnitrat (Natronsalpeter)",en:"Sodium nitrate",r:"++++–++/+++++++/+"},
+{de:"Natriumnitrit - wässrig",en:"Sodium nitrite - aqueous",r:"++–––++++––+–+++–"},
+{de:"Natriumpentachlorphenolat",en:"Sodium pentachlorophenol",r:"–+–––+–++–––––++–"},
+{de:"Natriumperborat, wässrig",en:"Sodium perborate, aqueous",r:"–+––+++o+++–+++/+"},
+{de:"Natriumperoxid",en:"Sodium peroxide",r:"++––+++/++++++/++"},
+{de:"Natriumpersulfat - wässrig",en:"Sodium persulfate - aqueous",r:"–+–––++/+––––++o–"},
+{de:"Natriumphosphat",en:"Sodium phosphate",r:"–+/++++++++++++/–"},
+{de:"Natriumpropionat - wässrig",en:"Sodium propionate - aqueous",r:"–+–––+–++––––+++–"},
+{de:"Natriumpyrosulfit - wässrig",en:"Sodium pyrosulfite - aqueous",r:"–+–––+–/+–––––++–"},
+{de:"Natriumsalze",en:"Sodium salt",r:"+–––++++–––+––––+"},
+{de:"Natriumsilikat (Wasserglas)",en:"Sodium silicate (water glass)",r:"+++++++++++++++/+"},
+{de:"Natriumstannat - wässrig",en:"Sodium stannate - aqueous",r:"–+–––++++–––––+/–"},
+{de:"Natriumsulfat, wässrig",en:"Sodium sulphate, aqueous",r:"++/++++++++++++++"},
+{de:"Natriumsulfid, wässrig",en:"Sodium sulphide, aqueous",r:"+///++++–––+––––+"},
+{de:"Natriumsulfit",en:"Sodium sulphite",r:"++++++++–––+––––+"},
+{de:"Natriumtartrat - wässrig",en:"Sodium tartrate - aqueous",r:"–+–––++++–––––++–"},
+{de:"Natriumthiosulfat - wässrig",en:"Sodium thiosulfate - aqueous",r:"+/–––++++––+–+++–"},
+{de:"Natriumzinkat - wässrig",en:"Sodium zincate - aqueous",r:"–+–––+–/+––––––––"},
+{de:"Natronlauge (max. 10%/85°C)",en:"Caustic soda (max. 10%/85°C)",r:"++++o++/+–++–/––+"},
+{de:"Nekal BX - wässrig (Färbereinetzmittel)",en:"Nekal BX - aqueous (dyeing wetting agent)",r:"–+–––+/++–––––+––"},
+{de:"Neon",en:"Neon",r:"++++++++–––+––––+"},
+{de:"Nickelacetat",en:"Nickel acetate",r:"––––o++/–––+–––––"},
+{de:"Nickelchlorid",en:"Nickel chloride",r:"+/+++++++++++++/–"},
+{de:"Nickelsalze",en:"Nickel salt",r:"–/––++++–––+––––+"},
+{de:"Nickelsulfat",en:"Nickel sulphate",r:"++/++++++++++++/–"},
+{de:"Nitrobenzoesäuren - wässrig",en:"Nitrobenzoic acids - aqueous",r:"–+–––++++–––––++–"},
+{de:"Nitrobenzol",en:"Nitrobenzene",r:"++++/o+o++++++o//"},
+{de:"Nitroethan",en:"Nitroethane",r:"+–––o/+o–––––––––"},
+{de:"Nitromethan",en:"Nitromethane",r:"+–––o/+o++++++//–"},
+{de:"Nitropropan",en:"Nitropropane",r:"+–––o/+o–––––––––"},
+{de:"Nitrotoluole (o-, m-, p) - rein",en:"Nitrotoluene (o-, m-, p) - pure",r:"–+–––o//+––/–++o–"},
+{de:"Obstbaum-Karbolineum (Karbolineum)",en:"Fruit tree carbolineum (creosote)",r:"++–––/+/+–––––o+–"},
+{de:"Octachlortoluol",en:"Octachlorotoluene",r:"+–––+o+o–––––––––"},
+{de:"Octadekan",en:"Octadecane",r:"+–––+o++–––––––––"},
+{de:"Octan",en:"Octane",r:"+–––+o+/+++++++o–"},
+{de:"Octylalkohol",en:"Cetyl alcohol",r:"+–––+++/–––––––––"},
+{de:"Oleum (rauchende Schwefelsäure)",en:"Oleum (fuming sulphuric acid)",r:"+–oo+o+o+++–ooooo"},
+{de:"Oleumspiritus",en:"Oleum spirit",r:"+–––+o+/–––––––––"},
+{de:"Olivenöl",en:"Olive oil",r:"+++++o++–––+––––/"},
+{de:"Ölsäure",en:"Oleic acid",r:"+–––/o+o++++++/+/"},
+{de:"Ortho-Chlorethylbenzol",en:"Ortho-chloroethyl benzene",r:"+–––+o+o–––––––––"},
+{de:"Oxalsäure",en:"Oxalic acid",r:"+o/++++/++++++/++"},
+{de:"Ozon",en:"Ozone",r:"++/++++o++++++++o"},
+{de:"Palmitinsäure",en:"Palmitic acid",r:"+–––+o++++++++/+o"},
+{de:"Paraffin",en:"Paraffin",r:"+++++o++++++++++/"},
+{de:"Pentan (N-Pentan)",en:"Pentane (n-pentane)",r:"+++++o++–––––––––"},
+{de:"Perchlorsäure",en:"Perchloric acid",r:"––––––––///+/+/o+"},
+{de:"Peressigsäure - wässrig (6 %)",en:"Peracetic acid - aqueous (6%)",r:"–+–––++o+––––––o–"},
+{de:"Petroleumbenzin, Petrolether",en:"Petroleum benzine, petroleum ether",r:"++–––o+++––+–+/+–"},
+{de:"Pflanzenschutzmittel (Karbolineum)",en:"Pesticides (creosote)",r:"++–––/+/+–––––o+–"},
+{de:"Pflanzliche Öle",en:"Vegetable oils",r:"+++++o++–––+––––/"},
+{de:"Phenol - wässrig (gesättigt)",en:"Phenol - aqueous (saturated)",r:"++–––/+/+––/–/+o–"},
+{de:"Phenylbenzol",en:"Phenyl benzene",r:"+–––+o+o–––––––––"},
+{de:"Phenylethylether",en:"Phenyl ethyl ether",r:"––––oo+o–––––––––"},
+{de:"Phenylhydrazin",en:"Phenylhydrazine",r:"––––+o+o––––––––/"},
+{de:"Phosgen (flüssig)",en:"Phosgene (liquid)",r:"–+–––o+–+–––––//–"},
+{de:"Phosgen (gasförmig)",en:"Phosgene (gaseous)",r:"–+–––o+–+––––+o/–"},
+{de:"Phosphorchloride",en:"Phosphorus chlorides",r:"–/–––o+o+––+–++o–"},
+{de:"Phosphorsäure",en:"Phosphoric acid",r:"/oo++o+o+++++++o+"},
+{de:"Phosphorsäure (max. 6%/85°C)",en:"Phosphoric acid (max. 6%/85°C)",r:"+++++++–+++++++o+"},
+{de:"Phosphortrichlorid",en:"Phosphorus trichloride",r:"––––+++o++++++//–"},
+{de:"Pikrinsäure",en:"Picric acid",r:"–+––+/+o++++/++o+"},
+{de:"Pinen",en:"Pinene",r:"––––+o+/–––––––––"},
+{de:"Pinienöl, Kiefernöl",en:"Pine oil",r:"+++++o++–––––––––"},
+{de:"Piperidin",en:"Piperidine",r:"––––oo+o–––––––––"},
+{de:"Polyvinylacetat-Emulsion",en:"Polyvinyl acetate emulsion",r:"–––––++––––––––––"},
+{de:"Pottasche (Kaliumcarbonat) - wässrig",en:"Potash (potassium carbonate) - aqueous",r:"–+–––++++––+–o+/–"},
+{de:"Propan",en:"Propane",r:"+++++o++++++++o/+"},
+{de:"Propanol (Propylalkohol)",en:"Propanol (propyl alcohol )",r:"+++++++++++++++/+"},
+{de:"Propionitril",en:"Propionitrile",r:"––––+o++–––––––––"},
+{de:"Propylacetat",en:"Propyl acetate",r:"––––o/+o–––+–––––"},
+{de:"Propylen",en:"Propylene",r:"+++–+o+o–––+–––––"},
+{de:"Propylenglykol",en:"Propylene glycol",r:"++–––++++––+–++/–"},
+{de:"Propylenoxid",en:"Propylene oxide",r:"–+++oooo+++–//++–"},
+{de:"Propylnitrat",en:"Propyl nitrate",r:"––––o/+o–––––––––"},
+{de:"Pydraul-A 150",en:"Pydraul-A 150",r:"–+–––/–o+––––––+–"},
+{de:"Pydraul-A 200",en:"Pydraul-A 200",r:"–+–––/–o+––––––+–"},
+{de:"Pydraul-AG",en:"Pydraul-AG",r:"–+–––+–o+––––––+–"},
+{de:"Pydraul-F-9",en:"Pydraul-F-9",r:"–+–––+–o+––––––o–"},
+{de:"Pyranol",en:"Pyranol",r:"+++++o++–––––––––"},
+{de:"Pyridin",en:"Pyridine",r:"++++o/+o++++/o+o/"},
+{de:"Pyrrol",en:"Pyrrole",r:"––––oo+o–––––––––"},
+{de:"Quecksilber",en:"Mercury",r:"++/+++++++++++/++"},
+{de:"Quecksilberchlorid, wässrig",en:"Mercury chloride, aqueous",r:"–/––+++++++++++++"},
+{de:"Quecksilberdämpfe",en:"Mercury vapours",r:"++++++++–––––––––"},
+{de:"Quecksilbersalze - wässrig",en:"Mercury salts - aqueous",r:"–+–––++++––+–++o–"},
+{de:"Rapsöl",en:"Rapeseed oil",r:"++++–o+/+––+–+/+–"},
+{de:"Resorcin (50%)",en:"Resorcinol (50%)",r:"––––––––+++o+++o–"},
+{de:"Rizinusöl",en:"Castor oil",r:"+++++/++–––+––––+"},
+{de:"Saccharin (Süßstoff)",en:"Saccharin (sweetener)",r:"++++–+–++–––––+––"},
+{de:"Salicylsäure",en:"Salicylic acid",r:"––––+++/+++o++++–"},
+{de:"Salmiakgeist (Ammoniak - Wasser)",en:"Ammonia solution (ammonia - water)",r:"++++oooo+––+–+++–"},
+{de:"Salpetersäure",en:"Nitric acid",r:"/oo+/o+o+++o+/ooo"},
+{de:"Salpetersäure (max. 6%/85°C)",en:"Nitric acid (max. 6%/85°C)",r:"+++++++––––o–––––"},
+{de:"Salzsäure",en:"Hydrochloric acid",r:"/oo++o+o++++++oo+"},
+{de:"Salzsäure (max. 6%/85°C)",en:"Hydrochloric acid (max. 6%/85°C)",r:"+/o++++––––––––––"},
+{de:"Salzwasser",en:"Salt water",r:"+//+–+++–––+––––+"},
+{de:"Sauerstoff (gasförmig, 100-200°C)",en:"Oxygen (gaseous, 100-200°C)",r:"++++/o+o––––––––/"},
+{de:"Sauerstoff (gasförmig, kalt)",en:"Oxygen (gaseous, cold)",r:"+++++++/–––+––––+"},
+{de:"Schmelzkäse, 60% Fett i.Tr.",en:"Processed cheese, 60% fat",r:"++++++++––––––––+"},
+{de:"Schmieröle",en:"Lubricating oils",r:"++–––o+++––+–+++–"},
+{de:"Schwarzlauge",en:"Black liquor",r:"––––+/+/–––––––––"},
+{de:"Schwefel",en:"Sulphur",r:"++/++++o–––+––––/"},
+{de:"Schwefel, geschmolzen",en:"Sulphur, molten",r:"––––+o+o–––––––––"},
+{de:"Schwefelchlorid",en:"Sulphur chloride",r:"+–––+o+o–––+–––––"},
+{de:"Schwefeldioxid",en:"Sulphur dioxide",r:"–+/+o++o+++++++oo"},
+{de:"Schwefelhexafluorid (SF6)",en:"Sulphur hexafluoride (SF6)",r:"––––++++–––+–––––"},
+{de:"Schwefelige Säure - wässrig",en:"Sulphurous acid - aqueous",r:"–+–––++o+––+–++o–"},
+{de:"Schwefelkalk",en:"Sulphuric lime",r:"––––+++o–––––––––"},
+{de:"Schwefelkohlenstoff",en:"Carbon disulphide",r:"+++++o+o++++++o+/"},
+{de:"Schwefellauge",en:"Sulphur lye",r:"––––+/+/–––––––––"},
+{de:"Schwefelsäure",en:"Sulphuric acid",r:"/oo++o+o+++–++/o+"},
+{de:"Schwefelsäure - konzentriert (96 %)",en:"Sulphuric acid - concentrated (96%)",r:"/o–––o+o+––o–+oo–"},
+{de:"Schwefelsäure - wässrig (30 %)",en:"Sulphuric acid - aqueous (30%)",r:"/o–––++/+––/–++o–"},
+{de:"Schwefelsäure (max. 6%/85°C)",en:"Sulphuric acid (max. 6%/85°C)",r:"+//++o+––––/––––/"},
+{de:"Schwefeltrioxid, trocken",en:"Sulphur trioxide, dry",r:"––––+/+o–––+––––o"},
+{de:"Schwefelwasserstoff",en:"Hydrogen sulphide",r:"+//+o++o++++++o++"},
+{de:"Schweflige Säure",en:"Sulphurous acid",r:"+//++++o–––+––––+"},
+{de:"Seifenlösung - wässrig",en:"Soap solution - aqueous",r:"++–––/+/+––––+//–"},
+{de:"Silbernitrat",en:"Silver nitrate",r:"–+–++++o+++++++/–"},
+{de:"Silicatester",en:"Silicate ester",r:"––––+o+/–––––––––"},
+{de:"Silikonfette",en:"Silicone grease",r:"++++++++–––+––––+"},
+{de:"Silikonöle",en:"Silicone oil",r:"++++++++++++++++–"},
+{de:"Skydrol 500",en:"Skydrol 500",r:"–+–––++o+––+–––/–"},
+{de:"Skydrol 7000",en:"Skydrol 7000",r:"–+–––++o+––––––/–"},
+{de:"Soda (Natriumcarbonat)",en:"Soda (sodium carbonate)",r:"+++/+++++++++++/+"},
+{de:"Sojaöl",en:"Soybean oil",r:"+++++o++–––+–––––"},
+{de:"Sole (Kühlsolen)",en:"Brine (cooling brine)",r:"+/–––++++––+–+++–"},
+{de:"Speiseöl",en:"Edible oil",r:"++++–o+/+––+–+/+–"},
+{de:"Spindelöl",en:"Spindle oil",r:"++++–o+++––+–+++–"},
+{de:"Spirituosen - (abhängig von Inhalts- und Aromastoffen)",en:"Spirits - (dependent on ingredients and flavorings)",r:"++++–/–/+––+–++––"},
+{de:"Stannoethylmorpholin",en:"Stannoethylmorpholine",r:"––––o/+o–––––––––"},
+{de:"Stärkelösung - wässrig",en:"Starch solution - aqueous",r:"++–––++++––+–+++–"},
+{de:"Stearinsäure",en:"Stearic acid",r:"++––+/+/++++++++/"},
+{de:"Stickoxide (Nitrose Gase)",en:"Nitrogen oxides (nitrous gases)",r:"+/–––o/o+––+–/oo–"},
+{de:"Stickstoff",en:"Nitrogen",r:"++++++++–––+––––+"},
+{de:"Stickstofftetraoxid",en:"Nitrogen tetraoxide",r:"––––oo+o–––––––––"},
+{de:"Styrol",en:"Styrene",r:"++++oo+o++++++/+/"},
+{de:"Tallöl",en:"Tall oil",r:"++++–/–/+––––+++–"},
+{de:"Tannin (Gerbsäure)",en:"Tannin (tannic acid)",r:"+++++/+/+++++++++"},
+{de:"Teer (bituminös)",en:"Tar (bituminous)",r:"+++++o+/–––+–––––"},
+{de:"Teeröl, Carbolineum",en:"Tar oil, carbolineum",r:"+++++o++–––––––––"},
+{de:"Terpentinersatz",en:"White spirit",r:"++–––o+/+––+–+/+–"},
+{de:"Terpentinersatz, Testbenzin",en:"White spirit, petroleum spirit",r:"+–––––––+++–++/+–"},
+{de:"Terpentinöl",en:"Spirits of turpentine",r:"+++++o++–––+––––/"},
+{de:"Terpineol",en:"Terpineol",r:"+++++o+/–––––––––"},
+{de:"Tertiär-Butyl-Alkohol",en:"Tertiary butyl alcohol",r:"+++++/+/–––––––––"},
+{de:"Tertiär-Butyl-Mercaptan",en:"Tertiary butyl mercaptan",r:"––––+o+o–––––––––"},
+{de:"Tetrabrommethan",en:"Tetrabromomethane",r:"––––+o+o–––––––––"},
+{de:"Tetrabutyltitanat",en:"Tetrabutyltitanate",r:"––––+++/–––––––––"},
+{de:"Tetrachlorethan",en:"Tetrachloroethane",r:"+/++oo+o+++/o+o+o"},
+{de:"Tetrachlorethylen",en:"Tetrachloroethylene",r:"+++++o+o++++o+o+o"},
+{de:"Tetrachlorkohlenstoff",en:"Carbon tetrachloride",r:"+++++o+o++++++/oo"},
+{de:"Tetraethylblei",en:"Tetraethyl lead",r:"–+––+o+o++++++++–"},
+{de:"Tetrahydrofuran (THF)",en:"Tetrahydrofuran (THF)",r:"––––o/+o+++////+o"},
+{de:"Tetrahydronaphtalin (Tetralin)",en:"Tetrahydronaphthalene (tetralin)",r:"–+–––o+o+–––––o+–"},
+{de:"Thiophen - rein",en:"Thiophene - pure",r:"–+–––o+o+––/––/––"},
+{de:"Tieröl",en:"Animal oil",r:"+++++/++––––––––/"},
+{de:"Titantetrachlorid",en:"Titanium tetrachloride",r:"––––+o+/–––––––––"},
+{de:"Toluol",en:"Toluene",r:"++++oo+o++++++/+o"},
+{de:"Toluol - rein",en:"Toluene - pure",r:"++++–o+o+––+–/o+–"},
+{de:"Toluylendiisocyanat",en:"Toluylene diisocyanate",r:"––––o/+o–––––––––"},
+{de:"Transformatorenöl",en:"Transformer oil",r:"+++++o++–––+–––––"},
+{de:"Triacetin",en:"Triacetin",r:"––––o++/–––––––––"},
+{de:"Triarylphosphat",en:"Triaryl phosphate",r:"––––+++o–––––––––"},
+{de:"Tributoxyethylphosphat",en:"Tributoxyethylphosphate",r:"––––+++o–––––––––"},
+{de:"Tributylmercaptan",en:"Tributyl mercaptan",r:"––––+o+o–––––––––"},
+{de:"Tributylphosphat",en:"Tributyl phosphate",r:"––––o++o–––+––––+"},
+{de:"Trichloressigsäure",en:"Trichloroacetic acid",r:"–oo–o/+/+++/++/oo"},
+{de:"Trichlorethan",en:"Trichloroethane",r:"+++++o+o–––+––––/"},
+{de:"Trichlorethylen (Tri)",en:"Trichloroethylene (tri)",r:"+//–+o+o++++++o+o"},
+{de:"Triethanolamin",en:"Triethanolamine",r:"––––o/+o+++/++++–"},
+{de:"Trikresylphosphat",en:"Tricresyl phosphate",r:"–+–––o+o+––/–o/+–"},
+{de:"Trinitrotoluol",en:"Trinitrotoluol",r:"+–––/o+o–––––––––"},
+{de:"Trioctylphosphat",en:"Trioctyl phosphate",r:"––––o++o––––––––/"},
+{de:"Tripolyphosphat",en:"Tripolyphosphate",r:"––––/++o–––––––––"},
+{de:"Uranhexafluorid",en:"Uranium hexafluoride",r:"–+–––+/++–––––+o–"},
+{de:"Urin",en:"Urine",r:"+++++++++++++++++"},
+{de:"UV-Lack",en:"UV paint",r:"–––––+–o+––––––––"},
+{de:"Vaseline",en:"Vaseline",r:"+++++o++++++++++o"},
+{de:"Vaselinöl",en:"Vaseline oil",r:"++++–o+++––+–+++–"},
+{de:"Verdünnung",en:"Thinner",r:"++++––––+++–+++/–"},
+{de:"Vinylacetat",en:"Vinyl acetate",r:"––––––––++++/+oo–"},
+{de:"Vinylacetylen",en:"Vinyl acetylene",r:"––––++++–––––––––"},
+{de:"Vinylchlorid",en:"Vinyl chloride",r:"––––––––+++//+oo–"},
+{de:"Waschmittel (synth. Haushaltswaschmittel)",en:"Detergent (synth. household detergent)",r:"++++–++/+––––+//–"},
+{de:"Wasser",en:"Water",r:"+++++++++++++++++"},
+{de:"Wasser (schwer)",en:"Water, heavy",r:"+++–/++++–––––––+"},
+{de:"Wasser, entmineralisiert",en:"Water, demineralised",r:"+–––+++–++++++++–"},
+{de:"Wasserdampf (bis 150°C)",en:"Steam (up to 150°C)",r:"+++–o++o–––+––––o"},
+{de:"Wasserdampf / Sattdampf (über 150°C)",en:"Steam / saturated steam (exceeding 150°C)",r:"+++–oooo–––+–––––"},
+{de:"Wasserglas (Natriumsilikat)",en:"Water glass (sodium silicate)",r:"+++++++++++++++/+"},
+{de:"Wasserstoff",en:"Hydrogen",r:"+/++++++–––+––––+"},
+{de:"Wasserstoffperoxid (50%/25°C)",en:"Hydrogen peroxide (50%/25°C)",r:"++o–+o+o–––+––––o"},
+{de:"Wasserstoffperoxid (max. 6%/85°C)",en:"Hydrogen peroxide (max. 6%/85°C)",r:"++o–oo+o–––+––––o"},
+{de:"Wein (Weißwein, Rotwein)",en:"Wine (white wine, red wine)",r:"++++++++–––+––––+"},
+{de:"Weinessig (Essigsäure)",en:"Wine vinegar (acetic acid)",r:"+/–––//o+––+–+//–"},
+{de:"Weinsäure, wässrig",en:"Tartaric acid, aqueous",r:"+//++++++++++++++"},
+{de:"Whisky",en:"Whisky",r:"++++++++–––+––––+"},
+{de:"Xenon",en:"Xenon",r:"++++++++–––––––––"},
+{de:"Xylol",en:"Xylol",r:"+++++o+o++++++/+o"},
+{de:"Zeolit",en:"Zeolite",r:"––––++++–––––––––"},
+{de:"Zinkacetat",en:"Zinc acetate",r:"––––o++/–––––––––"},
+{de:"Zinkchlorid",en:"Zinc chloride",r:"+//++++++++o++++–"},
+{de:"Zinksalze",en:"Zinc salt",r:"––––++++––––––––+"},
+{de:"Zinksulfat",en:"Zinc sulphate",r:"–+––++++–––+–––––"},
+{de:"Zinnchlorid",en:"Tin chloride",r:"+o/+++++––––––––+"},
+{de:"Zitronensaft",en:"Lemon juice",r:"+++++++/+––+––++–"},
+{de:"Zitronensäure, wässrig",en:"Citric acid, aqueous",r:"+/+++++++++++++o+"},
+{de:"Zuckerlösungen",en:"Sugar solutions",r:"++–––+–++––+–+++–"},
+{de:"Zuckerrohrlösung",en:"Sugar cane solution",r:"+++++++++++––+–––"},
+{de:"Zuckerrübensaft",en:"Sugar beet juice",r:"++++++++++++–+–––"}
+];
+
+// ─────────────────────────────────────────────
+// FLANSCH DATA (DIN EN 1092-1, AB 02, März 2012)
+// ─────────────────────────────────────────────
+var FLANSCH_DATA = [
+  {dn:15,  pn:6,  D:80,  k:55,  n:4,  d2:11},
+  {dn:15,  pn:10, D:95,  k:65,  n:4,  d2:14},
+  {dn:15,  pn:16, D:95,  k:65,  n:4,  d2:14},
+  {dn:15,  pn:25, D:95,  k:65,  n:4,  d2:14},
+  {dn:15,  pn:40, D:95,  k:65,  n:4,  d2:14},
+  {dn:20,  pn:6,  D:90,  k:65,  n:4,  d2:11},
+  {dn:20,  pn:10, D:105, k:75,  n:4,  d2:14},
+  {dn:20,  pn:16, D:105, k:75,  n:4,  d2:14},
+  {dn:20,  pn:25, D:105, k:75,  n:4,  d2:14},
+  {dn:20,  pn:40, D:105, k:75,  n:4,  d2:14},
+  {dn:25,  pn:6,  D:100, k:75,  n:4,  d2:11},
+  {dn:25,  pn:10, D:115, k:85,  n:4,  d2:14},
+  {dn:25,  pn:16, D:115, k:85,  n:4,  d2:14},
+  {dn:25,  pn:25, D:115, k:85,  n:4,  d2:14},
+  {dn:25,  pn:40, D:115, k:85,  n:4,  d2:14},
+  {dn:32,  pn:6,  D:120, k:90,  n:4,  d2:14},
+  {dn:32,  pn:10, D:140, k:100, n:4,  d2:18},
+  {dn:32,  pn:16, D:140, k:100, n:4,  d2:18},
+  {dn:32,  pn:25, D:140, k:100, n:4,  d2:18},
+  {dn:32,  pn:40, D:140, k:100, n:4,  d2:18},
+  {dn:40,  pn:6,  D:130, k:100, n:4,  d2:14},
+  {dn:40,  pn:10, D:150, k:110, n:4,  d2:18},
+  {dn:40,  pn:16, D:150, k:110, n:4,  d2:18},
+  {dn:40,  pn:25, D:150, k:110, n:4,  d2:18},
+  {dn:40,  pn:40, D:150, k:110, n:4,  d2:18},
+  {dn:50,  pn:6,  D:140, k:110, n:4,  d2:14},
+  {dn:50,  pn:10, D:165, k:125, n:4,  d2:18},
+  {dn:50,  pn:16, D:165, k:125, n:4,  d2:18},
+  {dn:50,  pn:25, D:165, k:125, n:4,  d2:18},
+  {dn:50,  pn:40, D:165, k:125, n:4,  d2:18},
+  {dn:65,  pn:6,  D:160, k:130, n:4,  d2:14},
+  {dn:65,  pn:10, D:185, k:145, n:8,  d2:18},
+  {dn:65,  pn:16, D:185, k:145, n:8,  d2:18},
+  {dn:65,  pn:25, D:185, k:145, n:8,  d2:18},
+  {dn:65,  pn:40, D:185, k:145, n:8,  d2:18},
+  {dn:80,  pn:6,  D:190, k:150, n:4,  d2:18},
+  {dn:80,  pn:10, D:200, k:160, n:8,  d2:18},
+  {dn:80,  pn:16, D:200, k:160, n:8,  d2:18},
+  {dn:80,  pn:25, D:200, k:160, n:8,  d2:18},
+  {dn:80,  pn:40, D:200, k:160, n:8,  d2:18},
+  {dn:100, pn:6,  D:210, k:170, n:4,  d2:18},
+  {dn:100, pn:10, D:220, k:180, n:8,  d2:18},
+  {dn:100, pn:16, D:220, k:180, n:8,  d2:18},
+  {dn:100, pn:25, D:235, k:190, n:8,  d2:22},
+  {dn:100, pn:40, D:235, k:190, n:8,  d2:22},
+  {dn:125, pn:6,  D:240, k:200, n:8,  d2:18},
+  {dn:125, pn:10, D:250, k:210, n:8,  d2:18},
+  {dn:125, pn:16, D:250, k:210, n:8,  d2:18},
+  {dn:125, pn:25, D:270, k:220, n:8,  d2:26},
+  {dn:125, pn:40, D:270, k:220, n:8,  d2:26},
+  {dn:150, pn:6,  D:265, k:225, n:8,  d2:18},
+  {dn:150, pn:10, D:285, k:240, n:8,  d2:22},
+  {dn:150, pn:16, D:285, k:240, n:8,  d2:22},
+  {dn:150, pn:25, D:300, k:250, n:8,  d2:26},
+  {dn:150, pn:40, D:300, k:250, n:8,  d2:26},
+  {dn:200, pn:6,  D:320, k:280, n:8,  d2:18},
+  {dn:200, pn:10, D:340, k:295, n:8,  d2:22},
+  {dn:200, pn:16, D:340, k:295, n:8,  d2:22},
+  {dn:200, pn:25, D:360, k:310, n:12, d2:26},
+  {dn:200, pn:40, D:375, k:320, n:12, d2:30},
+  {dn:250, pn:6,  D:375, k:335, n:12, d2:18},
+  {dn:250, pn:10, D:395, k:350, n:12, d2:22},
+  {dn:250, pn:16, D:405, k:355, n:12, d2:26},
+  {dn:250, pn:25, D:425, k:370, n:12, d2:30},
+  {dn:250, pn:40, D:450, k:385, n:12, d2:33},
+  {dn:300, pn:6,  D:440, k:395, n:12, d2:22},
+  {dn:300, pn:10, D:445, k:400, n:12, d2:22},
+  {dn:300, pn:16, D:460, k:410, n:12, d2:26},
+  {dn:300, pn:25, D:485, k:430, n:16, d2:30},
+  {dn:300, pn:40, D:515, k:450, n:16, d2:33},
+  {dn:350, pn:6,  D:490, k:445, n:12, d2:22},
+  {dn:350, pn:10, D:505, k:460, n:16, d2:22},
+  {dn:350, pn:16, D:520, k:470, n:16, d2:26},
+  {dn:350, pn:25, D:555, k:490, n:16, d2:33},
+  {dn:350, pn:40, D:580, k:510, n:16, d2:36},
+  {dn:400, pn:6,  D:540, k:495, n:16, d2:22},
+  {dn:400, pn:10, D:565, k:515, n:16, d2:26},
+  {dn:400, pn:16, D:580, k:525, n:16, d2:30},
+  {dn:400, pn:25, D:620, k:550, n:16, d2:36},
+  {dn:400, pn:40, D:660, k:585, n:16, d2:39},
+];
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+var actPulse   = pulses[0];
+var actAntenna = actPulse.antennas[0];
+
+var elPulse    = document.getElementById('pulsefamily');
+var elAntenna  = document.getElementById('pulseantenna');
+var elSlider   = document.getElementById('distSlider');
+var elDistIn   = document.getElementById('distInput');
+var elResAngle = document.getElementById('resAngle');
+var elResDia   = document.getElementById('resDia');
+var elResArea  = document.getElementById('resArea');
+var elInfoFreq = document.getElementById('infoFreq');
+var elInfoMax  = document.getElementById('infoMaxDist');
+var elInfoType = document.getElementById('infoType');
+var elProdImg  = document.getElementById('productImg');
+
+// ─────────────────────────────────────────────
+// TABS
+// ─────────────────────────────────────────────
+function switchTab(n) {
+  var titles = ['Abstrahlwinkel-Rechner', 'Beh\u00e4lter-Check', 'Flansch-Rechner', 'Best\u00e4ndigkeitsliste'];
+  [1,2,3,4].forEach(function(i) {
+    document.getElementById('tab'+i).classList.toggle('active', n === i);
+  });
+  document.querySelectorAll('.tab-btn').forEach(function(b, i) {
+    b.classList.toggle('active', n === i+1);
+  });
+  document.getElementById('headerTitle').textContent = titles[n-1];
+  if (n === 2) updateTankCheck();
+  if (n === 3) updateFlanschVorwaerts();
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+(function init() {
+  pulses.forEach(function(p) {
+    var opt = document.createElement('option');
+    opt.value = p.name; opt.textContent = p.description;
+    elPulse.appendChild(opt);
+  });
+  fillAntennaSelect();
+  update();
+})();
+
+function fillAntennaSelect() {
+  elAntenna.innerHTML = '';
+  actPulse.antennas.forEach(function(a) {
+    var opt = document.createElement('option');
+    opt.value = a.name;
+    opt.textContent = a.description + ' (' + a.angle + '\u00B0)';
+    elAntenna.appendChild(opt);
+  });
+  actAntenna = actPulse.antennas[0];
+  elSlider.max = actPulse.maxdist;
+  if (parseFloat(elSlider.value) > actPulse.maxdist) {
+    elSlider.value = actPulse.maxdist;
+    elDistIn.value = actPulse.maxdist;
+  }
+}
+
+function update() {
+  var dist   = parseFloat(elSlider.value) || 0;
+  var angle  = actAntenna.angle;
+  var diam   = actPulse.calcArea(angle, dist);
+  var area   = Math.PI * Math.pow(diam / 2, 2);
+
+  elResAngle.innerHTML = angle.toFixed(2) + '<span class="unit-sm">\u00B0</span>';
+  elResDia.innerHTML   = diam.toFixed(2)  + '<span class="unit-sm">m</span>';
+  elResArea.innerHTML  = area.toFixed(2)  + '<span class="unit-sm">m\u00B2</span>';
+  elInfoFreq.textContent = actAntenna.frequency + ' GHz';
+  elInfoMax.textContent  = actPulse.maxdist + ' m';
+  elInfoType.textContent = actAntenna.description;
+  elProdImg.src = actAntenna.imageUrl || actPulse.imageUrl;
+  elProdImg.alt = actPulse.description + ' \u2013 ' + actAntenna.description;
+
+  drawBeam(angle, dist, diam);
+  updateTankCheck();
+}
+
+// ─────────────────────────────────────────────
+// TAB 2: TANK TYPE TOGGLE
+// ─────────────────────────────────────────────
+var tankType = 'rect';
+
+function setTankType(t) {
+  tankType = t;
+  document.getElementById('btnRect').classList.toggle('active', t === 'rect');
+  document.getElementById('btnRound').classList.toggle('active', t === 'round');
+  document.getElementById('fgL').classList.toggle('visible', t === 'rect');
+  document.getElementById('fgB').classList.toggle('visible', t === 'rect');
+  document.getElementById('fgD').classList.toggle('visible', t === 'round');
+  updateTankCheck();
+}
+
+// ─────────────────────────────────────────────
+// TAB 2: TANK CHECK
+// ─────────────────────────────────────────────
+function updateTankCheck() {
+  document.getElementById('t2Device').textContent  = actPulse.description;
+  document.getElementById('t2Antenna').textContent = actAntenna.description;
+  document.getElementById('t2Angle').textContent   = actAntenna.angle.toFixed(1) + '\u00B0';
+  document.getElementById('t2Freq').textContent    = actAntenna.frequency + ' GHz';
+
+  var H  = Math.max(0.1, parseFloat(document.getElementById('tankH').value)      || 2);
+  var oX = parseFloat(document.getElementById('sensorOffX').value) || 0;
+  var oY = parseFloat(document.getElementById('sensorOffY').value) || 0;
+  var halfAngle = actAntenna.angle / 2;
+  var r  = H * Math.tan(halfAngle * Math.PI / 180);
+
+  var badge  = document.getElementById('statusBadge');
+  var detail = document.getElementById('statusDetail');
+
+  if (tankType === 'round') {
+    var D  = Math.max(0.1, parseFloat(document.getElementById('tankD').value) || 3);
+    var R  = D / 2;
+    var margin = 0.001;
+    // Clamp sensor inside cylinder
+    var distFromCenter = Math.sqrt(oX*oX + oY*oY);
+    if (distFromCenter > R - margin) {
+      var scale0 = (R - margin) / distFromCenter;
+      oX *= scale0; oY *= scale0;
+    }
+    var dMin = R - Math.sqrt(oX*oX + oY*oY);
+    var collision = r >= dMin;
+
+    badge.className   = collision ? 'status-badge warn' : 'status-badge ok';
+    badge.textContent = collision ? '\u26A0 Warnung' : '\u2713 OK';
+    detail.innerHTML =
+      '<strong>Strahlradius bei ' + H.toFixed(2) + ' m:</strong> ' + r.toFixed(3) + ' m<br>' +
+      '<strong>Abstand Sensor \u2192 Wand:</strong> ' + dMin.toFixed(3) + ' m<br>' +
+      (collision
+        ? '<strong style="color:#e65100">Wandkontakt — Strahl trifft Zylinderwand</strong>'
+        : '<strong style="color:#2e7d32">Kein Wandkontakt</strong> — Sicherheitsabstand: ' + (dMin - r).toFixed(3) + ' m');
+
+    drawCylinder(D, H, oX, oY, r, collision);
+
+  } else {
+    var L  = Math.max(0.1, parseFloat(document.getElementById('tankL').value) || 3);
+    var B  = Math.max(0.1, parseFloat(document.getElementById('tankB').value) || 3);
+    var margin2 = 0.01;
+    oX = Math.max(-(L/2 - margin2), Math.min(L/2 - margin2, oX));
+    oY = Math.max(-(B/2 - margin2), Math.min(B/2 - margin2, oY));
+    var sx = L/2 + oX, sy = B/2 + oY;
+    var dR = L - sx, dL = sx, dFront = sy, dBack = B - sy;
+    var dMin2  = Math.min(dR, dL, dFront, dBack);
+    var collision2 = r >= dMin2;
+
+    badge.className   = collision2 ? 'status-badge warn' : 'status-badge ok';
+    badge.textContent = collision2 ? '\u26A0 Warnung' : '\u2713 OK';
+
+    var wallHit = [];
+    if (r >= dR)     wallHit.push('rechts (' + dR.toFixed(2) + ' m)');
+    if (r >= dL)     wallHit.push('links ('  + dL.toFixed(2) + ' m)');
+    if (r >= dFront) wallHit.push('vorne ('  + dFront.toFixed(2) + ' m)');
+    if (r >= dBack)  wallHit.push('hinten (' + dBack.toFixed(2)  + ' m)');
+
+    detail.innerHTML =
+      '<strong>Strahlradius bei ' + H.toFixed(2) + ' m:</strong> ' + r.toFixed(3) + ' m<br>' +
+      '<strong>N\u00e4chste Wand:</strong> ' + dMin2.toFixed(3) + ' m<br>' +
+      (collision2
+        ? '<strong style="color:#e65100">Wandkontakt:</strong> ' + wallHit.join(', ')
+        : '<strong style="color:#2e7d32">Kein Wandkontakt</strong> — Sicherheitsabstand: ' + (dMin2 - r).toFixed(3) + ' m');
+
+    draw3D(L, B, H, sx, sy, actAntenna.angle, r, collision2, dR, dL, dFront, dBack);
+  }
+}
+
+// ─────────────────────────────────────────────
+// 3D CYLINDER VISUALIZATION
+// ─────────────────────────────────────────────
+function drawCylinder(D, H, oX, oY, r, collision) {
+  var W = 620, SH = 420;
+  var R = D / 2;
+
+  // Isometric scale
+  var isoW = D * 1.225 * 2;
+  var isoH = H + D * 0.707;
+  var scale = Math.min((W - 120) / isoW, (SH - 80) / isoH, 70);
+
+  // Center the cylinder: center of tank at 3D (0,0,z)
+  // iso projection: p(x,y,z) relative to center
+  var cxSvg = W / 2;
+  var cyBase = SH * 0.72; // y position of bottom ellipse center
+
+  function p(x, y, z) {
+    return {
+      x: cxSvg + (x - y) * 0.866 * scale,
+      y: cyBase + (x + y) * 0.5 * scale - z * scale
+    };
+  }
+
+  // Ellipse axes for a horizontal circle of radius rr
+  function eRx(rr) { return rr * Math.SQRT2 * 0.866 * scale; }
+  function eRy(rr) { return rr * Math.SQRT2 * 0.5   * scale; }
+
+  var coneColor = collision ? '#e53935' : '#43a047';
+  var coneFill  = collision ? 'rgba(229,57,53,0.15)' : 'rgba(67,160,71,0.13)';
+  var s = '';
+
+  // ── Bottom ellipse center
+  var bc = p(0, 0, 0);
+  var brx = eRx(R), bry = eRy(R);
+
+  // ── Top ellipse center
+  var tc = p(0, 0, H);
+  var trx = eRx(R), trY = eRy(R);
+
+  // Side tangent lines (leftmost / rightmost of ellipses have py_offset = 0)
+  var lx = cxSvg - brx, rx2 = cxSvg + brx;
+
+  // ── Back half of bottom ellipse (arc from right to left going "back")
+  s += '<path d="M '+(rx2.toFixed(1))+','+(bc.y.toFixed(1))+
+       ' A '+brx.toFixed(1)+' '+bry.toFixed(1)+' 0 0 0 '+lx.toFixed(1)+','+bc.y.toFixed(1)+
+       '" fill="none" stroke="#888" stroke-width="1" stroke-dasharray="4,3"/>';
+
+  // ── Cylinder body (rect between tangent lines)
+  s += '<rect x="'+lx.toFixed(1)+'" y="'+tc.y.toFixed(1)+
+       '" width="'+(rx2 - lx).toFixed(1)+'" height="'+(bc.y - tc.y).toFixed(1)+
+       '" fill="#d8d8d8" stroke="none"/>';
+
+  // ── Left & right side lines
+  s += '<line x1="'+lx.toFixed(1)+'" y1="'+bc.y.toFixed(1)+
+       '" x2="'+lx.toFixed(1)+'" y2="'+tc.y.toFixed(1)+'" stroke="#555" stroke-width="1.5"/>';
+  s += '<line x1="'+rx2.toFixed(1)+'" y1="'+bc.y.toFixed(1)+
+       '" x2="'+rx2.toFixed(1)+'" y2="'+tc.y.toFixed(1)+'" stroke="#555" stroke-width="1.5"/>';
+
+  // ── Front half of bottom ellipse
+  s += '<path d="M '+lx.toFixed(1)+','+bc.y.toFixed(1)+
+       ' A '+brx.toFixed(1)+' '+bry.toFixed(1)+' 0 0 1 '+rx2.toFixed(1)+','+bc.y.toFixed(1)+
+       '" fill="#c0c0c0" stroke="#555" stroke-width="1.5"/>';
+
+  // ── Cone footprint on bottom
+  var sensorBase = p(oX, -oY, 0); // note: Y axis in iso goes "back", oY+ = back
+  var fRx = eRx(r), fRy = eRy(r);
+  s += '<ellipse cx="'+sensorBase.x.toFixed(1)+'" cy="'+sensorBase.y.toFixed(1)+
+       '" rx="'+fRx.toFixed(1)+'" ry="'+fRy.toFixed(1)+
+       '" fill="'+coneFill+'" stroke="'+coneColor+'" stroke-width="1.5" stroke-dasharray="4,3"/>';
+
+  // ── Cone generator lines from apex to 4 cardinal points of footprint
+  var apex = p(oX, -oY, H);
+  var conePts = [
+    p(oX + r, -oY,     0),
+    p(oX - r, -oY,     0),
+    p(oX,     -oY + r, 0),
+    p(oX,     -oY - r, 0)
+  ];
+  conePts.forEach(function(cp) {
+    s += '<line x1="'+apex.x.toFixed(1)+'" y1="'+apex.y.toFixed(1)+
+         '" x2="'+cp.x.toFixed(1)+'" y2="'+cp.y.toFixed(1)+
+         '" stroke="'+coneColor+'" stroke-width="1.8" opacity="0.85"/>';
+  });
+
+  // ── Top ellipse (semi-transparent lid)
+  s += '<ellipse cx="'+tc.x.toFixed(1)+'" cy="'+tc.y.toFixed(1)+
+       '" rx="'+trx.toFixed(1)+'" ry="'+trY.toFixed(1)+
+       '" fill="rgba(240,240,240,0.55)" stroke="#444" stroke-width="1.5"/>';
+
+  // ── Sensor dot on top
+  s += '<circle cx="'+apex.x.toFixed(1)+'" cy="'+apex.y.toFixed(1)+
+       '" r="6" fill="#FFDE00" stroke="#333" stroke-width="1.5"/>';
+  s += '<circle cx="'+apex.x.toFixed(1)+'" cy="'+apex.y.toFixed(1)+
+       '" r="2.5" fill="#333"/>';
+
+  // ── Dimension labels
+  // D label (across bottom ellipse)
+  s += '<line x1="'+lx.toFixed(1)+'" y1="'+(bc.y + bry + 10).toFixed(1)+
+       '" x2="'+rx2.toFixed(1)+'" y2="'+(bc.y + bry + 10).toFixed(1)+
+       '" stroke="#aaa" stroke-width="1"/>';
+  s += '<text x="'+cxSvg+'" y="'+(bc.y + bry + 22).toFixed(1)+
+       '" text-anchor="middle" fill="#555" font-size="11" font-weight="600">\u00D8 ' + D.toFixed(1) + ' m</text>';
+  // H label (left side)
+  s += '<text x="'+(lx - 8).toFixed(1)+'" y="'+((tc.y + bc.y) / 2 + 4).toFixed(1)+
+       '" text-anchor="end" fill="#555" font-size="11" font-weight="600">H = ' + H.toFixed(1) + ' m</text>';
+
+  // ── Status label
+  var labelColor = collision ? '#e53935' : '#2e7d32';
+  var labelText  = collision ? '\u26A0 Wandkontakt' : '\u2713 OK';
+  s += '<rect x="'+(W/2 - 60)+'" y="8" width="120" height="26" rx="4" fill="'+labelColor+'" opacity="0.9"/>';
+  s += '<text x="'+W/2+'" y="25" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">'+labelText+'</text>';
+
+  document.getElementById('tankGroup').innerHTML = s;
+}
+
+// ─────────────────────────────────────────────
+// 3D ISOMETRIC VISUALIZATION
+// ─────────────────────────────────────────────
+function draw3D(L, B, H, sx, sy, angleDeg, r, collision, dR, dL, dFront, dBack) {
+  var W = 620, SH = 420;
+
+  // Scale: fit the isometric box
+  var isoW = (L + B) * 0.866;
+  var isoH = H + (L + B) * 0.5;
+  var scale = Math.min((W - 120) / isoW, (SH - 80) / isoH, 70);
+
+  // Projection origin (the front-bottom-left corner of the tank)
+  var pxMin = -B * 0.866 * scale;
+  var pxMax =  L * 0.866 * scale;
+  var pyMin = -H * scale;
+  var pyMax =  (L + B) * 0.5 * scale;
+  var cx = W  / 2 - (pxMin + pxMax) / 2;
+  var cy = SH / 2 - (pyMin + pyMax) / 2;
+
+  function p(x, y, z) {
+    return {
+      x: cx + (x - y) * 0.866 * scale,
+      y: cy + (x + y) * 0.5  * scale - z * scale
+    };
+  }
+  function pt(x, y, z) { var q = p(x,y,z); return q.x + ',' + q.y; }
+
+  var coneColor   = collision ? '#e53935' : '#43a047';
+  var coneOpacity = '0.85';
+  var coneFill    = collision ? 'rgba(229,57,53,0.18)' : 'rgba(67,160,71,0.15)';
+  var s = '';
+
+  // ── TANK WALLS (back to front for proper z-order) ──
+
+  // Back face (y = B) — dark
+  var hitBack = (r >= dBack) && collision;
+  s += '<polygon points="'+pt(0,B,0)+' '+pt(L,B,0)+' '+pt(L,B,H)+' '+pt(0,B,H)+'"'+
+       ' fill="'+(hitBack ? 'rgba(229,57,53,0.25)' : '#bdbdbd')+'" stroke="#666" stroke-width="1.2"/>';
+
+  // Left face (x = 0) — darkest
+  var hitLeft = (r >= dL) && collision;
+  s += '<polygon points="'+pt(0,0,0)+' '+pt(0,B,0)+' '+pt(0,B,H)+' '+pt(0,0,H)+'"'+
+       ' fill="'+(hitLeft ? 'rgba(229,57,53,0.25)' : '#c8c8c8')+'" stroke="#666" stroke-width="1.2"/>';
+
+  // Bottom face
+  s += '<polygon points="'+pt(0,0,0)+' '+pt(L,0,0)+' '+pt(L,B,0)+' '+pt(0,B,0)+'"'+
+       ' fill="#aaaaaa" stroke="#666" stroke-width="1.2"/>';
+
+  // Front face (y = 0)
+  var hitFront = (r >= dFront) && collision;
+  s += '<polygon points="'+pt(0,0,0)+' '+pt(L,0,0)+' '+pt(L,0,H)+' '+pt(0,0,H)+'"'+
+       ' fill="'+(hitFront ? 'rgba(229,57,53,0.25)' : '#d6d6d6')+'" stroke="#555" stroke-width="1.5"/>';
+
+  // Right face (x = L)
+  var hitRight = (r >= dR) && collision;
+  s += '<polygon points="'+pt(L,0,0)+' '+pt(L,B,0)+' '+pt(L,B,H)+' '+pt(L,0,H)+'"'+
+       ' fill="'+(hitRight ? 'rgba(229,57,53,0.25)' : '#cccccc')+'" stroke="#555" stroke-width="1.5"/>';
+
+  // ── CONE FOOTPRINT (bottom ellipse) ──
+  var fp   = p(sx, sy, 0);
+  var fprx = r * Math.sqrt(2) * 0.866 * scale;
+  var fpry = r * Math.sqrt(2) * 0.5   * scale;
+  s += '<ellipse cx="'+fp.x+'" cy="'+fp.y+'" rx="'+fprx.toFixed(1)+'" ry="'+fpry.toFixed(1)+
+       '" fill="'+coneFill+'" stroke="'+coneColor+'" stroke-width="1.5" stroke-dasharray="4,3"/>';
+
+  // ── CONE GENERATOR LINES ──
+  var apex = p(sx, sy, H);
+  var pts4 = [
+    p(sx + r, sy,     0),
+    p(sx - r, sy,     0),
+    p(sx,     sy + r, 0),
+    p(sx,     sy - r, 0),
+  ];
+  pts4.forEach(function(cp) {
+    s += '<line x1="'+apex.x.toFixed(1)+'" y1="'+apex.y.toFixed(1)+
+         '" x2="'+cp.x.toFixed(1)+'" y2="'+cp.y.toFixed(1)+
+         '" stroke="'+coneColor+'" stroke-width="1.8" opacity="'+coneOpacity+'"/>';
+  });
+
+  // ── TOP FACE (semi-transparent) ──
+  s += '<polygon points="'+pt(0,0,H)+' '+pt(L,0,H)+' '+pt(L,B,H)+' '+pt(0,B,H)+'"'+
+       ' fill="rgba(240,240,240,0.55)" stroke="#444" stroke-width="1.5"/>';
+
+  // ── SENSOR DOT ──
+  s += '<circle cx="'+apex.x.toFixed(1)+'" cy="'+apex.y.toFixed(1)+
+       '" r="6" fill="#FFDE00" stroke="#333" stroke-width="1.5"/>';
+  s += '<circle cx="'+apex.x.toFixed(1)+'" cy="'+apex.y.toFixed(1)+
+       '" r="2.5" fill="#333"/>';
+
+  // ── DIMENSION LABELS ──
+  var lbf = p(0, 0, 0), rbf = p(L, 0, 0), lbk = p(0, B, 0);
+  var ltf = p(0, 0, H);
+  // L label (front edge, bottom)
+  var lmid = p(L/2, 0, 0);
+  s += '<text x="'+lmid.x.toFixed(1)+'" y="'+(lmid.y+16).toFixed(1)+
+       '" text-anchor="middle" fill="#555" font-size="11" font-weight="600">L = '+L.toFixed(1)+' m</text>';
+  // B label (left edge, bottom)
+  var bmid = p(0, B/2, 0);
+  s += '<text x="'+(bmid.x-6).toFixed(1)+'" y="'+(bmid.y+5).toFixed(1)+
+       '" text-anchor="end" fill="#555" font-size="11" font-weight="600">B = '+B.toFixed(1)+' m</text>';
+  // H label (left vertical edge)
+  var hmid = p(0, 0, H/2);
+  s += '<text x="'+(hmid.x-8).toFixed(1)+'" y="'+(hmid.y+4).toFixed(1)+
+       '" text-anchor="end" fill="#555" font-size="11" font-weight="600">H = '+H.toFixed(1)+' m</text>';
+
+  // ── SENSOR POSITION CROSS ON TOP FACE ──
+  var scTop  = p(sx, sy, H);
+  var crossSize = 5;
+  var cxA = p(sx - 0.1, sy, H), cxB = p(sx + 0.1, sy, H);
+  var cyA = p(sx, sy - 0.1, H), cyB = p(sx, sy + 0.1, H);
+  // Draw small cross (direction-aware)
+  var dx1 = (cxB.x - cxA.x), dy1 = (cxB.y - cxA.y);
+  var len1 = Math.sqrt(dx1*dx1+dy1*dy1); dx1 /= len1; dy1 /= len1;
+  var dx2 = (cyB.x - cyA.x), dy2 = (cyB.y - cyA.y);
+  var len2 = Math.sqrt(dx2*dx2+dy2*dy2); dx2 /= len2; dy2 /= len2;
+  s += '<line x1="'+(scTop.x - dx1*8).toFixed(1)+'" y1="'+(scTop.y - dy1*8).toFixed(1)+
+       '" x2="'+(scTop.x + dx1*8).toFixed(1)+'" y2="'+(scTop.y + dy1*8).toFixed(1)+
+       '" stroke="#333" stroke-width="1.5"/>';
+  s += '<line x1="'+(scTop.x - dx2*8).toFixed(1)+'" y1="'+(scTop.y - dy2*8).toFixed(1)+
+       '" x2="'+(scTop.x + dx2*8).toFixed(1)+'" y2="'+(scTop.y + dy2*8).toFixed(1)+
+       '" stroke="#333" stroke-width="1.5"/>';
+
+  // ── STATUS LABEL ──
+  var labelColor = collision ? '#e53935' : '#2e7d32';
+  var labelText  = collision ? '\u26A0 Wandkontakt' : '\u2713 OK';
+  s += '<rect x="'+(W/2-60)+'" y="8" width="120" height="26" rx="4" fill="'+labelColor+'" opacity="0.9"/>';
+  s += '<text x="'+(W/2)+'" y="25" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">'+labelText+'</text>';
+
+  document.getElementById('tankGroup').innerHTML = s;
+}
+
+// ─────────────────────────────────────────────
+// BEAM SVG (tab1)
+// ─────────────────────────────────────────────
+function drawBeam(angleDeg, dist, diameter) {
+  var g = document.getElementById('beamGroup');
+  var W = 620, H = 320, ox = 70, oy = H / 2;
+  var maxLen  = W - 140;
+  var maxDist = parseFloat(elSlider.max);
+  var beamLen = Math.max(30, (dist / maxDist) * maxLen);
+  var spread  = Math.min(beamLen * Math.tan((angleDeg * Math.PI) / 180 / 2), H / 2 - 25);
+  var ex = ox + beamLen, ty = oy - spread, by = oy + spread;
+  var s = '';
+
+  for (var i = 0; i <= 5; i++) {
+    var x = ox + (maxLen / 5) * i;
+    var d = ((maxDist / 5) * i).toFixed(1);
+    s += '<line x1="'+x+'" y1="25" x2="'+x+'" y2="'+(H-25)+'" stroke="#333" stroke-width="1" stroke-dasharray="4,4"/>';
+    s += '<text x="'+x+'" y="'+(H-8)+'" text-anchor="middle" fill="#555" font-size="10">'+d+'m</text>';
+  }
+  s += '<line x1="'+ox+'" y1="'+oy+'" x2="'+(ox+maxLen)+'" y2="'+oy+'" stroke="#444" stroke-width="1" stroke-dasharray="6,4"/>';
+
+  s += '<polygon points="'+ox+','+oy+' '+ex+','+ty+' '+ex+','+by+'" fill="url(#beamGrad)"/>';
+  s += '<line x1="'+ox+'" y1="'+oy+'" x2="'+ex+'" y2="'+ty+'" stroke="url(#beamStroke)" stroke-width="1.5"/>';
+  s += '<line x1="'+ox+'" y1="'+oy+'" x2="'+ex+'" y2="'+by+'" stroke="url(#beamStroke)" stroke-width="1.5"/>';
+  s += '<line x1="'+ex+'" y1="'+ty+'" x2="'+ex+'" y2="'+by+'" stroke="#FFDE00" stroke-width="2.5" filter="url(#glow)"/>';
+  s += '<ellipse cx="'+ex+'" cy="'+oy+'" rx="8" ry="'+Math.max(spread,3)+'" fill="url(#spotGrad)"/>';
+
+  var arcR = Math.min(55, beamLen * 0.6);
+  var halfA = Math.min(angleDeg / 2, 50);
+  var hr = (halfA * Math.PI) / 180;
+  var atx = ox + arcR * Math.cos(hr), aty = oy - arcR * Math.sin(hr), aby = oy + arcR * Math.sin(hr);
+  s += '<path d="M '+(ox+arcR)+','+oy+' A '+arcR+' '+arcR+' 0 0 0 '+atx+','+aty+'" stroke="#FFDE00" stroke-width="2" fill="none"/>';
+  s += '<path d="M '+(ox+arcR)+','+oy+' A '+arcR+' '+arcR+' 0 0 1 '+atx+','+aby+'" stroke="#FFDE00" stroke-width="2" fill="none"/>';
+  s += '<text x="'+(ox+arcR+10)+'" y="'+(oy-10)+'" fill="#FFDE00" font-size="14" font-weight="700">'+angleDeg.toFixed(1)+'\u00B0</text>';
+
+  var maxDist2 = parseFloat(elSlider.max);
+  var dr = Math.max(0.35, Math.min(1.0, dist / maxDist2));
+  var sw = Math.round(18 + dr * 40), sh = Math.round(28 + dr * 64);
+  var sx2 = ox - sw, sy2 = oy - sh / 2;
+  s += '<rect x="'+sx2+'" y="'+sy2+'" width="'+sw+'" height="'+sh+'" rx="'+Math.round(sw*0.12)+'" fill="#2a2a2a" stroke="#FFDE00" stroke-width="'+(1+dr)+'"/>';
+  var ab1 = Math.round(sh*0.18), ab2 = Math.round(sh*0.30), ab3 = Math.round(sh*0.44);
+  s += '<path d="M '+ox+','+(oy-ab1)+' A '+ab1+' '+ab1+' 0 0 1 '+ox+','+(oy+ab1)+'" stroke="#FFDE00" stroke-width="'+(1+dr*1.5).toFixed(1)+'" fill="none" opacity="0.9"/>';
+  s += '<path d="M '+ox+','+(oy-ab2)+' A '+ab2+' '+ab2+' 0 0 1 '+ox+','+(oy+ab2)+'" stroke="#FFDE00" stroke-width="'+(0.8+dr).toFixed(1)+'" fill="none" opacity="0.55"/>';
+  s += '<path d="M '+ox+','+(oy-ab3)+' A '+ab3+' '+ab3+' 0 0 1 '+ox+','+(oy+ab3)+'" stroke="#FFDE00" stroke-width="'+(0.6+dr*0.8).toFixed(1)+'" fill="none" opacity="0.25"/>';
+  s += '<text x="'+(sx2+sw/2)+'" y="'+(sy2+sh+Math.round(8+dr*5)+3)+'" text-anchor="middle" fill="#888" font-size="'+Math.round(8+dr*5)+'" font-weight="700">Sensor</text>';
+
+  s += '<text x="'+((ox+ex)/2)+'" y="'+Math.min(by+24,H-28)+'" text-anchor="middle" fill="#FFDE00" font-size="12" font-weight="700">'+dist.toFixed(1)+' m</text>';
+  if (spread > 8) {
+    s += '<line x1="'+(ex+14)+'" y1="'+ty+'" x2="'+(ex+14)+'" y2="'+by+'" stroke="#ccc" stroke-width="1"/>';
+    s += '<line x1="'+(ex+9)+'" y1="'+ty+'" x2="'+(ex+19)+'" y2="'+ty+'" stroke="#ccc" stroke-width="1"/>';
+    s += '<line x1="'+(ex+9)+'" y1="'+by+'" x2="'+(ex+19)+'" y2="'+by+'" stroke="#ccc" stroke-width="1"/>';
+    s += '<polygon points="'+(ex+14)+','+ty+' '+(ex+11)+','+(ty+5)+' '+(ex+17)+','+(ty+5)+'" fill="#ccc"/>';
+    s += '<polygon points="'+(ex+14)+','+by+' '+(ex+11)+','+(by-5)+' '+(ex+17)+','+(by-5)+'" fill="#ccc"/>';
+    s += '<text x="'+(ex+26)+'" y="'+(oy+4)+'" fill="#ddd" font-size="11" font-weight="600">\u2300 '+diameter.toFixed(2)+'m</text>';
+  } else {
+    s += '<text x="'+(ex+10)+'" y="'+(oy+4)+'" fill="#ddd" font-size="11" font-weight="600">\u2300 '+diameter.toFixed(2)+'m</text>';
+  }
+  var cR = Math.min(Math.max(spread*0.5,6),30), ccx = W-50, ccy = 45;
+  s += '<circle cx="'+ccx+'" cy="'+ccy+'" r="'+cR+'" fill="none" stroke="#FFDE00" stroke-width="1.5" stroke-dasharray="3,2" opacity="0.5"/>';
+  s += '<circle cx="'+ccx+'" cy="'+ccy+'" r="2" fill="#FFDE00"/>';
+  s += '<text x="'+ccx+'" y="'+(ccy+cR+14)+'" text-anchor="middle" fill="#666" font-size="9" font-weight="600">Spot</text>';
+
+  g.innerHTML = s;
+}
+
+// ─────────────────────────────────────────────
+// FLANSCH FUNCTIONS (tab3)
+// ─────────────────────────────────────────────
+function updateFlanschVorwaerts() {
+  var pn = parseInt(document.getElementById('flPN').value);
+  var dn = parseInt(document.getElementById('flDN').value);
+  var entry = FLANSCH_DATA.find(function(r) { return r.pn === pn && r.dn === dn; });
+  if (!entry) return;
+  document.getElementById('flResD').innerHTML  = entry.D + '<span class="unit-sm">mm</span>';
+  document.getElementById('flResK').innerHTML  = entry.k + '<span class="unit-sm">mm</span>';
+  document.getElementById('flResN').textContent = entry.n;
+  document.getElementById('flResD2').innerHTML = entry.d2 + '<span class="unit-sm">mm</span>';
+  drawFlanschSVG(entry);
+}
+
+function drawFlanschSVG(e) {
+  var svg = document.getElementById('flanschSvg');
+  var W = 260, cx = 130, cy = 130;
+  // Scale so D fits in W-20
+  var scale = (W - 30) / e.D;
+  var rD  = (e.D  / 2) * scale;
+  var rK  = (e.k  / 2) * scale;
+  var rD2 = Math.max(3, (e.d2 / 2) * scale * 0.7);
+  var s = '';
+  // Outer flange ring (gray)
+  s += '<circle cx="'+cx+'" cy="'+cy+'" r="'+rD.toFixed(1)+'" fill="#e8e8e8" stroke="#999" stroke-width="2"/>';
+  // Pipe bore (inner hole, ~65% of k)
+  var rBore = rK * 0.5;
+  s += '<circle cx="'+cx+'" cy="'+cy+'" r="'+rBore.toFixed(1)+'" fill="#bbb" stroke="#888" stroke-width="1.5"/>';
+  // Lochkreis (yellow dashed)
+  s += '<circle cx="'+cx+'" cy="'+cy+'" r="'+rK.toFixed(1)+'" fill="none" stroke="#FFDE00" stroke-width="1.5" stroke-dasharray="5,3"/>';
+  // Bolt holes
+  for (var i = 0; i < e.n; i++) {
+    var angle = (2 * Math.PI * i / e.n) - Math.PI/2;
+    var bx = cx + rK * Math.cos(angle);
+    var by = cy + rK * Math.sin(angle);
+    s += '<circle cx="'+bx.toFixed(1)+'" cy="'+by.toFixed(1)+'" r="'+rD2.toFixed(1)+'" fill="#555" stroke="#333" stroke-width="1"/>';
+  }
+  // Dimension line D (horizontal, top)
+  var y0 = cy - rD - 18;
+  s += '<line x1="'+(cx-rD).toFixed(1)+'" y1="'+y0+'" x2="'+(cx+rD).toFixed(1)+'" y2="'+y0+'" stroke="#555" stroke-width="1" marker-start="url(#arr)" marker-end="url(#arr)"/>';
+  s += '<text x="'+cx+'" y="'+(y0-4)+'" text-anchor="middle" fill="#333" font-size="10" font-weight="700">D = '+e.D+' mm</text>';
+  // Dimension line k (horizontal, bottom)
+  var y1 = cy + rD + 12;
+  s += '<line x1="'+(cx-rK).toFixed(1)+'" y1="'+y1+'" x2="'+(cx+rK).toFixed(1)+'" y2="'+y1+'" stroke="#b8a000" stroke-width="1"/>';
+  s += '<text x="'+cx+'" y="'+(y1+12)+'" text-anchor="middle" fill="#b8a000" font-size="10" font-weight="700">k = '+e.k+' mm</text>';
+  // Bolt count label
+  s += '<text x="'+cx+'" y="'+(cy+4)+'" text-anchor="middle" fill="#333" font-size="10" font-weight="700">'+e.n+'× M'+e.d2+'</text>';
+
+  svg.innerHTML = '<defs>' +
+    '<marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">' +
+    '<path d="M0,0 L6,3 L0,6 Z" fill="#555"/></marker>' +
+    '</defs>' + s;
+}
+
+function updateFlanschRueckwaerts() {
+  var inD = parseFloat(document.getElementById('flInD').value);
+  var inK = parseFloat(document.getElementById('flInK').value);
+  var inN = parseFloat(document.getElementById('flInN').value);
+  if (isNaN(inD) && isNaN(inK) && isNaN(inN)) return;
+
+  // Score every entry
+  var scored = FLANSCH_DATA.map(function(r) {
+    var dD = isNaN(inD) ? 0 : Math.abs(inD - r.D);
+    var dK = isNaN(inK) ? 0 : Math.abs(inK - r.k);
+    var dN = isNaN(inN) ? 0 : Math.abs(inN - r.n);
+    return { r: r, score: dD + dK + dN * 20 };
+  });
+  var bestScore = Math.min.apply(null, scored.map(function(s) { return s.score; }));
+
+  // Collect ALL entries that share the best score (same D/k/n → same score)
+  var winners = scored.filter(function(s) { return s.score === bestScore; }).map(function(s) { return s.r; });
+
+  // Group winners by DN (one DN may match multiple PNs with identical dims)
+  var byDN = {};
+  winners.forEach(function(r) {
+    if (!byDN[r.dn]) byDN[r.dn] = [];
+    byDN[r.dn].push(r);
+  });
+
+  // Build title: "DN 25 · PN 10/16/25/40" — or list multiple DNs on separate lines
+  var dnKeys = Object.keys(byDN).map(Number).sort(function(a,b){return a-b;});
+
+  function pnLabel(entries) {
+    var pns = entries.map(function(e){ return e.pn; }).sort(function(a,b){return a-b;});
+    // Compact consecutive ranges: [6,10,16,25,40] → show as list since steps aren't uniform
+    return pns.map(function(p){ return 'PN ' + p; }).join(' / ');
+  }
+
+  var titleParts = dnKeys.map(function(dn) {
+    return 'DN ' + dn + ' · ' + pnLabel(byDN[dn]);
+  });
+
+  // Use first winner for delta calculations (all winners have same D/k/n)
+  var ref = winners[0];
+  var dD = isNaN(inD) ? null : Math.round((inD - ref.D) * 10) / 10;
+  var dK = isNaN(inK) ? null : Math.round((inK - ref.k) * 10) / 10;
+  var dN = isNaN(inN) ? null : Math.round(inN - ref.n);
+
+  var box = document.getElementById('flMatchBox');
+  box.classList.add('visible');
+
+  // Title: stack lines if multiple DNs match
+  var titleEl = document.getElementById('flMatchTitle');
+  titleEl.innerHTML = titleParts.join('<br>');
+
+  var badge = document.getElementById('flMatchBadge');
+  var roundedScore = Math.round(bestScore * 10) / 10;
+  if (roundedScore === 0) {
+    badge.textContent = 'Exakt'; badge.className = 'fl-badge exact';
+  } else if (roundedScore <= 5) {
+    badge.textContent = 'Messtoleranz'; badge.className = 'fl-badge tolerance';
+  } else {
+    badge.textContent = 'Nächster Treffer'; badge.className = 'fl-badge nearest';
+  }
+
+  function fmtDelta(v, unit) {
+    if (v === null) return '—';
+    return (v > 0 ? '+' : '') + v + (unit || '');
+  }
+  function deltaClass(v) {
+    if (v === null || v === 0) return 'ok';
+    return Math.abs(v) <= 3 ? 'ok' : 'warn';
+  }
+
+  document.getElementById('flDeltaD').textContent = fmtDelta(dD, ' mm');
+  document.getElementById('flDeltaD').className = 'fl-delta-val ' + deltaClass(dD);
+  document.getElementById('flDeltaK').textContent = fmtDelta(dK, ' mm');
+  document.getElementById('flDeltaK').className = 'fl-delta-val ' + deltaClass(dK);
+  document.getElementById('flDeltaN').textContent = fmtDelta(dN, '');
+  document.getElementById('flDeltaN').className = 'fl-delta-val ' + deltaClass(dN);
+  document.getElementById('flScore').textContent = roundedScore;
+  document.getElementById('flScore').className = 'fl-delta-val ' + (roundedScore === 0 ? 'ok' : roundedScore <= 5 ? '' : 'warn');
+
+  // Show table values + note if multiple d2 variants exist across matches
+  var d2vals = winners.map(function(r){ return r.d2; }).filter(function(v,i,a){ return a.indexOf(v)===i; }).sort(function(a,b){return a-b;});
+  var d2str = d2vals.length > 1 ? d2vals.join(' / ') + ' mm (je nach PN)' : d2vals[0] + ' mm';
+  document.getElementById('flTableVals').textContent =
+    'Tabellenwerte: D = ' + ref.D + ' mm · k = ' + ref.k + ' mm · n = ' + ref.n + ' · d2 = ' + d2str;
+}
+
+// ─────────────────────────────────────────────
+// EVENTS
+// ─────────────────────────────────────────────
+elPulse.addEventListener('input', function() {
+  actPulse = pulses.find(function(p) { return p.name === elPulse.value; }) || pulses[0];
+  fillAntennaSelect();
+  update();
+});
+elAntenna.addEventListener('input', function() {
+  actAntenna = actPulse.antennas.find(function(a) { return a.name === elAntenna.value; }) || actPulse.antennas[0];
+  update();
+});
+elSlider.addEventListener('input', function() { elDistIn.value = elSlider.value; update(); });
+elDistIn.addEventListener('input', function() {
+  var v = parseFloat(elDistIn.value);
+  if (isNaN(v)) return;
+  if (v > parseFloat(elSlider.max)) { v = parseFloat(elSlider.max); elDistIn.value = v; }
+  if (v < parseFloat(elSlider.min)) v = parseFloat(elSlider.min);
+  elSlider.value = v;
+  update();
+});
+
+['tankL','tankB','tankD','tankH','sensorOffX','sensorOffY'].forEach(function(id) {
+  document.getElementById(id).addEventListener('input', updateTankCheck);
+});
+
+document.getElementById('flPN').addEventListener('change', updateFlanschVorwaerts);
+document.getElementById('flDN').addEventListener('change', updateFlanschVorwaerts);
+
+// ─────────────────────────────────────────────
+// BESTÄNDIGKEIT FUNCTIONS (tab4)
+// ─────────────────────────────────────────────
+var BS_MATERIALS = [
+  'Sapphire ceramic®','1.4571 / 316Ti','Hastelloy C','Tantal',
+  'FKM (Viton)','EPDM','FFKM','NBR',
+  'PTFE','PFA','FEP','PEEK','ECTFE','PVDF','PP','PA','PE'
+];
+var BS_SELECTED = [];
+var bsActiveIdx = -1;
+
+function bsSearch(q) {
+  if (!q || q.length < 2) return [];
+  var ql = q.toLowerCase();
+  var results = [];
+  for (var i = 0; i < BESTAND_DATA.length && results.length < 10; i++) {
+    var s = BESTAND_DATA[i];
+    if (s.de.toLowerCase().indexOf(ql) >= 0 || s.en.toLowerCase().indexOf(ql) >= 0) {
+      results.push(s);
+    }
+  }
+  return results;
+}
+
+function bsRenderDropdown(results) {
+  var dd = document.getElementById('bsDropdown');
+  if (!results.length) { dd.classList.remove('open'); return; }
+  dd.innerHTML = results.map(function(s, i) {
+    return '<div class="bs-dd-item" data-idx="' + i + '" onmousedown="bsSelect(' + BESTAND_DATA.indexOf(s) + ')">' +
+      '<div class="bs-dd-name-de">' + s.de + '</div>' +
+      '<div class="bs-dd-name-en">' + s.en + '</div>' +
+    '</div>';
+  }).join('');
+  bsActiveIdx = -1;
+  dd.classList.add('open');
+}
+
+function bsSelect(dataIdx) {
+  var s = BESTAND_DATA[dataIdx];
+  if (!s) return;
+  // avoid duplicates
+  if (BS_SELECTED.some(function(x) { return x === s; })) return;
+  BS_SELECTED.push(s);
+  document.getElementById('bsInput').value = '';
+  document.getElementById('bsDropdown').classList.remove('open');
+  bsRenderTags();
+  bsCompute();
+}
+
+function bsRemoveTag(idx) {
+  BS_SELECTED.splice(idx, 1);
+  bsRenderTags();
+  bsCompute();
+}
+
+function bsRenderTags() {
+  var wrap = document.getElementById('bsTags');
+  wrap.innerHTML = BS_SELECTED.map(function(s, i) {
+    return '<span class="bs-tag">' + s.de +
+      ' <span class="bs-tag-x" onclick="bsRemoveTag(' + i + ')">✕</span></span>';
+  }).join('');
+}
+
+function bsCompute() {
+  var rc = document.getElementById('bsResultCard');
+  var ph = document.getElementById('bsPlaceholder');
+  var res = document.getElementById('bsResult');
+
+  if (!BS_SELECTED.length) {
+    rc.style.display = 'none';
+    ph.style.display = 'block';
+    return;
+  }
+  rc.style.display = 'block';
+  ph.style.display = 'none';
+
+  // For each of 17 materials, check all selected substances
+  var groupA = [], groupB = [], groupC = [], groupD = [];
+  BS_MATERIALS.forEach(function(mat, mi) {
+    var ratings = BS_SELECTED.map(function(s) { return s.r[mi]; });
+    var hasMinus = ratings.indexOf('–') >= 0;
+    var hasO = ratings.indexOf('o') >= 0;
+    var hasSlash = ratings.indexOf('/') >= 0;
+    if (hasMinus) {
+      groupC.push(mat);
+    } else if (hasSlash && !hasO) {
+      groupD.push(mat);
+    } else if (hasO) {
+      groupB.push(mat);
+    } else {
+      groupA.push(mat); // all '+'
+    }
+  });
+
+  function chips(arr, cls) {
+    if (!arr.length) return '<span class="bs-empty">—</span>';
+    return arr.map(function(m) {
+      return '<span class="bs-chip ' + cls + '">' + m + '</span>';
+    }).join('');
+  }
+
+  var subLabel = BS_SELECTED.length === 1
+    ? '<strong>' + BS_SELECTED[0].de + '</strong>'
+    : '<strong>' + BS_SELECTED.length + ' Substanzen</strong>';
+
+  res.innerHTML =
+    '<p style="font-size:0.78rem;color:#666;margin-bottom:16px;">Bewertung für ' + subLabel + '</p>' +
+    '<div class="bs-group">' +
+      '<div class="bs-group-title"><span class="bs-icon">✅</span> Vollständig beständig — <small style="font-weight:500;color:#555">+ für alle Substanzen</small></div>' +
+      '<div class="bs-chips">' + chips(groupA, 'ok') + '</div>' +
+    '</div>' +
+    '<div class="bs-group">' +
+      '<div class="bs-group-title"><span class="bs-icon">⚠️</span> Bedingt beständig — <small style="font-weight:500;color:#555">kein –, mind. 1× o</small></div>' +
+      '<div class="bs-chips">' + chips(groupB, 'part') + '</div>' +
+    '</div>' +
+    '<div class="bs-group">' +
+      '<div class="bs-group-title"><span class="bs-icon">❌</span> Nicht geeignet — <small style="font-weight:500;color:#555">mind. 1× –</small></div>' +
+      '<div class="bs-chips">' + chips(groupC, 'bad') + '</div>' +
+    '</div>' +
+    '<div class="bs-group">' +
+      '<div class="bs-group-title"><span class="bs-icon">ℹ️</span> Keine Information — <small style="font-weight:500;color:#555">nur / Einträge</small></div>' +
+      '<div class="bs-chips">' + chips(groupD, 'info') + '</div>' +
+    '</div>' +
+    '<p style="font-size:0.67rem;color:#bbb;margin-top:4px;">Quelle: VEGA Beständigkeitsliste 2025 — Angaben unverbindlich, keine Haftung.</p>';
+}
+
+// Input events for search
+(function() {
+  var input = document.getElementById('bsInput');
+  var dd = document.getElementById('bsDropdown');
+
+  input.addEventListener('input', function() {
+    var results = bsSearch(this.value);
+    bsRenderDropdown(results);
+    bsActiveIdx = -1;
+  });
+
+  input.addEventListener('keydown', function(e) {
+    var items = dd.querySelectorAll('.bs-dd-item');
+    if (e.key === 'ArrowDown') {
+      bsActiveIdx = Math.min(bsActiveIdx + 1, items.length - 1);
+      items.forEach(function(el, i) { el.classList.toggle('active', i === bsActiveIdx); });
+      e.preventDefault();
+    } else if (e.key === 'ArrowUp') {
+      bsActiveIdx = Math.max(bsActiveIdx - 1, 0);
+      items.forEach(function(el, i) { el.classList.toggle('active', i === bsActiveIdx); });
+      e.preventDefault();
+    } else if (e.key === 'Enter' && bsActiveIdx >= 0) {
+      var idx = parseInt(items[bsActiveIdx].dataset.idx);
+      var results = bsSearch(input.value);
+      if (results[idx]) bsSelect(BESTAND_DATA.indexOf(results[idx]));
+      e.preventDefault();
+    } else if (e.key === 'Escape') {
+      dd.classList.remove('open');
+    }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.bs-search-wrap')) {
+      dd.classList.remove('open');
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
