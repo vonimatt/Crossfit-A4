@@ -17,8 +17,8 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #f0f2f5;
-      color: #1a1a2e;
+      background: #f8fafc;
+      color: #0f172a;
       min-height: 100vh;
     }
 
@@ -38,17 +38,19 @@
 
     /* ── TABS ── */
     .tabs {
-      display: flex; gap: 3px; padding: 0 6px;
-      overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      padding: 6px 6px 0;
     }
-    .tabs::-webkit-scrollbar { display: none; }
     .tab-btn {
-      flex: 0 0 auto; white-space: nowrap; padding: 10px 13px;
+      padding: 10px 6px;
       border: none; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.55);
-      font-size: 0.72rem; font-weight: 700; cursor: pointer;
-      border-radius: 10px 10px 0 0; transition: all 0.2s;
+      font-size: 0.72rem; font-weight: 700; cursor: pointer; text-align: center;
+      border-radius: 10px 10px 0 0; transition: all 0.2s; line-height: 1.3;
     }
-    .tab-btn.active { background: #f0f2f5; color: #1a1a2e; }
+    .tab-btn.active { background: #f8fafc; color: #0f172a; }
+    .tab-btn.tab-full { grid-column: 1 / -1; }
 
     /* ── LAYOUT ── */
     .container { max-width: 480px; margin: 0 auto; padding: 16px; }
@@ -66,7 +68,7 @@
     .card h2 {
       font-size: 0.72rem;
       font-weight: 700;
-      color: #4a90d9;
+      color: #e91e8c;
       text-transform: uppercase;
       letter-spacing: 1px;
       margin-bottom: 14px;
@@ -94,9 +96,9 @@
     }
     .machine-btn .icon { font-size: 1.3rem; display: block; margin-bottom: 3px; }
     .machine-btn.active {
-      border-color: #4a90d9;
-      background: #eaf3fc;
-      color: #1a6fc4;
+      border-color: #e91e8c;
+      background: #fce4f1;
+      color: #c2177a;
     }
 
     /* ── CALORIE INPUT ── */
@@ -108,12 +110,12 @@
       border-radius: 14px;
       font-size: 1.6rem;
       font-weight: 700;
-      color: #1a1a2e;
+      color: #0f172a;
       outline: none;
       transition: border-color 0.2s;
       background: #fafbfc;
     }
-    .input-wrap input:focus { border-color: #4a90d9; background: white; }
+    .input-wrap input:focus { border-color: #e91e8c; background: white; }
     .input-wrap .unit {
       position: absolute;
       right: 16px;
@@ -148,9 +150,9 @@
       transition: all 0.2s;
     }
     .dist-chip.active {
-      border-color: #4a90d9;
-      background: #eaf3fc;
-      color: #1a6fc4;
+      border-color: #e91e8c;
+      background: #fce4f1;
+      color: #c2177a;
     }
 
     /* ── RESULTS ── */
@@ -165,8 +167,8 @@
       border-left: 4px solid #e0e0e0;
     }
     .result-item.highlight {
-      background: #eaf3fc;
-      border-left-color: #4a90d9;
+      background: #fce4f1;
+      border-left-color: #e91e8c;
     }
     .result-item.source {
       background: #f0faf0;
@@ -188,7 +190,7 @@
     .result-value {
       font-size: 1.4rem;
       font-weight: 800;
-      color: #1a1a2e;
+      color: #0f172a;
     }
     .result-value .unit-small {
       font-size: 0.68rem;
@@ -197,7 +199,7 @@
       margin-left: 2px;
     }
     .result-item.source .result-value  { color: #4caf50; }
-    .result-item.highlight .result-value { color: #1a6fc4; }
+    .result-item.highlight .result-value { color: #c2177a; }
     .result-item.accent .result-value   { color: #c97700; }
     .source-tag {
       font-size: 0.58rem;
@@ -221,7 +223,7 @@
       display: block;
       font-size: 0.7rem;
       font-weight: 700;
-      color: #4a90d9;
+      color: #e91e8c;
       text-transform: uppercase;
       letter-spacing: 0.8px;
       margin-bottom: 5px;
@@ -234,16 +236,16 @@
       border-radius: 12px;
       font-size: 1.5rem;
       font-weight: 700;
-      color: #1a1a2e;
+      color: #0f172a;
       background: #fafbfc;
       outline: none;
       transition: border-color 0.2s;
     }
-    .c2-field input:focus { border-color: #4a90d9; background: white; }
+    .c2-field input:focus { border-color: #e91e8c; background: white; }
     .c2-field input.computed {
-      background: #f0f7ff;
-      color: #1a6fc4;
-      border-color: #c5dff8;
+      background: #fce4f1;
+      color: #c2177a;
+      border-color: #f8c0e4;
     }
     .c2-field .field-unit {
       position: absolute;
@@ -257,7 +259,7 @@
     }
     .c2-divider {
       height: 1px;
-      background: #f0f2f5;
+      background: #f8fafc;
       margin: 4px 0;
     }
 
@@ -285,7 +287,7 @@
     .c2-result-box .box-value {
       font-size: 1.3rem;
       font-weight: 800;
-      color: #1a1a2e;
+      color: #0f172a;
     }
     .c2-result-box.accent .box-value { color: #c97700; }
     .c2-result-box .box-unit {
@@ -308,7 +310,7 @@
       letter-spacing: 0.8px;
       padding: 0 8px 10px;
       text-align: left;
-      border-bottom: 2px solid #f0f2f5;
+      border-bottom: 2px solid #f8fafc;
     }
     .dist-time-table thead th:last-child { text-align: right; }
     .dist-time-table tbody tr {
@@ -326,16 +328,16 @@
     }
     .dist-time-table tbody td:last-child {
       font-weight: 800;
-      color: #1a1a2e;
+      color: #0f172a;
       text-align: right;
       font-variant-numeric: tabular-nums;
     }
     .dist-time-table tr.row-special td {
-      background: #eaf3fc;
-      color: #1a6fc4;
+      background: #fce4f1;
+      color: #c2177a;
     }
-    .dist-time-table tr.row-special td:first-child { color: #1a6fc4; font-weight: 700; }
-    .dist-time-table tr.row-special td:last-child  { color: #1a6fc4; }
+    .dist-time-table tr.row-special td:first-child { color: #c2177a; font-weight: 700; }
+    .dist-time-table tr.row-special td:last-child  { color: #c2177a; }
     .dist-time-table tr.row-top td {
       background: #f0faf0;
       color: #2e7d32;
@@ -350,7 +352,7 @@
       background: white; cursor: pointer; text-align: center;
       font-size: 0.75rem; font-weight: 700; color: #555; transition: all 0.2s;
     }
-    .bar-btn.active { border-color: #4a90d9; background: #eaf3fc; color: #1a6fc4; }
+    .bar-btn.active { border-color: #e91e8c; background: #fce4f1; color: #c2177a; }
     .plate-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
     .plate-chip {
       padding: 6px 13px; border-radius: 20px; font-size: 0.82rem; font-weight: 800;
@@ -364,10 +366,10 @@
     .plate-2_5{ background: #757575; }
     .plate-other { background: #9e9e9e; }
     .bb-total {
-      margin-top: 16px; padding: 14px 16px; background: #eaf3fc;
+      margin-top: 16px; padding: 14px 16px; background: #fce4f1;
       border-radius: 12px; text-align: center;
     }
-    .bb-total .total-kg { font-size: 2rem; font-weight: 900; color: #1a6fc4; }
+    .bb-total .total-kg { font-size: 2rem; font-weight: 900; color: #c2177a; }
     .bb-total .total-label { font-size: 0.72rem; color: #888; font-weight: 600; margin-top: 2px; }
     .bb-error {
       background: #fff0f0; border: 1px solid #ffcdd2; border-radius: 10px;
@@ -383,7 +385,7 @@
       border-radius: 12px; background: white; cursor: pointer; text-align: center;
       font-size: 0.78rem; font-weight: 700; color: #555; transition: all 0.2s;
     }
-    .mode-btn.active { border-color: #4a90d9; background: #eaf3fc; color: #1a6fc4; }
+    .mode-btn.active { border-color: #e91e8c; background: #fce4f1; color: #c2177a; }
     .timer-display {
       text-align: center; font-size: 4rem; font-weight: 900;
       font-variant-numeric: tabular-nums; color: #43a047; line-height: 1;
@@ -406,22 +408,22 @@
     .timer-btn.pause  { background: #e53935; color: white; }
     .timer-params { display: grid; gap: 10px; }
     .timer-param label {
-      display: block; font-size: 0.7rem; font-weight: 700; color: #4a90d9;
+      display: block; font-size: 0.7rem; font-weight: 700; color: #e91e8c;
       text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px;
     }
     .timer-param input {
       width: 100%; padding: 11px 16px; border: 2px solid #e8ecf0; border-radius: 12px;
-      font-size: 1.4rem; font-weight: 700; color: #1a1a2e; background: #fafbfc; outline: none;
+      font-size: 1.4rem; font-weight: 700; color: #0f172a; background: #fafbfc; outline: none;
       transition: border-color 0.2s;
     }
-    .timer-param input:focus { border-color: #4a90d9; background: white; }
+    .timer-param input:focus { border-color: #e91e8c; background: white; }
     .timer-checkbox {
       display: flex; align-items: center; gap: 10px;
       margin-top: 14px; padding-top: 12px;
       border-top: 1px solid #e8ecf0;
     }
     .timer-checkbox input[type="checkbox"] {
-      width: 20px; height: 20px; cursor: pointer; accent-color: #4a90d9; flex-shrink: 0;
+      width: 20px; height: 20px; cursor: pointer; accent-color: #e91e8c; flex-shrink: 0;
     }
     .timer-checkbox label {
       font-size: 0.82rem; font-weight: 600; color: #444; cursor: pointer; line-height: 1.3;
@@ -432,7 +434,7 @@
       text-align: center; margin: 8px 0 16px;
     }
     .orm-result .orm-kg {
-      font-size: 3rem; font-weight: 900; color: #4a90d9; line-height: 1;
+      font-size: 3rem; font-weight: 900; color: #e91e8c; line-height: 1;
     }
     .orm-result .orm-label { font-size: 0.78rem; color: #888; font-weight: 600; margin-top: 4px; }
     .orm-table {
@@ -441,14 +443,14 @@
     .orm-table thead th {
       font-size: 0.65rem; font-weight: 700; color: #aaa; text-transform: uppercase;
       letter-spacing: 0.8px; padding: 0 8px 10px; text-align: left;
-      border-bottom: 2px solid #f0f2f5;
+      border-bottom: 2px solid #f8fafc;
     }
     .orm-table thead th:not(:first-child) { text-align: right; }
     .orm-table tbody tr { border-bottom: 1px solid #f5f7fa; }
     .orm-table tbody tr:last-child { border-bottom: none; }
     .orm-table tbody td { padding: 7px 8px; color: #555; }
     .orm-table tbody td:not(:first-child) { text-align: right; font-weight: 700; }
-    .orm-table tr.orm-row-100 td { background: #eaf3fc; color: #1a6fc4; font-weight: 800; }
+    .orm-table tr.orm-row-100 td { background: #fce4f1; color: #c2177a; font-weight: 800; }
 
     /* ── INFO ── */
     .info-text {
@@ -457,7 +459,99 @@
       text-align: center;
       line-height: 1.5;
     }
-    .info-text strong { color: #4a90d9; }
+    .info-text strong { color: #e91e8c; }
+
+    /* ── WOD CREATOR ── */
+    .wod-subtabs { display: flex; gap: 6px; margin-bottom: 14px; }
+    .wod-subtab {
+      flex: 1; padding: 10px 6px; border: 2px solid #e2e8f0; border-radius: 12px;
+      background: white; cursor: pointer; text-align: center;
+      font-size: 0.82rem; font-weight: 700; color: #555; transition: all 0.2s;
+    }
+    .wod-subtab.active { border-color: #e91e8c; background: #fce4f1; color: #c2177a; }
+    .wod-filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+    .wod-filter {
+      padding: 6px 12px; border: 2px solid #e2e8f0; border-radius: 20px;
+      background: white; cursor: pointer; font-size: 0.75rem; font-weight: 700;
+      color: #555; transition: all 0.2s;
+    }
+    .wod-filter.active { border-color: #e91e8c; background: #fce4f1; color: #c2177a; }
+    .wod-search {
+      width: 100%; padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 12px;
+      font-size: 0.9rem; color: #0f172a; background: #f8fafc; outline: none;
+      transition: border-color 0.2s;
+    }
+    .wod-search:focus { border-color: #e91e8c; background: white; }
+    .wod-card {
+      background: white; border-radius: 14px; margin-bottom: 8px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.07); overflow: hidden; cursor: pointer;
+    }
+    .wod-card-header {
+      padding: 13px 16px; display: flex; align-items: flex-start; gap: 10px;
+    }
+    .wod-card-meta { flex: 1; min-width: 0; }
+    .wod-card-name { font-size: 1rem; font-weight: 800; color: #0f172a; }
+    .wod-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 4px; }
+    .wod-tag {
+      font-size: 0.62rem; font-weight: 700; padding: 2px 7px; border-radius: 20px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .tag-girls     { background: #fce4f1; color: #c2177a; }
+    .tag-heroes    { background: #fff3e0; color: #e65100; }
+    .tag-benchmark { background: #e8f5e9; color: #2e7d32; }
+    .tag-engine    { background: #e3f2fd; color: #1565c0; }
+    .tag-fortime   { background: #f3e5f5; color: #7b1fa2; }
+    .tag-amrap     { background: #e0f7fa; color: #00695c; }
+    .tag-emom      { background: #fff8e1; color: #f57f17; }
+    .tag-rounds    { background: #fce4f1; color: #880e4f; }
+    .tag-max       { background: #f1f8e9; color: #558b2f; }
+    .wod-card-brief { font-size: 0.75rem; color: #888; margin-top: 3px; }
+    .wod-chevron { font-size: 0.7rem; color: #bbb; transition: transform 0.2s; flex-shrink: 0; padding-top: 3px; }
+    .wod-card.open .wod-chevron { transform: rotate(180deg); }
+    .wod-card-body {
+      display: none; padding: 0 16px 14px; border-top: 1px solid #f1f5f9;
+    }
+    .wod-card.open .wod-card-body { display: block; }
+    .wod-desc {
+      white-space: pre-wrap; font-size: 0.85rem; color: #334155; line-height: 1.7;
+      margin: 10px 0 8px;
+    }
+    .wod-rx {
+      font-size: 0.78rem; font-weight: 700; color: #e91e8c;
+      background: #fce4f1; padding: 5px 10px; border-radius: 8px;
+      display: inline-block; margin-bottom: 6px;
+    }
+    .wod-note {
+      font-size: 0.72rem; color: #94a3b8; font-style: italic; margin-top: 4px;
+    }
+    .wod-empty { text-align: center; padding: 30px; color: #bbb; font-size: 0.85rem; }
+    /* Generator */
+    .gen-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .gen-chip {
+      padding: 8px 14px; border: 2px solid #e2e8f0; border-radius: 20px;
+      background: white; cursor: pointer; font-size: 0.78rem; font-weight: 700;
+      color: #555; transition: all 0.2s;
+    }
+    .gen-chip.active { border-color: #e91e8c; background: #fce4f1; color: #c2177a; }
+    .gen-btn {
+      width: 100%; padding: 16px; border: none; border-radius: 14px;
+      background: linear-gradient(135deg, #e91e8c, #c2177a);
+      color: white; font-size: 1rem; font-weight: 800; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(233,30,140,0.35); transition: all 0.2s;
+      margin-top: 4px;
+    }
+    .gen-btn:active { transform: scale(0.98); }
+    .gen-result-title {
+      font-size: 1.2rem; font-weight: 900; color: #0f172a; margin-bottom: 6px;
+    }
+    .gen-result-desc {
+      white-space: pre-wrap; font-size: 0.88rem; color: #334155; line-height: 1.8;
+    }
+    .gen-result-rx {
+      margin-top: 10px; font-size: 0.78rem; font-weight: 700;
+      color: #e91e8c; background: #fce4f1; padding: 6px 12px; border-radius: 8px;
+      display: inline-block;
+    }
 
     /* ── INTERP NOTE ── */
     .interp-note {
@@ -484,6 +578,7 @@
     <button class="tab-btn" onclick="switchTab('barbell')">🏋️ Barbell</button>
     <button class="tab-btn" onclick="switchTab('timer')">⏱ Timer</button>
     <button class="tab-btn" onclick="switchTab('onerm')">💪 1RM</button>
+    <button class="tab-btn tab-full" onclick="switchTab('wod')">📋 WOD Creator</button>
   </div>
 </header>
 
@@ -515,7 +610,7 @@
     <div class="card">
       <h2>Enter Calories</h2>
       <div class="input-wrap">
-        <input type="number" id="cal-input" placeholder="e.g. 50" min="1" max="200"
+        <input type="number" id="cal-input" placeholder="e.g. 50" min="1" max="1000"
                oninput="convertCal()" inputmode="numeric" />
         <span class="unit">Cal</span>
       </div>
@@ -784,6 +879,81 @@
 
   </div><!-- /onerm -->
 
+  <!-- ══════════════════════════════════
+       TAB 7 — WOD CREATOR
+  ══════════════════════════════════ -->
+  <div id="section-wod" class="section">
+
+    <!-- Sub-tab switcher -->
+    <div class="wod-subtabs">
+      <button class="wod-subtab active" id="wst-library" onclick="setWodView('library')">📚 Library</button>
+      <button class="wod-subtab" id="wst-generator" onclick="setWodView('generator')">⚡ Generator</button>
+    </div>
+
+    <!-- ── LIBRARY ── -->
+    <div id="wod-library-view">
+      <div class="card">
+        <div class="wod-filters">
+          <button class="wod-filter active" onclick="filterWods(this,'all')">All</button>
+          <button class="wod-filter" onclick="filterWods(this,'girls')">Girls</button>
+          <button class="wod-filter" onclick="filterWods(this,'heroes')">Heroes</button>
+          <button class="wod-filter" onclick="filterWods(this,'benchmark')">Benchmark</button>
+          <button class="wod-filter" onclick="filterWods(this,'engine')">Engine</button>
+        </div>
+        <input type="text" class="wod-search" id="wod-search" placeholder="Search WODs…" oninput="renderWodList()" />
+      </div>
+      <div id="wod-list"></div>
+    </div>
+
+    <!-- ── GENERATOR ── -->
+    <div id="wod-generator-view" style="display:none">
+      <div class="card">
+        <h2>Time Domain</h2>
+        <div class="gen-chips">
+          <button class="gen-chip active" data-gen="time" data-val="short" onclick="genSelect(this)">Short &lt;10 min</button>
+          <button class="gen-chip" data-gen="time" data-val="medium" onclick="genSelect(this)">Medium 10–20 min</button>
+          <button class="gen-chip" data-gen="time" data-val="long" onclick="genSelect(this)">Long 20+ min</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>WOD Type</h2>
+        <div class="gen-chips">
+          <button class="gen-chip active" data-gen="type" data-val="any" onclick="genSelect(this)">Any</button>
+          <button class="gen-chip" data-gen="type" data-val="amrap" onclick="genSelect(this)">AMRAP</button>
+          <button class="gen-chip" data-gen="type" data-val="fortime" onclick="genSelect(this)">For Time</button>
+          <button class="gen-chip" data-gen="type" data-val="emom" onclick="genSelect(this)">EMOM</button>
+          <button class="gen-chip" data-gen="type" data-val="rounds" onclick="genSelect(this)">Rounds</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Equipment</h2>
+        <div class="gen-chips">
+          <button class="gen-chip active" data-gen="equip" data-val="full" onclick="genSelect(this)">Full (Barbell)</button>
+          <button class="gen-chip" data-gen="equip" data-val="kb" onclick="genSelect(this)">KB / DB</button>
+          <button class="gen-chip" data-gen="equip" data-val="bw" onclick="genSelect(this)">Bodyweight</button>
+          <button class="gen-chip" data-gen="equip" data-val="engine" onclick="genSelect(this)">Engine</button>
+          <button class="gen-chip" data-gen="equip" data-val="mixed" onclick="genSelect(this)">Mixed</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Focus</h2>
+        <div class="gen-chips">
+          <button class="gen-chip active" data-gen="focus" data-val="mixed" onclick="genSelect(this)">Mixed</button>
+          <button class="gen-chip" data-gen="focus" data-val="strength" onclick="genSelect(this)">Strength</button>
+          <button class="gen-chip" data-gen="focus" data-val="gymnastics" onclick="genSelect(this)">Gymnastics</button>
+          <button class="gen-chip" data-gen="focus" data-val="cardio" onclick="genSelect(this)">Cardio</button>
+        </div>
+      </div>
+      <button class="gen-btn" onclick="generateWod()">⚡ Generate WOD</button>
+      <div class="card" id="gen-result-card" style="display:none; margin-top:14px">
+        <div class="gen-result-title" id="gen-result-title"></div>
+        <div class="gen-result-desc" id="gen-result-desc"></div>
+        <div id="gen-result-rx" class="gen-result-rx" style="display:none"></div>
+      </div>
+    </div>
+
+  </div><!-- /wod -->
+
   <!-- Footer info -->
   <div class="card">
     <p class="info-text" id="footer-info">
@@ -800,7 +970,7 @@
 // ═══════════════════════════════════════════
 let activeTab = 'calorie';
 
-const ALL_TABS = ['calorie','distance','concept2','barbell','timer','onerm'];
+const ALL_TABS = ['calorie','distance','concept2','barbell','timer','onerm','wod'];
 
 function switchTab(tab) {
   activeTab = tab;
@@ -820,6 +990,9 @@ function switchTab(tab) {
     info.innerHTML = 'Web Audio API beeps: triple-beep on last 3 seconds, long tone on finish.';
   } else if (tab === 'onerm') {
     info.innerHTML = '<strong>Epley formula</strong>: 1RM = weight × (1 + reps / 30)';
+  } else if (tab === 'wod') {
+    info.innerHTML = 'Library: 20 Girls · 15 Heroes · 5 Benchmark · 8 Engine WODs · <strong>Generator</strong> creates random WODs from your settings.';
+    initWodTab();
   } else {
     info.innerHTML = 'Based on the <strong>Mayhem Athlete × Cardio Conversion Chart</strong><br/>' +
       'All values shown as <strong>Male / Female</strong> · Calorie values interpolated where needed.';
@@ -844,6 +1017,16 @@ const CAL_TABLE = [
   [75,60, 56,45,45,36,56,45],[80,64, 60,48,48,38,60,48],
   [85,68, 64,51,51,41,64,51],[90,72, 68,54,54,43,68,54],
   [95,76, 71,57,57,46,71,57],[100,80,75,60,60,48,75,60],
+  // extended — ratios from official chart: F=×0.80, Assault M=×0.75, Assault F=×0.60, Echo M=×0.60, Echo F=×0.48, AirRunner M=×0.75, AirRunner F=×0.60
+  [110,88, 83,66,66,53,83,66],  [120,96, 90,72,72,58,90,72],
+  [130,104,98,78,78,62,98,78],  [140,112,105,84,84,67,105,84],
+  [150,120,113,90,90,72,113,90],[175,140,131,105,105,84,131,105],
+  [200,160,150,120,120,96,150,120],[250,200,188,150,150,120,188,150],
+  [300,240,225,180,180,144,225,180],[350,280,263,210,210,168,263,210],
+  [400,320,300,240,240,192,300,240],[450,360,338,270,270,216,338,270],
+  [500,400,375,300,300,240,375,300],[600,480,450,360,360,288,450,360],
+  [700,560,525,420,420,336,525,420],[800,640,600,480,480,384,600,480],
+  [900,720,675,540,540,432,675,540],[1000,800,750,600,600,480,750,600],
 ];
 const CAL_COLS = { row:[0,1], assault:[2,3], echo:[4,5], airrunner:[6,7] };
 const CAL_LABELS = {
@@ -870,7 +1053,13 @@ function calInterp1(input, srcCol, tgtCol) {
   }
   if (!lower&&!upper) return null;
   if (!lower) return {value:upper[tgtCol],exact:false};
-  if (!upper) return {value:lower[tgtCol],exact:false};
+  if (!upper) {
+    // extrapolate linearly beyond the table using the last two rows
+    const n = CAL_TABLE.length;
+    const r1 = CAL_TABLE[n-2], r2 = CAL_TABLE[n-1];
+    const slope = (r2[tgtCol]-r1[tgtCol]) / (r2[srcCol]-r1[srcCol]);
+    return {value:Math.round(r2[tgtCol]+slope*(input-r2[srcCol])),exact:false};
+  }
   if (lower===upper) return {value:lower[tgtCol],exact:true};
   const ratio=(input-lower[srcCol])/(upper[srcCol]-lower[srcCol]);
   return {value:Math.round(lower[tgtCol]+ratio*(upper[tgtCol]-lower[tgtCol])),exact:false};
@@ -1556,6 +1745,482 @@ function calcOrm() {
     <thead><tr><th>%</th><th>kg</th><th>~Reps</th></tr></thead>
     <tbody>${rows}</tbody>
   </table>`;
+}
+
+// ═══════════════════════════════════════════
+// TAB 7 — WOD CREATOR
+// ═══════════════════════════════════════════
+
+// ── WOD DATABASE ────────────────────────────────
+const WOD_DB = [
+
+  // ════ GIRLS ════
+  { name:'Fran',      cat:'girls', type:'fortime', time:'short',
+    brief:'21-15-9 Thrusters + Pull-ups',
+    desc:`21-15-9 reps for time:\n• Thrusters\n• Pull-ups`,
+    rx:'♂ 43 kg · ♀ 30 kg', note:'Elite: sub 3 min · Good: sub 5 min' },
+
+  { name:'Helen',     cat:'girls', type:'rounds', time:'short',
+    brief:'3 rds: 400m Run + 21 KB Swings + 12 Pull-ups',
+    desc:`3 rounds for time:\n• 400 m Run\n• 21 KB Swings\n• 12 Pull-ups`,
+    rx:'♂ 24 kg · ♀ 16 kg', note:'Elite: sub 9 min · Good: sub 12 min' },
+
+  { name:'Grace',     cat:'girls', type:'fortime', time:'short',
+    brief:'30 Clean & Jerks for time',
+    desc:`For time:\n• 30 Clean & Jerks`,
+    rx:'♂ 61 kg · ♀ 43 kg', note:'Elite: sub 2 min · Good: sub 5 min' },
+
+  { name:'Diane',     cat:'girls', type:'fortime', time:'short',
+    brief:'21-15-9 Deadlifts + HSPU',
+    desc:`21-15-9 reps for time:\n• Deadlifts\n• Handstand Push-ups`,
+    rx:'♂ 102 kg · ♀ 70 kg', note:'Elite: sub 3 min · Good: sub 6 min' },
+
+  { name:'Elizabeth', cat:'girls', type:'fortime', time:'short',
+    brief:'21-15-9 Squat Cleans + Ring Dips',
+    desc:`21-15-9 reps for time:\n• Squat Cleans\n• Ring Dips`,
+    rx:'♂ 61 kg · ♀ 43 kg', note:'Elite: sub 5 min' },
+
+  { name:'Isabel',    cat:'girls', type:'fortime', time:'short',
+    brief:'30 Snatches for time',
+    desc:`For time:\n• 30 Snatches`,
+    rx:'♂ 61 kg · ♀ 43 kg', note:'Elite: sub 2 min · Good: sub 5 min' },
+
+  { name:'Jackie',    cat:'girls', type:'fortime', time:'short',
+    brief:'1000m Row + 50 Thrusters + 30 Pull-ups',
+    desc:`For time:\n• 1 000 m Row\n• 50 Thrusters\n• 30 Pull-ups`,
+    rx:'♂ 20 kg · ♀ 15 kg', note:'Elite: sub 7 min · Good: sub 12 min' },
+
+  { name:'Karen',     cat:'girls', type:'fortime', time:'medium',
+    brief:'150 Wall Balls for time',
+    desc:`For time:\n• 150 Wall Balls (to 3 m / 2.7 m target)`,
+    rx:'♂ 9 kg · ♀ 6 kg', note:'Good: sub 12 min' },
+
+  { name:'Cindy',     cat:'girls', type:'amrap', time:'long',
+    brief:'20 min AMRAP: 5 Pull-ups + 10 Push-ups + 15 Air Squats',
+    desc:`20 min AMRAP:\n• 5 Pull-ups\n• 10 Push-ups\n• 15 Air Squats`,
+    rx:'Bodyweight', note:'Good score: 20+ rounds' },
+
+  { name:'Mary',      cat:'girls', type:'amrap', time:'long',
+    brief:'20 min AMRAP: 5 HSPU + 10 Pistols + 15 Pull-ups',
+    desc:`20 min AMRAP:\n• 5 Handstand Push-ups\n• 10 Pistol Squats\n• 15 Pull-ups`,
+    rx:'Bodyweight', note:'Good score: 10+ rounds' },
+
+  { name:'Amanda',    cat:'girls', type:'fortime', time:'short',
+    brief:'9-7-5 Muscle-ups + Squat Snatches',
+    desc:`9-7-5 reps for time:\n• Muscle-ups\n• Squat Snatches`,
+    rx:'♂ 61 kg · ♀ 43 kg', note:'Elite: sub 5 min' },
+
+  { name:'Annie',     cat:'girls', type:'fortime', time:'short',
+    brief:'50-40-30-20-10 Double-unders + Sit-ups',
+    desc:`50-40-30-20-10 reps for time:\n• Double-unders\n• Sit-ups`,
+    rx:'Bodyweight', note:'Elite: sub 6 min · Good: sub 12 min' },
+
+  { name:'Barbara',   cat:'girls', type:'rounds', time:'long',
+    brief:'5 rds: 20 Pull-ups + 30 Push-ups + 40 Sit-ups + 50 Air Squats',
+    desc:`5 rounds for time (3 min rest between rounds):\n• 20 Pull-ups\n• 30 Push-ups\n• 40 Sit-ups\n• 50 Air Squats`,
+    rx:'Bodyweight', note:'Good: sub 30 min (excl. rest)' },
+
+  { name:'Chelsea',   cat:'girls', type:'emom', time:'long',
+    brief:'30 min EMOM: 5 Pull-ups + 10 Push-ups + 15 Air Squats',
+    desc:`EMOM 30 min:\n• 5 Pull-ups\n• 10 Push-ups\n• 15 Air Squats`,
+    rx:'Bodyweight', note:'If you fall behind, keep going for time' },
+
+  { name:'Eva',       cat:'girls', type:'rounds', time:'long',
+    brief:'5 rds: 800m Run + 30 KB Swings + 30 Pull-ups',
+    desc:`5 rounds for time:\n• 800 m Run\n• 30 KB Swings\n• 30 Pull-ups`,
+    rx:'♂ 32 kg · ♀ 24 kg', note:'Long grind — pacing is key' },
+
+  { name:'Kelly',     cat:'girls', type:'rounds', time:'long',
+    brief:'5 rds: 400m Run + 30 Box Jumps + 30 Wall Balls',
+    desc:`5 rounds for time:\n• 400 m Run\n• 30 Box Jumps (24"/20")\n• 30 Wall Balls`,
+    rx:'♂ 9 kg / 3 m · ♀ 6 kg / 2.7 m', note:'Good: sub 40 min' },
+
+  { name:'Lynne',     cat:'girls', type:'max', time:'medium',
+    brief:'5 rds max reps: Bench Press (BW) + Pull-ups',
+    desc:`5 rounds, max reps each:\n• Bench Press (bodyweight)\n• Pull-ups\n\nRest as needed between rounds.`,
+    rx:'♂ & ♀ Bodyweight on bar', note:'No time limit — record total reps' },
+
+  { name:'Nicole',    cat:'girls', type:'amrap', time:'long',
+    brief:'20 min AMRAP: 400m Run + max Pull-ups',
+    desc:`20 min AMRAP:\n• 400 m Run\n• Max Pull-ups\n\nRecord total pull-up reps.`,
+    rx:'Bodyweight', note:'Rest on the run, unbroken pull-ups' },
+
+  { name:'Nancy',     cat:'girls', type:'rounds', time:'medium',
+    brief:'5 rds: 400m Run + 15 OHS',
+    desc:`5 rounds for time:\n• 400 m Run\n• 15 Overhead Squats`,
+    rx:'♂ 43 kg · ♀ 30 kg', note:'Good: sub 20 min' },
+
+  { name:'Angie',     cat:'girls', type:'fortime', time:'medium',
+    brief:'100 Pull-ups + 100 Push-ups + 100 Sit-ups + 100 Air Squats',
+    desc:`For time:\n• 100 Pull-ups\n• 100 Push-ups\n• 100 Sit-ups\n• 100 Air Squats\n\nComplete all reps of each movement before moving on.`,
+    rx:'Bodyweight', note:'Good: sub 20 min' },
+
+  // ════ HEROES ════
+  { name:'Murph',     cat:'heroes', type:'fortime', time:'long',
+    brief:'1 mile Run + 100 Pull-ups + 200 Push-ups + 300 Air Squats + 1 mile Run',
+    desc:`For time (with 9 kg / 6 kg vest):\n• 1 mile (1.6 km) Run\n• 100 Pull-ups\n• 200 Push-ups\n• 300 Air Squats\n• 1 mile (1.6 km) Run\n\nPartition pull-ups, push-ups, squats as needed.`,
+    rx:'♂ 9 kg vest · ♀ 6 kg vest', note:'Memorial Day WOD · Named for Lt. Michael Murphy' },
+
+  { name:'DT',        cat:'heroes', type:'rounds', time:'medium',
+    brief:'5 rds: 12 Deadlifts + 9 Hang Power Cleans + 6 Push Jerks',
+    desc:`5 rounds for time:\n• 12 Deadlifts\n• 9 Hang Power Cleans\n• 6 Push Jerks\n\nUse the same bar throughout.`,
+    rx:'♂ 70 kg · ♀ 47 kg', note:'Named for SSgt Timothy P. Davis · Elite: sub 7 min' },
+
+  { name:'J.T.',      cat:'heroes', type:'fortime', time:'medium',
+    brief:'21-15-9 HSPU + Ring Dips + Push-ups',
+    desc:`21-15-9 reps for time:\n• Handstand Push-ups\n• Ring Dips\n• Push-ups`,
+    rx:'Bodyweight', note:'Named for PO1 Jeff Taylor · Pressing volume is intense' },
+
+  { name:'Michael',   cat:'heroes', type:'rounds', time:'medium',
+    brief:'3 rds: 800m Run + 50 Back Extensions + 50 Sit-ups',
+    desc:`3 rounds for time:\n• 800 m Run\n• 50 Back Extensions\n• 50 Sit-ups`,
+    rx:'Bodyweight (GHD recommended)', note:'Named for Navy Lt. Michael McGreevy' },
+
+  { name:'Ryan',      cat:'heroes', type:'rounds', time:'medium',
+    brief:'5 rds: 7 Muscle-ups + 21 Burpees',
+    desc:`5 rounds for time:\n• 7 Muscle-ups\n• 21 Burpees`,
+    rx:'Bodyweight', note:'Named for Sgt. 1st Class Ryan Hilbert' },
+
+  { name:'Nate',      cat:'heroes', type:'amrap', time:'long',
+    brief:'20 min AMRAP: 2 Muscle-ups + 4 HSPU + 8 KB Swings',
+    desc:`20 min AMRAP:\n• 2 Muscle-ups\n• 4 Handstand Push-ups\n• 8 KB Swings`,
+    rx:'♂ 32 kg · ♀ 24 kg', note:'Named for CPO Nate Hardy · Good: 10+ rounds' },
+
+  { name:'Badger',    cat:'heroes', type:'rounds', time:'long',
+    brief:'3 rds: 30 Squat Cleans + 30 Pull-ups + 800m Run',
+    desc:`3 rounds for time:\n• 30 Squat Cleans\n• 30 Pull-ups\n• 800 m Run`,
+    rx:'♂ 43 kg · ♀ 30 kg', note:'Named for CPO Mark Carter · Long grinder' },
+
+  { name:'Tommy V',   cat:'heroes', type:'fortime', time:'medium',
+    brief:'21-15-9 Thrusters + Rope Climbs',
+    desc:`21-15-9 reps for time:\n• Thrusters\n• Rope Climbs (4.5 m)`,
+    rx:'♂ 56 kg · ♀ 38 kg', note:'Named for Lt. Thomas Weaver' },
+
+  { name:'Daniel',    cat:'heroes', type:'fortime', time:'long',
+    brief:'50 Pull-ups + 400m Run + 21 Thrusters + 800m Run + 21 Thrusters + 400m Run + 50 Pull-ups',
+    desc:`For time:\n• 50 Pull-ups\n• 400 m Run\n• 21 Thrusters\n• 800 m Run\n• 21 Thrusters\n• 400 m Run\n• 50 Pull-ups`,
+    rx:'♂ 43 kg · ♀ 30 kg', note:'Named for Sgt. 1st Class Daniel Crabtree' },
+
+  { name:'Loredo',    cat:'heroes', type:'rounds', time:'long',
+    brief:'6 rds: 24 Air Squats + 24 Push-ups + 24 Lunges + 400m Run',
+    desc:`6 rounds for time:\n• 24 Air Squats\n• 24 Push-ups\n• 24 Walking Lunges\n• 400 m Run`,
+    rx:'Bodyweight', note:'Named for SSgt. Juan Lopez' },
+
+  { name:'Hansen',    cat:'heroes', type:'rounds', time:'long',
+    brief:'5 rds: 30 KB Swings + 30 Burpees + 30 GHD Sit-ups',
+    desc:`5 rounds for time:\n• 30 KB Swings\n• 30 Burpees\n• 30 GHD Sit-ups`,
+    rx:'♂ 32 kg · ♀ 24 kg', note:'Named for Staff Sgt. Daniel Hansen' },
+
+  { name:'Ship',      cat:'heroes', type:'fortime', time:'long',
+    brief:'1000m Row + 25 Burpees + 1000m Row + 50 Box Jumps + 1000m Row + 75 KB Swings',
+    desc:`For time:\n• 1 000 m Row\n• 25 Burpees\n• 1 000 m Row\n• 50 Box Jumps (24"/20")\n• 1 000 m Row\n• 75 KB Swings`,
+    rx:'♂ 24 kg · ♀ 16 kg', note:'Named for EOD Technician James "Ship" Kamolchanok' },
+
+  { name:'Arnie',     cat:'heroes', type:'fortime', time:'medium',
+    brief:'21-15-9-9-15-21 Push Press + KB Swings + Box Jumps',
+    desc:`21-15-9-9-15-21 reps for time:\n• Push Press\n• KB Swings\n• Box Jumps (24"/20")`,
+    rx:'♂ Push Press 43 kg · KB 32 kg · ♀ PP 30 kg · KB 24 kg', note:'Named for Sgt. 1st Class Jason Arndt' },
+
+  { name:'Luce',      cat:'heroes', type:'rounds', time:'medium',
+    brief:'8 rds: 200m Run + 8 Muscle-ups',
+    desc:`8 rounds for time:\n• 200 m Run\n• 8 Muscle-ups`,
+    rx:'Bodyweight', note:'Named for SSgt. Jacob Lugo' },
+
+  { name:'Holleyman', cat:'heroes', type:'rounds', time:'long',
+    brief:'30 rds: 5 Wall Balls + 3 HSPU + 1 Power Clean',
+    desc:`30 rounds for time:\n• 5 Wall Balls (to 3 m)\n• 3 Handstand Push-ups\n• 1 Power Clean`,
+    rx:'♂ Ball 9 kg, Clean 102 kg · ♀ Ball 6 kg, Clean 70 kg', note:'Named for SSG Aaron Holleyman · Very heavy clean' },
+
+  // ════ BENCHMARK ════
+  { name:'Fight Gone Bad', cat:'benchmark', type:'amrap', time:'medium',
+    brief:'3 rds × 5 stations × 1 min: Wall Balls / SDLHP / Box Jumps / Push Press / Row',
+    desc:`3 rounds for max reps:\nEach station 1 min, 1 min rest after each round.\n• Wall Balls (to 3 m)\n• Sumo Deadlift High-pull\n• Box Jumps (20")\n• Push Press\n• Row (calories)\n\nScore = total reps + calories.`,
+    rx:'♂ Ball 9 kg, SDLHP & PP 35 kg · ♀ Ball 6 kg, 25 kg', note:'Good score: 300+ total' },
+
+  { name:'Filthy Fifty', cat:'benchmark', type:'fortime', time:'long',
+    brief:'50 reps each of 10 movements',
+    desc:`For time (50 reps each):\n• Box Jumps (24")\n• Jumping Pull-ups\n• KB Swings\n• Walking Lunges\n• Knees-to-Elbows\n• Push Press\n• Back Extensions\n• Wall Balls\n• Burpees\n• Double-unders`,
+    rx:'♂ KB 16 kg, PP 20 kg, Ball 9 kg · ♀ 12 kg / 15 kg / 6 kg', note:'Pacing every movement is crucial' },
+
+  { name:'The Seven',  cat:'benchmark', type:'rounds', time:'long',
+    brief:'7 rds: 7 Muscle-ups + 7 Squat Cleans + 7 HSPU + 7 KB Swings + 7 K2E + 7 Deadlifts + 7 Push Jerks',
+    desc:`7 rounds for time:\n• 7 Muscle-ups\n• 7 Squat Cleans\n• 7 Handstand Push-ups\n• 7 KB Swings\n• 7 Knees-to-Elbows\n• 7 Deadlifts\n• 7 Push Jerks`,
+    rx:'♂ Cleans 61 kg, KB 32 kg, DL 102 kg, PJ 43 kg · ♀ scaled proportionally', note:'One of the hardest benchmark WODs' },
+
+  { name:'CrossFit Total', cat:'benchmark', type:'max', time:'long',
+    brief:'1RM Back Squat + 1RM Shoulder Press + 1RM Deadlift',
+    desc:`Find 1-rep max of each (in order):\n• Back Squat\n• Shoulder Press\n• Deadlift\n\n3 attempts per lift. Score = combined total.`,
+    rx:'Any weight', note:'Technique and CNS readiness matter most' },
+
+  { name:'Kalsu',      cat:'benchmark', type:'emom', time:'long',
+    brief:'100 Thrusters — EMOM 5 Burpees',
+    desc:`For time — 100 Thrusters:\nAt the top of every minute (including 0:00): 5 Burpees.\nContinue Thrusters with remaining time.`,
+    rx:'♂ 61 kg · ♀ 43 kg', note:'Named for Bob Kalsu. One of the most brutal WODs.' },
+
+  // ════ ENGINE / ENDURANCE ════
+  { name:'Assault Bike Descending', cat:'engine', type:'fortime', time:'medium',
+    brief:'10-9-8-7-6-5-4-3-2-1 cal Assault Bike',
+    desc:`For time:\n10-9-8-7-6-5-4-3-2-1 calories\n• Assault Bike`,
+    rx:'55 total calories', note:'Breathe on the descend — pace early rounds' },
+
+  { name:'Erg Pyramid',  cat:'engine', type:'fortime', time:'long',
+    brief:'Row: 250m – 500m – 750m – 1000m – 750m – 500m – 250m (90s rest)',
+    desc:`For time (90 sec rest between pieces):\n• 250 m Row\n• 500 m Row\n• 750 m Row\n• 1 000 m Row\n• 750 m Row\n• 500 m Row\n• 250 m Row`,
+    rx:'Hold target pace throughout', note:'Great aerobic capacity builder' },
+
+  { name:'Row & Squat', cat:'engine', type:'rounds', time:'long',
+    brief:'4 rds: 1000m Row + 50 Air Squats',
+    desc:`4 rounds for time:\n• 1 000 m Row\n• 50 Air Squats`,
+    rx:'Consistent row pace each round', note:'Goal: sub 23 min' },
+
+  { name:'Engine Builder', cat:'engine', type:'emom', time:'long',
+    brief:'EMOM 20: Odd 12/10 cal Row · Even 12/10 cal Assault Bike',
+    desc:`EMOM 20 min:\n• Odd minutes: 12/10 cal Row\n• Even minutes: 12/10 cal Assault Bike`,
+    rx:'♂ 12 cal · ♀ 10 cal', note:'Aerobic power — rest is your reward' },
+
+  { name:'100 Cal Row',  cat:'engine', type:'fortime', time:'medium',
+    brief:'100 cal Row for time',
+    desc:`For time:\n• 100 cal Row`,
+    rx:'Hold 800-1000 cal/h pace', note:'♂ Good: sub 6 min · ♀ Good: sub 7:30' },
+
+  { name:'Bike & Burpee', cat:'engine', type:'fortime', time:'medium',
+    brief:'30-20-10 cal Assault Bike + Burpees',
+    desc:`For time:\n• 30 cal Assault Bike\n• 30 Burpees\n• 20 cal Assault Bike\n• 20 Burpees\n• 10 cal Assault Bike\n• 10 Burpees`,
+    rx:'No equipment restrictions', note:'Good: sub 12 min' },
+
+  { name:'Run & Row',    cat:'engine', type:'rounds', time:'long',
+    brief:'5 rds: 400m Run + 500m Row',
+    desc:`5 rounds for time:\n• 400 m Run\n• 500 m Row`,
+    rx:'Consistent pacing both modalities', note:'Good: sub 25 min' },
+
+  { name:'Ski & Bike',   cat:'engine', type:'amrap', time:'medium',
+    brief:'12 min AMRAP: 15/12 cal SkiErg + 12/10 cal Echo Bike',
+    desc:`12 min AMRAP:\n• 15/12 cal SkiErg\n• 12/10 cal Echo Bike`,
+    rx:'♂ 15 / 12 cal · ♀ 12 / 10 cal', note:'Keep stroke rate controlled' },
+
+  { name:'Triathlon',    cat:'engine', type:'fortime', time:'long',
+    brief:'1000m Row + 1000m BikeErg + 1000m SkiErg',
+    desc:`For time:\n• 1 000 m Row\n• 1 000 m BikeErg\n• 1 000 m SkiErg`,
+    rx:'Damper 3–5 recommended', note:'Test all three machines back to back' },
+];
+
+// ── LIBRARY ─────────────────────────────────────
+let wodFilterCat = 'all';
+
+function setWodView(view) {
+  document.getElementById('wod-library-view').style.display   = view === 'library'   ? '' : 'none';
+  document.getElementById('wod-generator-view').style.display = view === 'generator' ? '' : 'none';
+  document.getElementById('wst-library').classList.toggle('active',   view === 'library');
+  document.getElementById('wst-generator').classList.toggle('active', view === 'generator');
+}
+
+function filterWods(btn, cat) {
+  document.querySelectorAll('.wod-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  wodFilterCat = cat;
+  renderWodList();
+}
+
+function renderWodList() {
+  const q = (document.getElementById('wod-search').value || '').toLowerCase();
+  const list = WOD_DB.filter(w => {
+    const catMatch = wodFilterCat === 'all' || w.cat === wodFilterCat;
+    const txtMatch = !q || w.name.toLowerCase().includes(q) || w.brief.toLowerCase().includes(q);
+    return catMatch && txtMatch;
+  });
+  const el = document.getElementById('wod-list');
+  if (!list.length) { el.innerHTML = '<div class="wod-empty">No WODs found.</div>'; return; }
+  el.innerHTML = list.map((w,i) => {
+    const catLabel = {girls:'Girls', heroes:'Heroes', benchmark:'Benchmark', engine:'Engine'}[w.cat];
+    const typeLabel = {fortime:'For Time', amrap:'AMRAP', emom:'EMOM', rounds:'Rounds', max:'Max Lift'}[w.type];
+    return `<div class="wod-card" onclick="toggleWodCard(this)">
+      <div class="wod-card-header">
+        <div class="wod-card-meta">
+          <div class="wod-card-name">${w.name}</div>
+          <div class="wod-tags">
+            <span class="wod-tag tag-${w.cat}">${catLabel}</span>
+            <span class="wod-tag tag-${w.type}">${typeLabel}</span>
+          </div>
+          <div class="wod-card-brief">${w.brief}</div>
+        </div>
+        <span class="wod-chevron">▼</span>
+      </div>
+      <div class="wod-card-body">
+        <div class="wod-desc">${w.desc}</div>
+        ${w.rx ? `<div class="wod-rx">${w.rx}</div>` : ''}
+        ${w.note ? `<div class="wod-note">💡 ${w.note}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleWodCard(card) {
+  card.classList.toggle('open');
+}
+
+// ── GENERATOR ───────────────────────────────────
+const GEN_STATE = { time:'short', type:'any', equip:'full', focus:'mixed' };
+
+function genSelect(btn) {
+  const group = btn.dataset.gen;
+  document.querySelectorAll(`.gen-chip[data-gen="${group}"]`).forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  GEN_STATE[group] = btn.dataset.val;
+}
+
+const GEN_MOVES = {
+  barbell: {
+    strength: [
+      ['Deadlifts','♂ 100 kg · ♀ 70 kg'],
+      ['Back Squats','♂ 80 kg · ♀ 55 kg'],
+      ['Front Squats','♂ 70 kg · ♀ 47 kg'],
+      ['Overhead Squats','♂ 43 kg · ♀ 30 kg'],
+      ['Push Press','♂ 50 kg · ♀ 35 kg'],
+      ['Push Jerks','♂ 50 kg · ♀ 35 kg'],
+    ],
+    olympic: [
+      ['Power Cleans','♂ 61 kg · ♀ 43 kg'],
+      ['Hang Power Cleans','♂ 61 kg · ♀ 43 kg'],
+      ['Squat Cleans','♂ 61 kg · ♀ 43 kg'],
+      ['Power Snatches','♂ 43 kg · ♀ 30 kg'],
+      ['Squat Snatches','♂ 43 kg · ♀ 30 kg'],
+      ['Clean & Jerks','♂ 61 kg · ♀ 43 kg'],
+      ['Thrusters','♂ 43 kg · ♀ 30 kg'],
+    ],
+  },
+  kb: [
+    ['KB Swings','♂ 24 kg · ♀ 16 kg'],
+    ['KB Goblet Squats','♂ 24 kg · ♀ 16 kg'],
+    ['KB Turkish Get-ups','♂ 20 kg · ♀ 16 kg'],
+    ['DB Thrusters','♂ 2×22.5 kg · ♀ 2×15 kg'],
+    ['DB Snatches','♂ 22.5 kg · ♀ 15 kg'],
+    ['DB Power Cleans','♂ 2×22.5 kg · ♀ 2×15 kg'],
+  ],
+  gymnastics: [
+    ['Pull-ups','Bodyweight'],
+    ['Push-ups','Bodyweight'],
+    ['Handstand Push-ups','Bodyweight'],
+    ['Ring Dips','Bodyweight'],
+    ['Toes-to-Bar','Bodyweight'],
+    ['Knees-to-Elbows','Bodyweight'],
+    ['Box Jumps','♂ 60 cm · ♀ 50 cm'],
+    ['Burpees','Bodyweight'],
+    ['Wall Balls','♂ 9 kg / 3 m · ♀ 6 kg / 2.7 m'],
+    ['Double-unders','Jump rope'],
+    ['Pistol Squats','Bodyweight'],
+    ['Sit-ups','Bodyweight'],
+    ['Air Squats','Bodyweight'],
+    ['Muscle-ups','Bodyweight'],
+  ],
+  cardio: [
+    ['cal Row',     'Damper 3–5'],
+    ['cal Assault Bike','Full effort'],
+    ['cal Echo Bike','Full effort'],
+    ['m Run',       'Outdoor or treadmill'],
+    ['m SkiErg',    'Consistent pace'],
+    ['cal BikeErg', 'Damper 3–5'],
+  ],
+};
+
+function rnd(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function rndInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+function generateWod() {
+  const { time, type, equip, focus } = GEN_STATE;
+
+  // ── pick movements pool ──
+  let pool = [];
+  if (equip === 'full') {
+    pool = [...GEN_MOVES.barbell.strength, ...GEN_MOVES.barbell.olympic, ...GEN_MOVES.gymnastics];
+    if (focus === 'strength')    pool = [...GEN_MOVES.barbell.strength, ...GEN_MOVES.gymnastics.slice(0,4)];
+    if (focus === 'gymnastics')  pool = [...GEN_MOVES.gymnastics, ...GEN_MOVES.barbell.olympic.slice(0,2)];
+  } else if (equip === 'kb') {
+    pool = [...GEN_MOVES.kb, ...GEN_MOVES.gymnastics];
+  } else if (equip === 'bw') {
+    pool = [...GEN_MOVES.gymnastics];
+  } else if (equip === 'engine') {
+    pool = [...GEN_MOVES.cardio, ...GEN_MOVES.gymnastics.filter(m => ['Burpees','Air Squats','Box Jumps','Double-unders'].includes(m[0]))];
+  } else if (equip === 'mixed') {
+    // Barbell + KB + Gymnastics + a cardio piece
+    pool = [
+      ...GEN_MOVES.barbell.olympic,
+      ...GEN_MOVES.barbell.strength,
+      ...GEN_MOVES.kb,
+      ...GEN_MOVES.gymnastics,
+      ...GEN_MOVES.cardio,
+    ];
+  }
+  if (focus === 'cardio' && equip !== 'engine' && equip !== 'mixed') pool = [...pool, ...GEN_MOVES.cardio, ...GEN_MOVES.cardio];
+
+  // ── pick WOD type ──
+  const types = type === 'any'
+    ? (time === 'short' ? ['fortime','amrap'] : time === 'medium' ? ['fortime','rounds','amrap'] : ['amrap','emom','rounds'])
+    : [type];
+  const wodType = rnd(types);
+
+  // ── time parameters ──
+  const durations = { short:[7,10], medium:[12,18], long:[20,30] };
+  const [tMin, tMax] = durations[time];
+  const mins = rndInt(tMin, tMax);
+
+  // ── rep schemes by time domain ──
+  const repsShort   = () => rnd([[21,15,9],[10,8,6],[15,12,9],[12,9,6]]);
+  const repsMedium  = () => rnd([[21,15,9],[15,12,9,6],[20,15,10]]);
+  const repsLong    = () => rnd([[30,20,10],[25,20,15],[20,15,10,5]]);
+  const repScheme   = time === 'short' ? repsShort() : time === 'medium' ? repsMedium() : repsLong();
+
+  const amrapReps  = time === 'short' ? [5,8] : time === 'medium' ? [8,15] : [10,20];
+  const emomReps   = time === 'short' ? [8,12] : time === 'medium' ? [10,15] : [12,18];
+  const roundCount = time === 'short' ? rndInt(3,4) : time === 'medium' ? rndInt(4,6) : rndInt(5,8);
+  const movCount   = time === 'short' ? rndInt(2,3) : rndInt(2,4);
+
+  // ── pick unique movements ──
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  const moves = shuffled.slice(0, Math.min(movCount, shuffled.length));
+  const rxParts = [...new Set(moves.map(m => m[1]).filter(r => r && r !== 'Bodyweight'))];
+  const rxText = rxParts.length ? rxParts[0] : 'Bodyweight';
+
+  // ── build WOD description ──
+  let title = '', desc = '';
+
+  if (wodType === 'fortime') {
+    const scheme = repScheme;
+    title = `${scheme.join('-')} For Time`;
+    desc = `For time — ${scheme.join('-')} reps:\n` + moves.map(m => `• ${m[0]}`).join('\n');
+  }
+  else if (wodType === 'amrap') {
+    const repCount = rndInt(amrapReps[0], amrapReps[1]);
+    title = `${mins} min AMRAP`;
+    desc = `${mins} min AMRAP:\n` + moves.map(m => `• ${repCount} ${m[0]}`).join('\n');
+  }
+  else if (wodType === 'emom') {
+    const repCount = rndInt(emomReps[0], emomReps[1]);
+    if (moves.length >= 2) {
+      title = `EMOM ${mins} min`;
+      desc = `EMOM ${mins} min:\n` + moves.map((m, i) => `• ${i % 2 === 0 ? 'Odd' : 'Even'} min — ${repCount} ${m[0]}`).join('\n');
+    } else {
+      title = `EMOM ${mins} min`;
+      desc = `EMOM ${mins} min:\n• ${repCount} ${moves[0][0]}`;
+    }
+  }
+  else if (wodType === 'rounds') {
+    title = `${roundCount} Rounds for Time`;
+    const repCount = rndInt(amrapReps[0], amrapReps[1]);
+    desc = `${roundCount} rounds for time:\n` + moves.map(m => `• ${repCount} ${m[0]}`).join('\n');
+  }
+
+  const card = document.getElementById('gen-result-card');
+  document.getElementById('gen-result-title').textContent = title;
+  document.getElementById('gen-result-desc').textContent = desc;
+  const rxEl = document.getElementById('gen-result-rx');
+  rxEl.textContent = rxText;
+  rxEl.style.display = rxText !== 'Bodyweight' ? '' : 'none';
+  card.style.display = '';
+}
+
+// initialise library on first tab switch
+function initWodTab() {
+  if (!document.getElementById('wod-list').innerHTML) renderWodList();
 }
 </script>
 
