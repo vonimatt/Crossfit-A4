@@ -1,12 +1,14 @@
 {
   "name": "CrossFit Affoltern",
   "short_name": "CF Affoltern",
-  "description": "Cardio Converter & WOD Tools",
+  "description": "Cardio Converter, WOD Creator & Training Tools",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#000000",
   "theme_color": "#000000",
-  "orientation": "portrait",
+  "categories": ["health", "fitness", "sports"],
   "icons": [
     {
       "src": "logo.png",

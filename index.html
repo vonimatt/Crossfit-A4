@@ -11,6 +11,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   <meta name="apple-mobile-web-app-title" content="CF Affoltern" />
   <link rel="apple-touch-icon" href="logo.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="logo.png" />
 
   <title>CrossFit Affoltern — Cardio Converter</title>
   <style>
@@ -131,6 +132,22 @@
       margin-top: 6px;
       text-align: center;
     }
+
+    /* ── CALORIE MULTI-INPUT ── */
+    .cal-multi-inputs { display: flex; flex-direction: column; gap: 8px; }
+    .cal-input-row { display: flex; align-items: center; gap: 8px; }
+    .cal-input-num {
+      width: 22px; height: 22px; flex-shrink: 0;
+      background: #e91e8c; color: white; border-radius: 50%;
+      font-size: 0.7rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cal-block-header {
+      font-size: 0.72rem; font-weight: 800; color: #e91e8c;
+      text-transform: uppercase; letter-spacing: 0.8px;
+      padding: 10px 0 6px; border-top: 1px solid #f1f5f9; margin-top: 4px;
+    }
+    .cal-block-header:first-child { border-top: none; padding-top: 0; }
 
     /* ── DISTANCE CHIPS ── */
     .dist-chips {
@@ -257,6 +274,18 @@
       font-weight: 600;
       pointer-events: none;
     }
+    .pace-split { display: flex; align-items: center; gap: 4px; }
+    .pace-colon {
+      font-size: 1.6rem; font-weight: 900; color: #475569;
+      flex-shrink: 0; padding: 0 2px; line-height: 1;
+    }
+    .pace-split #c2-pace-min {
+      width: 72px; padding: 13px 8px !important; text-align: center; flex-shrink: 0;
+    }
+    .pace-split #c2-pace-sec {
+      flex: 1; padding: 13px 52px 13px 8px !important; text-align: center;
+    }
+
     .c2-divider {
       height: 1px;
       background: #f8fafc;
@@ -609,22 +638,38 @@
 
     <div class="card">
       <h2>Enter Calories</h2>
-      <div class="input-wrap">
-        <input type="number" id="cal-input" placeholder="e.g. 50" min="1" max="1000"
-               oninput="convertCal()" inputmode="numeric" />
-        <span class="unit">Cal</span>
+      <div class="cal-multi-inputs">
+        <div class="cal-input-row">
+          <span class="cal-input-num">1</span>
+          <div class="input-wrap" style="flex:1">
+            <input type="number" id="cal-input-1" placeholder="e.g. 50" min="1" max="1000"
+                   oninput="convertCal()" inputmode="numeric" />
+            <span class="unit">Cal</span>
+          </div>
+        </div>
+        <div class="cal-input-row">
+          <span class="cal-input-num">2</span>
+          <div class="input-wrap" style="flex:1">
+            <input type="number" id="cal-input-2" placeholder="e.g. 35" min="1" max="1000"
+                   oninput="convertCal()" inputmode="numeric" />
+            <span class="unit">Cal</span>
+          </div>
+        </div>
+        <div class="cal-input-row">
+          <span class="cal-input-num">3</span>
+          <div class="input-wrap" style="flex:1">
+            <input type="number" id="cal-input-3" placeholder="e.g. 20" min="1" max="1000"
+                   oninput="convertCal()" inputmode="numeric" />
+            <span class="unit">Cal</span>
+          </div>
+        </div>
       </div>
       <p class="input-hint">Enter the calories shown on your machine</p>
-      <div id="cal-interp-note" class="interp-note">
-        ⚠️ Value interpolated — not in the original table
-      </div>
     </div>
 
-    <div class="card">
+    <div class="card" id="cal-results-card" style="display:none">
       <h2>Conversions <span style="font-size:0.65rem;color:#aaa;font-weight:400;letter-spacing:0">(Male / Female)</span></h2>
-      <div id="cal-results" class="results-grid">
-        <div class="no-result">Enter calories above to see the conversion</div>
-      </div>
+      <div id="cal-results"></div>
     </div>
 
   </div><!-- /calorie -->
@@ -682,9 +727,12 @@
       <div class="c2-fields">
         <div class="c2-field">
           <label>Pace / 500m</label>
-          <div class="field-row">
-            <input type="text" id="c2-pace" placeholder="2:00.0"
-                   oninput="c2Calc('pace')" inputmode="decimal" />
+          <div class="field-row pace-split">
+            <input type="number" id="c2-pace-min" placeholder="2" min="0" max="9"
+                   inputmode="numeric" oninput="c2Calc('pace')" />
+            <span class="pace-colon">:</span>
+            <input type="number" id="c2-pace-sec" placeholder="00.0" min="0" max="59.9" step="0.1"
+                   inputmode="decimal" oninput="c2Calc('pace')" />
             <span class="field-unit">min/500m</span>
           </div>
         </div>
@@ -1065,14 +1113,7 @@ function calInterp1(input, srcCol, tgtCol) {
   return {value:Math.round(lower[tgtCol]+ratio*(upper[tgtCol]-lower[tgtCol])),exact:false};
 }
 
-function convertCal() {
-  const input = parseInt(document.getElementById('cal-input').value);
-  const resultsDiv = document.getElementById('cal-results');
-  const interpNote = document.getElementById('cal-interp-note');
-  if (!input || input<1) {
-    resultsDiv.innerHTML='<div class="no-result">Enter calories above to see the conversion</div>';
-    interpNote.classList.remove('show'); return;
-  }
+function calConvertSingle(input) {
   const [srcM,srcF] = CAL_COLS[calSourceMachine];
   let anyInterp=false, html='';
   for (const [machine,info] of Object.entries(CAL_LABELS)) {
@@ -1090,8 +1131,23 @@ function convertCal() {
       <div class="result-label"><span class="icon">${info.icon}</span>${info.name}</div>
       <div class="result-value">${resM.value}/${resF.value}<span class="unit-small">Cal</span></div></div>`;
   }
-  resultsDiv.innerHTML=html;
-  interpNote.classList.toggle('show',anyInterp);
+  return {html, anyInterp};
+}
+
+function convertCal() {
+  const inputs = [1,2,3].map(n => parseInt(document.getElementById('cal-input-'+n).value)).filter(v => v>0);
+  const resultsDiv = document.getElementById('cal-results');
+  const card = document.getElementById('cal-results-card');
+  if (!inputs.length) { card.style.display='none'; return; }
+  card.style.display='';
+  let fullHtml='', anyInterp=false;
+  inputs.forEach((val, i) => {
+    const {html, anyInterp: interp} = calConvertSingle(val);
+    if (interp) anyInterp=true;
+    const label = inputs.length>1 ? `<div class="cal-block-header">Set ${i+1} — ${val} Cal</div>` : '';
+    fullHtml += label + `<div class="results-grid" style="margin-bottom:${i<inputs.length-1?'4px':'0'}">${html}</div>`;
+  });
+  resultsDiv.innerHTML = fullHtml + (anyInterp ? '<p class="input-hint" style="margin-top:8px;color:#c97700">⚠️ Some values interpolated</p>' : '');
 }
 
 // ═══════════════════════════════════════════
@@ -1236,13 +1292,29 @@ function parsePace(str) {
 
 let c2Watts = null, c2Calh = null, c2PaceSec = null;
 
+function getPaceSecs() {
+  const m = parseInt(document.getElementById('c2-pace-min').value) || 0;
+  const s = parseFloat(document.getElementById('c2-pace-sec').value) || 0;
+  const total = m * 60 + s;
+  return total > 0 ? total : null;
+}
+function setPaceFields(totalSec) {
+  const m = Math.floor(totalSec / 60);
+  const s = totalSec - m * 60;
+  const minEl = document.getElementById('c2-pace-min');
+  const secEl = document.getElementById('c2-pace-sec');
+  minEl.value = m;
+  secEl.value = s.toFixed(1);
+  minEl.classList.add('computed');
+  secEl.classList.add('computed');
+}
 function setC2Field(id, value) {
   const el = document.getElementById(id);
   el.value = value;
   el.classList.add('computed');
 }
 function clearC2Computed() {
-  ['c2-pace','c2-watts','c2-calh'].forEach(id => {
+  ['c2-pace-min','c2-pace-sec','c2-watts','c2-calh'].forEach(id => {
     document.getElementById(id).classList.remove('computed');
   });
 }
@@ -1252,7 +1324,7 @@ function c2Calc(source) {
   let watts=null, calh=null, paceSec=null;
 
   if (source==='pace') {
-    const t = parsePace(document.getElementById('c2-pace').value);
+    const t = getPaceSecs();
     if (!t||t<=0) { c2Watts=null; c2Calh=null; c2PaceSec=null; renderC2Results(); return; }
     paceSec=t; watts=c2WattsFromPace(t); calh=c2CalhFromWatts(watts);
     setC2Field('c2-watts', Math.round(watts));
@@ -1261,13 +1333,13 @@ function c2Calc(source) {
     watts = parseFloat(document.getElementById('c2-watts').value);
     if (!watts||watts<=0) { c2Watts=null; c2Calh=null; c2PaceSec=null; renderC2Results(); return; }
     calh=c2CalhFromWatts(watts); paceSec=c2PaceFromWatts(watts);
-    setC2Field('c2-pace', secsToMMSS(paceSec));
+    setPaceFields(paceSec);
     setC2Field('c2-calh', Math.round(calh));
   } else if (source==='calh') {
     calh = parseFloat(document.getElementById('c2-calh').value);
     if (!calh||calh<=300) { c2Watts=null; c2Calh=null; c2PaceSec=null; renderC2Results(); return; }
     watts=c2WattsFromCalh(calh); paceSec=c2PaceFromWatts(watts);
-    setC2Field('c2-pace',  secsToMMSS(paceSec));
+    setPaceFields(paceSec);
     setC2Field('c2-watts', Math.round(watts));
   }
 
@@ -2222,6 +2294,12 @@ function generateWod() {
 function initWodTab() {
   if (!document.getElementById('wod-list').innerHTML) renderWodList();
 }
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
+  }
 </script>
 
 </body>
