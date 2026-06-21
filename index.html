@@ -40,11 +40,12 @@
     /* ── TABS ── */
     .tabs {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(6, 1fr);
       gap: 3px;
       padding: 6px 6px 0;
     }
     .tab-btn {
+      grid-column: span 2;
       padding: 10px 6px;
       border: none; background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.55);
       font-size: 0.72rem; font-weight: 700; cursor: pointer; text-align: center;
@@ -52,6 +53,8 @@
     }
     .tab-btn.active { background: #f8fafc; color: #0f172a; }
     .tab-btn.tab-full { grid-column: 1 / -1; }
+    .tab-btn.tab-half { grid-column: span 3; }
+    .tab-btn.tab-external { background: rgba(233,30,140,0.18); color: rgba(255,255,255,0.8); }
 
     /* ── LAYOUT ── */
     .container { max-width: 480px; margin: 0 auto; padding: 16px; }
@@ -603,11 +606,12 @@
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('calorie')">🔥 Calorie</button>
     <button class="tab-btn" onclick="switchTab('distance')">📏 Distance</button>
-    <button class="tab-btn" onclick="switchTab('concept2')">⚙️ Concept2</button>
+    <button class="tab-btn" onclick="switchTab('concept2')">⚙️ Cal2Time</button>
     <button class="tab-btn" onclick="switchTab('barbell')">🏋️ Barbell</button>
     <button class="tab-btn" onclick="switchTab('timer')">⏱ Timer</button>
     <button class="tab-btn" onclick="switchTab('onerm')">💪 1RM</button>
-    <button class="tab-btn tab-full" onclick="switchTab('wod')">📋 WOD Creator</button>
+    <button class="tab-btn tab-half" onclick="switchTab('wod')">📋 WOD Creator</button>
+    <button class="tab-btn tab-half tab-external" onclick="window.open('https://vonimatt.github.io/BoxMate/','_blank')">📦 BoxMate ↗</button>
   </div>
 </header>
 
@@ -668,7 +672,7 @@
     </div>
 
     <div class="card" id="cal-results-card" style="display:none">
-      <h2>Conversions <span style="font-size:0.65rem;color:#aaa;font-weight:400;letter-spacing:0">(Male / Female)</span></h2>
+      <h2>Conversions</h2>
       <div id="cal-results"></div>
     </div>
 
@@ -709,7 +713,7 @@
     </div>
 
     <div class="card">
-      <h2>Conversions <span style="font-size:0.65rem;color:#aaa;font-weight:400;letter-spacing:0">(Male / Female)</span></h2>
+      <h2>Conversions</h2>
       <div id="dist-results" class="results-grid">
         <div class="no-result">Select a distance above to see the conversion</div>
       </div>
@@ -1006,7 +1010,7 @@
   <div class="card">
     <p class="info-text" id="footer-info">
       Based on the <strong>Mayhem Athlete × Cardio Conversion Chart</strong><br/>
-      All values shown as <strong>Male / Female</strong> · Calorie values interpolated where needed.
+      Calorie values interpolated where needed.
     </p>
   </div>
 
@@ -1043,7 +1047,7 @@ function switchTab(tab) {
     initWodTab();
   } else {
     info.innerHTML = 'Based on the <strong>Mayhem Athlete × Cardio Conversion Chart</strong><br/>' +
-      'All values shown as <strong>Male / Female</strong> · Calorie values interpolated where needed.';
+      'Calorie values interpolated where needed.';
   }
 }
 
@@ -1129,7 +1133,7 @@ function calConvertSingle(input) {
     if (!resM.exact||!resF.exact) anyInterp=true;
     html+=`<div class="result-item highlight">
       <div class="result-label"><span class="icon">${info.icon}</span>${info.name}</div>
-      <div class="result-value">${resM.value}/${resF.value}<span class="unit-small">Cal</span></div></div>`;
+      <div class="result-value">${resM.value}<span class="unit-small">Cal</span></div></div>`;
   }
   return {html, anyInterp};
 }
