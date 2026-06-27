@@ -585,6 +585,64 @@
       display: inline-block;
     }
 
+    /* ── EXERCISE LIBRARY ── */
+    .ex-filters { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+    .ex-filter {
+      padding:6px 12px; border:2px solid #e2e8f0; border-radius:20px;
+      background:white; cursor:pointer; font-size:0.75rem; font-weight:700;
+      color:#555; transition:all 0.2s;
+    }
+    .ex-filter.active { border-color:#e91e8c; background:#fce4f1; color:#c2177a; }
+    .ex-search {
+      width:100%; padding:10px 14px; border:2px solid #e2e8f0; border-radius:12px;
+      font-size:0.9rem; color:#0f172a; background:#f8fafc; outline:none; transition:border-color 0.2s;
+    }
+    .ex-search:focus { border-color:#e91e8c; background:white; }
+    .ex-card {
+      background:white; border-radius:14px; margin-bottom:8px;
+      box-shadow:0 1px 6px rgba(0,0,0,0.07); overflow:hidden; cursor:pointer;
+    }
+    .ex-card-header { padding:13px 16px; display:flex; align-items:flex-start; gap:10px; }
+    .ex-card-meta { flex:1; min-width:0; }
+    .ex-card-name { font-size:1rem; font-weight:800; color:#0f172a; }
+    .ex-tags { display:flex; gap:5px; flex-wrap:wrap; margin-top:4px; }
+    .ex-tag {
+      font-size:0.62rem; font-weight:700; padding:2px 7px; border-radius:20px;
+      text-transform:uppercase; letter-spacing:0.5px;
+    }
+    .tag-olympic  { background:#fff3e0; color:#e65100; }
+    .tag-strength { background:#e8f5e9; color:#2e7d32; }
+    .tag-gymnastics { background:#f3e5f5; color:#7b1fa2; }
+    .tag-kb       { background:#fce4f1; color:#c2177a; }
+    .tag-cardio   { background:#e3f2fd; color:#1565c0; }
+    .ex-diff { display:flex; gap:2px; margin-top:4px; }
+    .ex-diff span { font-size:0.7rem; }
+    .ex-chevron { font-size:0.7rem; color:#bbb; transition:transform 0.2s; flex-shrink:0; padding-top:3px; }
+    .ex-card.open .ex-chevron { transform:rotate(180deg); }
+    .ex-card-body { display:none; padding:0 16px 14px; border-top:1px solid #f1f5f9; }
+    .ex-card.open .ex-card-body { display:block; }
+    .ex-section-title {
+      font-size:0.65rem; font-weight:800; color:#e91e8c; text-transform:uppercase;
+      letter-spacing:1px; margin:10px 0 4px;
+    }
+    .ex-muscles { font-size:0.78rem; color:#64748b; margin-bottom:4px; }
+    .ex-steps { padding-left:16px; margin:0; }
+    .ex-steps li { font-size:0.82rem; color:#334155; line-height:1.6; margin-bottom:2px; }
+    .ex-cues { display:flex; flex-wrap:wrap; gap:5px; margin-top:2px; }
+    .ex-cue {
+      background:#fce4f1; color:#c2177a; font-size:0.72rem; font-weight:700;
+      padding:3px 9px; border-radius:20px;
+    }
+    .ex-faults { padding-left:16px; margin:0; }
+    .ex-faults li { font-size:0.78rem; color:#e53935; line-height:1.5; }
+    .ex-scale { font-size:0.78rem; color:#475569; font-style:italic; margin-top:2px; }
+    .ex-video-btn {
+      display:inline-flex; align-items:center; gap:6px;
+      margin-top:10px; padding:8px 14px; border-radius:10px; border:none;
+      background:linear-gradient(135deg,#e91e8c,#c2177a); color:white;
+      font-size:0.78rem; font-weight:700; cursor:pointer; text-decoration:none;
+    }
+
     /* ── INTERP NOTE ── */
     .interp-note {
       background: #fff8e1;
@@ -610,8 +668,9 @@
     <button class="tab-btn" onclick="switchTab('barbell')">🏋️ Barbell</button>
     <button class="tab-btn" onclick="switchTab('timer')">⏱ Timer</button>
     <button class="tab-btn" onclick="switchTab('onerm')">💪 1RM</button>
-    <button class="tab-btn tab-half" onclick="switchTab('wod')">📋 WOD Creator</button>
-    <button class="tab-btn tab-half tab-external" onclick="window.open('https://vonimatt.github.io/BoxMate/','_blank')">📦 BoxMate ↗</button>
+    <button class="tab-btn" onclick="switchTab('wod')">📋 WOD</button>
+    <button class="tab-btn" onclick="switchTab('movements')">📖 Movements</button>
+    <button class="tab-btn tab-external" onclick="window.open('https://vonimatt.github.io/BoxMate/','_blank')">📦 BoxMate ↗</button>
   </div>
 </header>
 
@@ -1006,6 +1065,24 @@
 
   </div><!-- /wod -->
 
+  <!-- ══════════════════════════════════
+       TAB 8 — MOVEMENTS LIBRARY
+  ══════════════════════════════════ -->
+  <div id="section-movements" class="section">
+    <div class="card">
+      <div class="ex-filters">
+        <button class="ex-filter active" onclick="filterEx(this,'all')">All</button>
+        <button class="ex-filter" onclick="filterEx(this,'olympic')">Olympic</button>
+        <button class="ex-filter" onclick="filterEx(this,'strength')">Strength</button>
+        <button class="ex-filter" onclick="filterEx(this,'gymnastics')">Gymnastics</button>
+        <button class="ex-filter" onclick="filterEx(this,'kb')">KB / DB</button>
+        <button class="ex-filter" onclick="filterEx(this,'cardio')">Cardio</button>
+      </div>
+      <input class="ex-search" id="ex-search" type="text" placeholder="Search movements…" oninput="renderEx()" />
+    </div>
+    <div id="ex-list"></div>
+  </div><!-- /movements -->
+
   <!-- Footer info -->
   <div class="card">
     <p class="info-text" id="footer-info">
@@ -1022,7 +1099,7 @@
 // ═══════════════════════════════════════════
 let activeTab = 'calorie';
 
-const ALL_TABS = ['calorie','distance','concept2','barbell','timer','onerm','wod'];
+const ALL_TABS = ['calorie','distance','concept2','barbell','timer','onerm','wod','movements'];
 
 function switchTab(tab) {
   activeTab = tab;
@@ -1045,6 +1122,9 @@ function switchTab(tab) {
   } else if (tab === 'wod') {
     info.innerHTML = 'Library: 20 Girls · 15 Heroes · 5 Benchmark · 8 Engine WODs · <strong>Generator</strong> creates random WODs from your settings.';
     initWodTab();
+  } else if (tab === 'movements') {
+    info.innerHTML = '<strong>35 Movements</strong> — Olympic · Strength · Gymnastics · KB/DB · Cardio · Tap any card for cues, faults & scaling.';
+    initExTab();
   } else {
     info.innerHTML = 'Based on the <strong>Mayhem Athlete × Cardio Conversion Chart</strong><br/>' +
       'Calorie values interpolated where needed.';
@@ -2301,6 +2381,527 @@ function initWodTab() {
 </script>
 
 <script>
+// ═══════════════════════════════════════════
+// TAB 8 — MOVEMENTS LIBRARY
+// ═══════════════════════════════════════════
+const EX_DB = [
+
+  // ════ OLYMPIC ════
+  { name:'Power Clean', cat:'olympic', diff:2,
+    muscles:'Hamstrings, Glutes, Traps, Shoulders, Core',
+    setup:'Bar over mid-foot, hip-width stance. Hips hinge back, shoulders just over the bar, hook grip, arms straight.',
+    steps:['Push the floor away — bar moves vertically, stays close to shins','As bar passes knees, hips drive forward explosively','Full triple extension: ankles, knees, hips — then violent shrug','Pull elbows high and fast around the bar','Catch in a partial squat (above parallel), elbows forward, stand tall'],
+    cues:['Bar stays close','Hips through','Elbows high & fast','Soft knees in catch'],
+    faults:['Bar swings away from body','Early arm pull (arms bend before hip extension)','Catching with elbows low','Jumping forward instead of straight up'],
+    scale:'Hang Power Clean → Romanian Deadlift + Shrug → PVC pipe drill',
+    yt:'https://www.youtube.com/results?search_query=crossfit+power+clean+technique' },
+
+  { name:'Squat Clean', cat:'olympic', diff:3,
+    muscles:'Full body — Hamstrings, Glutes, Quads, Traps, Core',
+    setup:'Same as Power Clean. Requires strong front rack and overhead squat mobility.',
+    steps:['Identical first and second pull as Power Clean','At full triple extension, pull under the bar aggressively','Elbows shoot through fast — land in full front squat','Bottom of catch: elbows high, chest up, knees tracking out','Stand to full extension to complete the lift'],
+    cues:['Pull yourself under','Elbows fast','Hips below parallel','Stand tall'],
+    faults:['Early arm bend','Elbows dropping in catch','Not squatting deep enough','Soft core at bottom'],
+    scale:'Power Clean → Tall Clean drill → PVC pipe',
+    yt:'https://www.youtube.com/results?search_query=crossfit+squat+clean+technique' },
+
+  { name:'Hang Power Clean', cat:'olympic', diff:2,
+    muscles:'Hamstrings, Glutes, Traps, Shoulders',
+    setup:'Bar starts above the knee. Hinge at hip, slight knee bend, shoulders over bar.',
+    steps:['Load the hamstrings by pushing hips back','Explosively drive hips forward — bar accelerates upward','Triple extension: ankles, knees, hips','High elbows, catch above parallel','Stand to full extension'],
+    cues:['Load the hips','Hips through the bar','Punch elbows through fast'],
+    faults:['Bar too far from body','Reverse curling the bar','Catching with a wide grip'],
+    scale:'Good Morning + Shrug → PVC hang drill',
+    yt:'https://www.youtube.com/results?search_query=hang+power+clean+crossfit' },
+
+  { name:'Power Snatch', cat:'olympic', diff:3,
+    muscles:'Full body — posterior chain, traps, shoulders, core',
+    setup:'Wide snatch grip (hand near rings). Bar over mid-foot, hips above knees, shoulders over bar.',
+    steps:['First pull: bar stays vertical, close to body','Transition at knee — hips drive through','Violent triple extension + high pull with wide elbows','Pull under bar — punch hands up into lockout','Catch overhead in partial squat, elbows locked out'],
+    cues:['Wide grip','Hips through','Punch up, not out','Active shoulders in catch'],
+    faults:['Bar swinging forward','Early arm pull','Soft elbows in catch','Pressing out overhead'],
+    scale:'Overhead Squat → Snatch Balance → PVC drill',
+    yt:'https://www.youtube.com/results?search_query=crossfit+power+snatch+technique' },
+
+  { name:'Squat Snatch', cat:'olympic', diff:3,
+    muscles:'Full body — requires high hip, shoulder and thoracic mobility',
+    setup:'Wide snatch grip. Requires full overhead squat mobility before loading.',
+    steps:['Same first and second pull as Power Snatch','At full extension, aggressively pull under the bar','Punch hands up into lockout while dropping into full squat','Bottom position: arms locked, active shoulders, knees out','Drive through heels to stand, keep bar overhead'],
+    cues:['Pull under fast','Punch the ceiling','Active shoulders always','Knees out at bottom'],
+    faults:['Pressing out at catch','No hip mobility — forward lean','Narrow catch position','Bar crashing down'],
+    scale:'Power Snatch → Overhead Squat → Snatch Balance',
+    yt:'https://www.youtube.com/results?search_query=crossfit+squat+snatch+technique' },
+
+  { name:'Clean & Jerk', cat:'olympic', diff:3,
+    muscles:'Full body — the king of weightlifting movements',
+    setup:'Perform a Squat Clean first, then set up for the Jerk from front rack.',
+    steps:['Complete a Squat Clean — stand fully before jerking','Front rack: elbows high, bar resting on shoulders, full grip','Dip: controlled, vertical torso, bend knees ~10–15 cm','Drive: explosive leg drive straight up','Split: one foot forward, one back — bar locked overhead','Recover: front foot back first, then rear foot, stand tall'],
+    cues:['Stand fully after clean','Vertical dip','Explosive drive','Lock overhead immediately'],
+    faults:['Elbows dropping in dip','Pushing with arms before legs extend','Landing with soft elbows','Not recovering fully'],
+    scale:'Push Jerk → Push Press → Front Squat for mobility',
+    yt:'https://www.youtube.com/results?search_query=crossfit+clean+and+jerk+technique' },
+
+  { name:'Push Jerk', cat:'olympic', diff:2,
+    muscles:'Shoulders, Triceps, Legs, Core',
+    setup:'Bar in front rack. Feet hip-width, elbows slightly forward.',
+    steps:['Dip: controlled, vertical torso, knees track over toes (~10 cm)','Drive: explosive leg extension launches bar upward','Press and drop: press bar while dropping hips under','Catch: arms locked, slight squat, feet re-set slightly wider','Stand to full extension'],
+    cues:['Vertical dip','Legs then arms','Drop under the bar','Lock elbows immediately'],
+    faults:['Elbows dipping in dip','Pressing with arms only','Soft elbows at catch','Bar drifting forward'],
+    scale:'Push Press → Strict Press → Dumbbell variation',
+    yt:'https://www.youtube.com/results?search_query=crossfit+push+jerk+technique' },
+
+  { name:'Push Press', cat:'olympic', diff:1,
+    muscles:'Shoulders, Triceps, Legs, Core',
+    setup:'Bar in front rack, feet hip-width, elbows slightly in front of bar.',
+    steps:['Dip: slight knee bend (~5–8 cm), torso stays vertical','Drive: explosive leg extension — legs do the work','Press: arms finish the movement overhead','Finish: arms locked, biceps by ears, hips and knees fully extended','Lower bar back to front rack under control'],
+    cues:['Vertical torso in dip','Legs launch the bar','Arms finish overhead','Lockout strong'],
+    faults:['Forward lean in dip','Not using leg drive','Bar drifting forward overhead','Soft lockout'],
+    scale:'Strict Press → DB Push Press',
+    yt:'https://www.youtube.com/results?search_query=crossfit+push+press+technique' },
+
+  // ════ STRENGTH ════
+  { name:'Back Squat', cat:'strength', diff:1,
+    muscles:'Quads, Glutes, Hamstrings, Core, Spinal Erectors',
+    setup:'Bar on upper traps (high bar) or rear delts (low bar). Feet shoulder-width, toes slightly out. Big breath and brace.',
+    steps:['Unrack: short steps back, set stance','Brace: deep breath into belly, create intra-abdominal pressure','Break at hips and knees simultaneously','Descend until hip crease is below knee (ATG optional)','Drive through whole foot, knees track over toes','Stand to full hip extension, exhale at top'],
+    cues:['Chest up','Knees out','Break parallel','Drive the floor away'],
+    faults:['Knees caving in','Rounding lower back','Heels rising','Good morning squat (forward lean)'],
+    scale:'Goblet Squat → Box Squat → Air Squat for mobility',
+    yt:'https://www.youtube.com/results?search_query=crossfit+back+squat+technique' },
+
+  { name:'Front Squat', cat:'strength', diff:2,
+    muscles:'Quads, Glutes, Core, Upper Back',
+    setup:'Bar in front rack: elbows high, bar resting on shoulders, fingertip grip. Feet shoulder-width.',
+    steps:['Elbows stay high throughout the entire movement','Sit straight down — torso more upright than back squat','Hip crease below knee at bottom','Drive knees out, chest stays up','Stand to full extension, elbows remain high'],
+    cues:['Elbows up','Sit tall','Knees track out','Never lose the rack'],
+    faults:['Elbows dropping — bar crashes forward','Forward lean','Heels rising (ankle mobility)','Knees caving'],
+    scale:'Goblet Squat → Zombie Squat → Mobility work (wrists, ankles)',
+    yt:'https://www.youtube.com/results?search_query=crossfit+front+squat+technique' },
+
+  { name:'Overhead Squat', cat:'strength', diff:3,
+    muscles:'Full body — requires shoulder, hip, ankle and thoracic mobility',
+    setup:'Snatch grip. Bar locked out overhead, active shoulders (push bar into ceiling). Feet shoulder-width.',
+    steps:['Press bar overhead — arms locked, active shoulders','Push bar into ceiling throughout entire movement','Sit into squat — torso upright, hips back and down','At bottom: arms locked, bar slightly behind head, knees out','Drive through heels to stand, maintain lockout'],
+    cues:['Push the ceiling','Active shoulders','Stay tall','Bar behind head'],
+    faults:['Soft elbows','Bar drifting forward','Forward lean','Knees caving'],
+    scale:'PVC Overhead Squat → Snatch Balance → Mobility drills',
+    yt:'https://www.youtube.com/results?search_query=crossfit+overhead+squat+technique' },
+
+  { name:'Deadlift', cat:'strength', diff:1,
+    muscles:'Hamstrings, Glutes, Spinal Erectors, Traps, Lats, Core',
+    setup:'Bar over mid-foot (2–3 cm from shins). Hip-width stance. Hinge: hips back, neutral spine, shoulders slightly over bar, double overhand grip.',
+    steps:['Create tension: engage lats (protect armpits), brace core','Push floor away — legs initiate the lift','Bar stays in contact with body the entire pull','Hips and shoulders rise at same rate (no early hip extension)','Lock out: hips through, glutes squeezed, stand tall','Lower: hinge at hip first, then bend knees when bar passes knee'],
+    cues:['Bar stays close','Chest up','Push the floor','Hips and shoulders together'],
+    faults:['Bar drifting away from body','Rounding lower back','Jerking the bar off floor','Early hip extension (stripper pull)'],
+    scale:'Romanian Deadlift → KB Deadlift → Resistance band pull',
+    yt:'https://www.youtube.com/results?search_query=crossfit+deadlift+technique' },
+
+  { name:'Shoulder Press', cat:'strength', diff:1,
+    muscles:'Shoulders, Triceps, Core, Upper Traps',
+    setup:'Bar in front rack. Feet hip-width, no leg drive — strict movement. Brace core.',
+    steps:['Press bar straight up — slight backward lean of torso','As bar passes forehead, push head through (bar finishes over ears)','Lock elbows fully, biceps by ears','Lower under control to front rack','Maintain rigid torso throughout'],
+    cues:['Push head through','Lock elbows','Biceps by ears','Rigid torso — no leg drive'],
+    faults:['Bar drifting forward','Not locking elbows','Hyperextending lower back','Leg drive (then it becomes a Push Press)'],
+    scale:'Dumbbell press → Band-assisted → Seated press',
+    yt:'https://www.youtube.com/results?search_query=crossfit+strict+press+technique' },
+
+  { name:'Sumo Deadlift High Pull', cat:'strength', diff:2,
+    muscles:'Hamstrings, Glutes, Traps, Shoulders, Biceps',
+    setup:'Wide stance (sumo), toes out 45°. Narrow grip inside legs. Hips hinge, spine neutral.',
+    steps:['Push floor away — legs drive first','Hips extend explosively — shrug aggressively','High pull: elbows above the bar and lead the pull','Bar travels close to body up to chin height','Lower bar under control back to floor'],
+    cues:['Legs then hips then shrug','Elbows above the bar','Bar close to body','Full hip extension before arms pull'],
+    faults:['Arms pulling before hips extend','Wide grip','Bar swinging away','Elbows dropping below bar at top'],
+    scale:'KB Sumo DL → Romanian DL + Shrug',
+    yt:'https://www.youtube.com/results?search_query=crossfit+sumo+deadlift+high+pull' },
+
+  // ════ GYMNASTICS ════
+  { name:'Strict Pull-up', cat:'gymnastics', diff:1,
+    muscles:'Lats, Biceps, Rhomboids, Core',
+    setup:'Dead hang, full grip over the bar, hands shoulder-width. Shoulders engaged (no passive hang).',
+    steps:['From dead hang: depress and retract scapula first','Pull elbows down and back — chest to bar','Chin clears the bar at top','Lower under full control back to dead hang','No kipping or swinging'],
+    cues:['Elbows down and back','Chest to bar','Control the descent','Active shoulders in hang'],
+    faults:['Passive hang (shrugged shoulders)','Not reaching chin over bar','Kipping','Losing hollow body'],
+    scale:'Band-assisted → Jumping pull-up → Ring rows → Lat pulldown',
+    yt:'https://www.youtube.com/results?search_query=crossfit+strict+pull+up+technique' },
+
+  { name:'Kipping Pull-up', cat:'gymnastics', diff:2,
+    muscles:'Lats, Shoulders, Core, Hip Flexors',
+    setup:'Requires a solid strict pull-up base first. Active hang to start.',
+    steps:['Arch position: push bar away, chest forward, legs back','Hollow position: pull bar, legs forward — aggressive switch','At the hollow: pull with arms — elbows drive down and back','Chin over bar — push away to return to arch','Rhythm: arch → hollow → pull → push → arch'],
+    cues:['Hips drive up','Push away at top','Find the rhythm','Hollow before you pull'],
+    faults:['No strict pull-up strength base','Pulling too early (hollow → arch)','Not pushing away at top','Worm kip (no control)'],
+    scale:'Strict Pull-up (3–5 required first) → Ring Row → Band',
+    yt:'https://www.youtube.com/results?search_query=crossfit+kipping+pull+up+technique' },
+
+  { name:'Chest-to-Bar Pull-up', cat:'gymnastics', diff:2,
+    muscles:'Lats, Biceps, Chest, Core',
+    setup:'Same as kipping pull-up. Bar must contact chest below the clavicle.',
+    steps:['Generate aggressive kip — more power than standard pull-up','At peak of hollow, pull hard — drive elbows behind body','Chest touches bar below collarbone','Push away from bar strongly to maintain rhythm','Re-establish arch for next rep'],
+    cues:['More aggressive kip','Drive elbows behind you','Chest touches bar','Strong push away'],
+    faults:['Chin-over bar only','Losing kip rhythm after each rep','Soft push-away','Chest not touching'],
+    scale:'Kipping Pull-up → Jumping C2B → Band-assisted C2B',
+    yt:'https://www.youtube.com/results?search_query=crossfit+chest+to+bar+pull+up' },
+
+  { name:'Bar Muscle-up', cat:'gymnastics', diff:3,
+    muscles:'Lats, Chest, Triceps, Shoulders, Core',
+    setup:'Requires: 5–10 strict pull-ups + bar dip. False grip not required on bar.',
+    steps:['Aggressive kip — more powerful than C2B','Hips drive up hard toward the bar','At hip-to-bar contact, push hips away and lean forward','Transition: rotate wrists over bar, press to top (bar dip)','Lock out arms fully at top — stand tall on the bar'],
+    cues:['Hips to bar','Lean forward in transition','Push into the bar','Lockout at top'],
+    faults:['Not getting hips to bar','Muscling up with arms only','No wrist turnover','Soft lockout at top'],
+    scale:'Kipping C2B + Bar Dip → Jumping Muscle-up → Banded transition drill',
+    yt:'https://www.youtube.com/results?search_query=crossfit+bar+muscle+up+technique' },
+
+  { name:'Ring Muscle-up', cat:'gymnastics', diff:3,
+    muscles:'Lats, Chest, Triceps, Shoulders, Core',
+    setup:'Rings at height that allows a kip. False grip (wrist over ring) for strict; standard grip for kipping.',
+    steps:['False grip: wrist on top of ring for transition advantage','Aggressive kip — drive hips up toward rings','At chest level, turn rings out and lean forward over hands','Transition: elbows drive behind and down — sit up over rings','Lock out arms fully — turn rings out at top (active shoulders)'],
+    cues:['False grip','Hips up first','Turn rings out','Sit up into the dip'],
+    faults:['Losing false grip','Not getting high enough in pull','Muscle-up with arms only','Soft elbows at lockout'],
+    scale:'Ring Row + Ring Dip → Jumping Ring MU → Banded transition',
+    yt:'https://www.youtube.com/results?search_query=crossfit+ring+muscle+up+technique' },
+
+  { name:'Handstand Push-up', cat:'gymnastics', diff:2,
+    muscles:'Shoulders, Triceps, Upper Traps, Core',
+    setup:'Hands ~15 cm outside shoulder-width. Head forms a triangle with hands on floor. Kick up to wall.',
+    steps:['Kick up: back to wall, belly faces away from wall','Hollow body: core tight, legs together, toes on wall','Lower head to floor in a controlled triangle path','Head touches floor (to abmat for standard)','Press explosively back to lockout — fully extend elbows'],
+    cues:['Triangle hand-head position','Hollow body','Head to abmat','Explosive press up'],
+    faults:['Flared elbows (chicken wing)','Not reaching full lockout','Wide hand position','No core tension'],
+    scale:'Pike Push-up → Box HSPU → Wall Walk + Hold → Band-assisted',
+    yt:'https://www.youtube.com/results?search_query=crossfit+handstand+push+up+technique' },
+
+  { name:'Ring Dip', cat:'gymnastics', diff:2,
+    muscles:'Triceps, Chest, Shoulders, Core',
+    setup:'Support position on rings: rings turned out, arms locked, body hollow.',
+    steps:['Lower under control: elbows track back (not flared)','Shoulder dips below elbow at bottom','Press to lockout — turn rings out at top','Maintain hollow body throughout','No kipping — strict movement'],
+    cues:['Elbows back','Rings turned out at top','Full lockout','Hollow body'],
+    faults:['Elbows flaring wide','Not reaching full depth','Soft lockout','Leaning too far forward'],
+    scale:'Box Dip → Bar Dip → Banded Ring Dip',
+    yt:'https://www.youtube.com/results?search_query=crossfit+ring+dip+technique' },
+
+  { name:'Toes-to-Bar', cat:'gymnastics', diff:2,
+    muscles:'Hip Flexors, Core (Rectus Abdominis), Lats, Grip',
+    setup:'Dead hang, active shoulders, hands shoulder-width. Initiate with a kip.',
+    steps:['Start with a small kip: arch then hollow','On the hollow, drive knees up first (knees-to-elbows position)','Extend legs — toes drive up to touch the bar','Both feet must touch the bar simultaneously','Lower under control, re-establish kip for next rep'],
+    cues:['Active shoulders','Hollow then knees up','Toes touch the bar','Both feet together'],
+    faults:['Passive hang (shoulder injuries)','One foot touching','Not returning to dead hang','Swinging wildly'],
+    scale:'Knees-to-Elbows → Hanging Knee Raise → GHD Sit-up',
+    yt:'https://www.youtube.com/results?search_query=crossfit+toes+to+bar+technique' },
+
+  { name:'Box Jump', cat:'gymnastics', diff:1,
+    muscles:'Quads, Glutes, Hamstrings, Calves, Core',
+    setup:'Stand in front of box (~30–50 cm away). Athletic stance, arms ready to swing.',
+    steps:['Load: quick dip, arms swing back','Jump: arms swing forward and up, full hip extension','Land: both feet simultaneously on top of box','Stand: fully extend hips and knees at top','Step or jump down — reset for next rep'],
+    cues:['Swing arms','Full hip extension','Soft landing','Stand tall at top'],
+    faults:['Landing with soft hips (no full extension)','One foot landing','Landing on toes only (Achilles risk)','Not standing fully at top'],
+    scale:'Step-up → Lower box → Broad jump',
+    yt:'https://www.youtube.com/results?search_query=crossfit+box+jump+technique' },
+
+  { name:'Burpee', cat:'gymnastics', diff:1,
+    muscles:'Full body — conditioning movement',
+    setup:'No equipment needed. Can be done anywhere.',
+    steps:['From standing: jump feet back or step back to plank','Lower chest AND thighs to floor simultaneously','Press up (push-up position) — feet jump to hands','Jump and clap overhead — fully extend hips at top','Land softly and repeat'],
+    cues:['Chest AND thighs touch','Clap overhead','Full extension at top','Find your rhythm'],
+    faults:['Only chest touching floor','Not fully standing at top','Inefficient step pattern (for speed)','No clap overhead'],
+    scale:'Burpee to plate (lower target) → Step-back burpee → No jump burpee',
+    yt:'https://www.youtube.com/results?search_query=crossfit+burpee+technique' },
+
+  { name:'Double-Under', cat:'gymnastics', diff:2,
+    muscles:'Calves, Shoulders, Wrists, Coordination',
+    setup:'Jump rope with handles at hip height. Light rope recommended. Relaxed wrists.',
+    steps:['Small, consistent bounce height (do not jump high)','Wrists rotate rope — not arms (elbows stay at sides)','Two rope passes per jump — time the second pass at peak of jump','Stay on balls of feet, slight forward lean','Relax: tension in hands and arms kills consistency'],
+    cues:['Small jump','Wrists rotate','Stay on balls of feet','Relax your grip'],
+    faults:['Jumping too high (donkey kick)','Arms flailing out','Looking down','Tension in shoulders'],
+    scale:'Single-unders (3:1 ratio) → Penguin jumps → Single → Double drill',
+    yt:'https://www.youtube.com/results?search_query=crossfit+double+under+technique' },
+
+  { name:'Pistol Squat', cat:'gymnastics', diff:3,
+    muscles:'Quads, Glutes, Core, Hip Flexors, Ankle Stability',
+    setup:'Stand on one foot. Non-working leg extended forward. Arms out for balance.',
+    steps:['Sit back and down on one leg — working knee tracks over toes','Non-working leg stays extended and elevated throughout','Hip crease below knee at bottom (full depth)','Drive through heel to stand','Maintain balance throughout — no support needed'],
+    cues:['Heel down','Knee tracks out','Control the descent','Non-working leg forward'],
+    faults:['Heel rising','Knee caving in','Non-working foot touching floor','Losing balance forward'],
+    scale:'Assisted Pistol (TRX/ring) → Box Pistol → Counterweight Pistol',
+    yt:'https://www.youtube.com/results?search_query=crossfit+pistol+squat+technique' },
+
+  // ════ KB / DB ════
+  { name:'KB Swing (American)', cat:'kb', diff:1,
+    muscles:'Hamstrings, Glutes, Core, Shoulders, Traps',
+    setup:'Feet shoulder-width, toes slightly out. KB 30 cm in front of feet. Hinge at hip to grip.',
+    steps:['Hike: swing KB back between legs — hips load, knees soft','Hip snap: explosively drive hips forward','KB floats up — arms guide, not lift (the hips power the swing)','Overhead: KB inverted, arms locked, biceps by ears','Hinge back: hips back, slight knee bend, KB swings back between legs'],
+    cues:['Hips drive the swing','Soft knees — not a squat','Lock out overhead','Float, don\'t muscle it up'],
+    faults:['Squatting instead of hinging','Muscling the KB with arms','Soft lockout overhead','Rounded lower back'],
+    scale:'Russian KB Swing (hip height) → Lighter KB → DB Swing',
+    yt:'https://www.youtube.com/results?search_query=crossfit+american+kettlebell+swing' },
+
+  { name:'KB Turkish Get-up', cat:'kb', diff:3,
+    muscles:'Full body — shoulder stability, core, hip mobility',
+    setup:'Lie on back. KB in right hand, arm straight (locked), right knee bent, left leg flat.',
+    steps:['Roll to left elbow — KB stays vertical, eye on KB throughout','Press to left hand — straight arm on floor','Sweep left leg under — come to kneeling position','Rotate left hand off floor — come to half-kneeling','Stand up — lunge front foot back','Reverse exactly — step back, kneel, hand down, sit, lie down'],
+    cues:['Eye on KB always','Packed shoulder (retract)','Slow and controlled','Each position is a pause'],
+    faults:['Looking away from KB','Bent arm overhead','Rushing the movement','Losing shoulder stability'],
+    scale:'No weight (shoe balance) → Light DB → Lighter KB',
+    yt:'https://www.youtube.com/results?search_query=kettlebell+turkish+get+up+technique' },
+
+  { name:'Wall Ball', cat:'kb', diff:1,
+    muscles:'Quads, Glutes, Shoulders, Core',
+    setup:'Ball at chest. Stand ~30 cm from wall. Target: 3 m (♂) / 2.7 m (♀).',
+    steps:['Squat: descend below parallel, ball stays at chest','Drive: explosive leg drive — triple extension','Throw: arms extend, ball leaves hands at forehead height','Ball hits target — catch on the way down at chest','Use catch momentum to initiate next squat'],
+    cues:['Squat below parallel','Use legs to throw','Catch and squat in one motion','Eyes on target'],
+    faults:['Partial squat','Throwing only with arms','Letting ball drop too low before squatting','Looking down'],
+    scale:'Lighter ball → Lower target → DB Thruster',
+    yt:'https://www.youtube.com/results?search_query=crossfit+wall+ball+technique' },
+
+  { name:'DB Snatch', cat:'kb', diff:2,
+    muscles:'Hamstrings, Glutes, Traps, Shoulder, Core',
+    setup:'DB between feet, hinge position. One hand on DB, palm facing body.',
+    steps:['Load hips — shoulders over DB, neutral spine','Explosive hip drive — shrug aggressively','High pull: elbow leads upward close to body','Punch hand up under the DB at peak — lockout overhead','Active shoulder at top, bicep by ear, stand tall'],
+    cues:['Hip drive first','High elbow pull','Punch under at the top','Lock out overhead'],
+    faults:['Pressing the DB up (no hip drive)','Elbow dropping early','Soft lockout','Bar path too wide'],
+    scale:'KB Swing → DB High Pull → Lighter DB',
+    yt:'https://www.youtube.com/results?search_query=crossfit+dumbbell+snatch+technique' },
+
+  // ════ CARDIO ════
+  { name:'Row (Concept2)', cat:'cardio', diff:1,
+    muscles:'Legs (60%), Core (20%), Arms/Back (20%)',
+    setup:'Feet strapped in (ball of foot on footpad). Damper 3–5 recommended. Grip: relaxed, not tight.',
+    steps:['Catch: shins vertical, arms straight, hinge forward from hip','Drive: legs push first — do not open hips early','Mid-drive: as legs near extension, hinge torso back','Finish: legs extended, lean back ~11 o\'clock, arms pull to lower ribs','Recovery: arms away first, then hinge forward, then bend knees'],
+    cues:['Legs first','Arms away first on recovery','Hang from the handle','Smooth — not jerky'],
+    faults:['Opening hips too early (shooting the tail)','Gripping too tight','Breaking arms before legs extend','Hunching the back'],
+    scale:'Focus on technique at low watts before adding intensity',
+    yt:'https://www.youtube.com/results?search_query=concept2+rowing+technique+crossfit' },
+
+  { name:'Assault / Echo Bike', cat:'cardio', diff:1,
+    muscles:'Full body — Quads, Hamstrings, Glutes, Shoulders, Core',
+    setup:'Seat height: slight bend in knee at bottom of pedal stroke. Grip handles firmly.',
+    steps:['Coordinate arms and legs simultaneously — no dead weight','Push down with legs AND pull with arms at same time','At bottom of stroke: push handles forward, drive knees up','Maintain consistent cadence — avoid sprinting then dying','Breathe in rhythm with the stroke'],
+    cues:['Push AND pull','Full pedal stroke','Consistent cadence','Lean slightly forward'],
+    faults:['Only pedaling with legs (passive arms)','Death grip causing fatigue','Going too hard too early','Inconsistent rpm'],
+    scale:'Reduce resistance/pace → Echo Bike (lighter flywheel) → Focus on cadence',
+    yt:'https://www.youtube.com/results?search_query=assault+bike+technique+crossfit' },
+
+  { name:'Running', cat:'cardio', diff:1,
+    muscles:'Full body — Quads, Hamstrings, Calves, Glutes, Core',
+    setup:'Relaxed posture, slight forward lean from ankles (not waist). Arms bent at 90°.',
+    steps:['Land on midfoot — not heel striking','Cadence ~180 steps/min (high turnover)','Arms swing forward and back — not across body','Torso: slight lean forward, relaxed shoulders','Breathing: find a rhythm (e.g. 2 steps inhale / 2 steps exhale)'],
+    cues:['Midfoot strike','Lean from ankles','Relax shoulders','High cadence'],
+    faults:['Heel striking','Overstriding','Arms crossing midline','Hunching forward at the waist'],
+    scale:'Walk → Run-walk intervals → Reduce distance',
+    yt:'https://www.youtube.com/results?search_query=running+form+crossfit+technique' },
+
+  { name:'Jump Rope / Singles', cat:'cardio', diff:1,
+    muscles:'Calves, Shoulders, Wrists, Coordination',
+    setup:'Rope length: when standing on rope, handles reach armpits. Relaxed grip.',
+    steps:['Bounce on balls of feet — small, efficient jumps','Wrists rotate rope — elbows stay at sides','One rotation per jump — steady rhythm','Look forward, not down','Land softly — minimal impact'],
+    cues:['Small jumps','Wrists rotate','Relax arms','Steady rhythm'],
+    faults:['Jumping too high','Arms moving instead of wrists','Looking at feet','Inconsistent timing'],
+    scale:'Stepping over rope → Slow singles → Speed up gradually',
+    yt:'https://www.youtube.com/results?search_query=jump+rope+singles+technique+crossfit' },
+];
+
+// ── STICK-FIGURE SVG ENGINE ──────────────────
+// Each pose = 14 joints × 2 coords in a 54×92 SVG box (y=0 at top):
+// [hx,hy, nx,ny, slx,sly, srx,sry, elx,ely, erx,ery, hlx,hly, hrx,hry, hpx,hpy, klx,kly, krx,kry, flx,fly, frx,fry]
+const POSES = {
+  stand:         [27,8, 27,16, 20,20, 34,20, 16,32, 38,32, 14,45, 40,45, 27,47, 23,66, 31,66, 20,84, 34,84],
+  overhead:      [27,8, 27,16, 18,20, 36,20,  9,13, 45,13,  4, 6, 50, 6, 27,47, 23,66, 31,66, 20,84, 34,84],
+  hinge:         [13,19, 18,26, 11,30, 27,30, 10,43, 26,43, 10,58, 26,58, 30,44, 25,63, 35,63, 22,83, 36,83],
+  tripleext:     [27,8, 27,16, 19,20, 35,20, 12,12, 42,12, 19,20, 35,20, 27,46, 23,65, 31,65, 21,84, 33,84],
+  pclean_catch:  [27,12, 27,20, 18,24, 36,24, 11,24, 43,24, 19,24, 35,24, 27,51, 22,68, 32,68, 19,83, 35,83],
+  sqclean_catch: [27,15, 27,22, 18,26, 36,26, 11,26, 43,26, 19,26, 35,26, 27,59, 13,73, 41,73, 12,84, 42,84],
+  ohs_bot:       [27,15, 27,22, 18,26, 36,26,  8,17, 46,17,  4, 9, 50, 9, 27,59, 12,73, 42,73, 11,84, 43,84],
+  bsq_stand:     [27,8, 27,16, 15,20, 39,20,  8,23, 46,23,  5,29, 49,29, 27,47, 23,66, 31,66, 20,84, 34,84],
+  bsq_bot:       [27,14, 27,22, 15,26, 39,26,  8,29, 46,29,  5,35, 49,35, 27,56, 17,72, 37,72, 15,84, 39,84],
+  fsq_stand:     [27,8, 27,16, 18,20, 36,20, 11,20, 43,20, 19,20, 35,20, 27,47, 23,66, 31,66, 20,84, 34,84],
+  dl_lock:       [27,8, 27,16, 20,20, 34,20, 16,32, 38,32, 16,52, 38,52, 27,47, 23,66, 31,66, 20,84, 34,84],
+  pp_dip:        [27,10, 27,18, 19,22, 35,22, 16,34, 38,34, 19,24, 35,24, 27,51, 22,69, 32,69, 20,84, 34,84],
+  pp_top:        [27,8, 27,16, 19,20, 35,20, 13,13, 41,13,  9, 6, 45, 6, 27,47, 23,66, 31,66, 20,84, 34,84],
+  hang:          [27,32, 27,39, 19,43, 35,43, 19,20, 35,20, 21, 8, 33, 8, 27,57, 23,74, 31,74, 21,89, 33,89],
+  pull_top:      [27,14, 27,21, 19,25, 35,25, 19,12, 35,12, 21, 8, 33, 8, 27,44, 23,62, 31,62, 21,78, 33,78],
+  hspu_up:       [27,80, 27,73, 19,69, 35,69, 14,76, 40,76, 12,86, 42,86, 27,52, 22,33, 32,33, 20,13, 34,13],
+  hspu_low:      [27,83, 27,76, 19,72, 35,72, 12,79, 42,79, 10,87, 44,87, 27,54, 22,35, 32,35, 20,13, 34,13],
+  ring_top:      [27,8, 27,16, 18,20, 36,20, 11,22, 43,22,  9,27, 45,27, 27,47, 23,66, 31,66, 20,84, 34,84],
+  ring_bot:      [27,14, 27,22, 18,26, 36,26, 11,30, 43,30,  9,36, 45,36, 27,53, 23,70, 31,70, 20,84, 34,84],
+  t2b_mid:       [27,27, 27,34, 19,38, 35,38, 19,18, 35,18, 21, 8, 33, 8, 27,54, 20,62, 34,62, 21,74, 33,74],
+  t2b_top:       [27,27, 27,34, 19,38, 35,38, 19,18, 35,18, 21, 8, 33, 8, 27,54, 18,15, 36,15, 21, 8, 33, 8],
+  box_crouch:    [27,16, 27,24, 19,28, 35,28, 13,39, 41,39, 12,51, 42,51, 27,54, 20,71, 34,71, 18,84, 36,84],
+  box_land:      [27,14, 27,22, 19,26, 35,26, 14,36, 40,36, 13,49, 41,49, 27,50, 21,65, 33,65, 20,78, 34,78],
+  split_catch:   [27,9, 27,17, 18,21, 36,21,  9,13, 45,13,  4, 6, 50, 6, 27,47, 16,60, 38,65, 11,80, 40,84],
+  run:           [27,11, 27,19, 19,23, 35,23, 13,33, 41,31, 11,46, 42,43, 27,47, 16,64, 38,62, 12,83, 39,77],
+  plank:         [10,28, 15,34,  8,38, 22,38,  7,46,  9,46,  7,54,  9,54, 28,42, 28,54, 38,54, 28,65, 46,65],
+  kb_hike:       [15,20, 20,27, 12,31, 28,31, 10,41, 27,41, 17,53, 29,53, 29,41, 24,62, 34,62, 21,83, 35,83],
+  kb_top:        [27,8, 27,16, 19,20, 35,20, 11,13, 43,13,  9, 6, 45, 6, 27,47, 23,66, 31,66, 20,84, 34,84],
+  wall_squat:    [27,15, 27,23, 18,27, 36,27, 12,36, 42,36,  8,43, 46,43, 27,58, 14,72, 40,72, 12,83, 42,83],
+  row_catch:     [16,19, 21,26, 12,30, 29,30,  8,41, 26,41,  5,53, 23,53, 31,43, 26,63, 36,63, 23,83, 37,83],
+  row_fin:       [30,11, 29,19, 21,23, 37,23, 16,29, 43,29, 19,35, 36,35, 27,49, 23,67, 33,67, 21,84, 35,84],
+  pistol_bot:    [27,17, 27,25, 18,29, 36,29, 14,39, 40,37, 14,51, 40,49, 27,58, 17,72, 35,66, 15,83, 35,56],
+  sumo_hinge:    [16,21, 21,28, 13,32, 29,32, 12,44, 28,44, 12,58, 28,58, 27,44, 18,63, 36,63,  8,83, 46,83],
+  sdlhp_fin:     [27,8, 27,16, 19,20, 35,20, 11,13, 43,13, 18,16, 36,16, 27,47, 23,66, 31,66, 20,84, 34,84],
+};
+
+function figInner(pts, bar, kb, lbl, frameNum, fh) {
+  if (!pts) return '';
+  const [hx,hy,nx,ny,slx,sly,srx,sry,elx,ely,erx,ery,hlx,hly,hrx,hry,hpx,hpy,klx,kly,krx,kry,flx,fly,frx,fry] = pts;
+  const bd = '#1e3a5f', eq = '#e91e8c';
+  const seg = (x1,y1,x2,y2,w) =>
+    `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${bd}" stroke-width="${w}" stroke-linecap="round" fill="none"/>`;
+  let s = '';
+
+  // Ground shadow
+  s += `<ellipse cx="27" cy="${fh-1}" rx="17" ry="2.5" fill="#dde4f0"/>`;
+
+  // Equipment (drawn behind body)
+  if (bar) {
+    const {y, xl=5, xr=49} = bar;
+    s += `<rect x="${xl+4}" y="${y-2}" width="${Math.max(0,xr-xl-8)}" height="4" rx="2" fill="${eq}"/>`;
+    s += `<rect x="${xl-2}" y="${y-6}" width="7" height="12" rx="3" fill="${eq}"/>`;
+    s += `<rect x="${xr-5}" y="${y-6}" width="7" height="12" rx="3" fill="${eq}"/>`;
+  }
+  if (kb) {
+    const {cx: kx, cy: ky} = kb;
+    s += `<circle cx="${kx}" cy="${ky+5}" r="9" fill="none" stroke="${eq}" stroke-width="2.5"/>`;
+    s += `<path d="M${kx-5} ${ky-1} Q${kx} ${ky-14} ${kx+5} ${ky-1}" fill="none" stroke="${eq}" stroke-width="3" stroke-linecap="round"/>`;
+  }
+
+  // Body — thick rounded segments, back-to-front order
+  s += seg(klx,kly,flx,fly,5);   s += seg(krx,kry,frx,fry,5);    // shins
+  s += seg(flx-4,fly,flx+5,fly,4); s += seg(frx-4,fry,frx+5,fry,4); // feet
+  s += seg(hpx,hpy,klx,kly,6);   s += seg(hpx,hpy,krx,kry,6);    // thighs
+  s += seg(nx,ny,hpx,hpy,7);                                        // torso
+  s += seg(slx,sly,srx,sry,5);                                      // shoulder bar
+  s += seg(slx,sly,elx,ely,5);   s += seg(srx,sry,erx,ery,5);     // upper arms
+  s += seg(elx,ely,hlx,hly,4);   s += seg(erx,ery,hrx,hry,4);     // forearms
+  s += seg(hx,hy+8,nx,ny,4);                                        // neck
+  s += `<circle cx="${hx}" cy="${hy}" r="9" fill="#dde9f7" stroke="${bd}" stroke-width="2.5"/>`;
+
+  // Position number badge
+  s += `<circle cx="48" cy="9" r="7.5" fill="${eq}"/>`;
+  s += `<text x="48" y="13" text-anchor="middle" font-size="9.5" fill="white" font-family="system-ui,sans-serif" font-weight="800">${frameNum}</text>`;
+
+  // Label
+  if (lbl) s += `<text x="27" y="${fh+13}" text-anchor="middle" font-size="8.5" fill="#64748b" font-family="system-ui,sans-serif" font-weight="700">${lbl}</text>`;
+  return s;
+}
+
+function exSVG(frames) {
+  const fw = 56, fh = 94, gap = 18, n = frames.length;
+  const tw = n * fw + (n - 1) * gap;
+  let g = `<svg width="${tw}" height="${fh+18}" viewBox="0 0 ${tw} ${fh+18}" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:10px auto 6px;max-width:100%;border-radius:14px;background:linear-gradient(135deg,#eef2fb,#f0f4ff)">`;
+  frames.forEach((f, i) => {
+    const ox = i * (fw + gap);
+    // individual frame card
+    g += `<rect x="${ox}" y="2" width="${fw}" height="${fh+2}" rx="10" fill="white" opacity="0.85"/>`;
+    g += `<g transform="translate(${ox},2)">${figInner(POSES[f.pose], f.bar||null, f.kb||null, f.label||'', i+1, fh)}</g>`;
+    // arrow to next frame
+    if (i < n - 1) {
+      const ax = ox + fw + 2, ay = (fh + 2) / 2;
+      g += `<line x1="${ax}" y1="${ay}" x2="${ax+gap-4}" y2="${ay}" stroke="#e91e8c" stroke-width="1.5" stroke-linecap="round"/>`;
+      g += `<path d="M${ax+gap-7} ${ay-3} L${ax+gap-2} ${ay} L${ax+gap-7} ${ay+3}" fill="none" stroke="#e91e8c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    }
+  });
+  return g + '</svg>';
+}
+
+const EX_FRAMES = {
+  'Power Clean':           [{pose:'hinge',bar:{y:58,xl:8,xr:28},label:'Setup'},{pose:'tripleext',bar:{y:44,xl:17,xr:37},label:'Extension'},{pose:'pclean_catch',bar:{y:24,xl:17,xr:37},label:'Catch'}],
+  'Squat Clean':           [{pose:'hinge',bar:{y:58,xl:8,xr:28},label:'Setup'},{pose:'tripleext',bar:{y:44,xl:17,xr:37},label:'Extension'},{pose:'sqclean_catch',bar:{y:26,xl:17,xr:37},label:'Catch'}],
+  'Hang Power Clean':      [{pose:'hinge',bar:{y:44,xl:8,xr:28},label:'Hang'},{pose:'tripleext',bar:{y:44,xl:17,xr:37},label:'Extension'},{pose:'pclean_catch',bar:{y:24,xl:17,xr:37},label:'Catch'}],
+  'Power Snatch':          [{pose:'hinge',bar:{y:58,xl:8,xr:28},label:'Setup'},{pose:'tripleext',bar:{y:44,xl:17,xr:37},label:'Extension'},{pose:'overhead',bar:{y:6,xl:3,xr:51},label:'Catch'}],
+  'Squat Snatch':          [{pose:'hinge',bar:{y:58,xl:8,xr:28},label:'Setup'},{pose:'tripleext',bar:{y:44,xl:17,xr:37},label:'Extension'},{pose:'ohs_bot',bar:{y:9,xl:3,xr:51},label:'Catch'}],
+  'Clean & Jerk':          [{pose:'pclean_catch',bar:{y:24,xl:17,xr:37},label:'Clean'},{pose:'fsq_stand',bar:{y:20,xl:17,xr:37},label:'Front Rack'},{pose:'split_catch',bar:{y:6,xl:3,xr:51},label:'Jerk'}],
+  'Push Jerk':             [{pose:'fsq_stand',bar:{y:20,xl:17,xr:37},label:'Front Rack'},{pose:'pp_dip',bar:{y:24,xl:17,xr:37},label:'Dip'},{pose:'overhead',bar:{y:6,xl:3,xr:51},label:'Overhead'}],
+  'Push Press':            [{pose:'fsq_stand',bar:{y:20,xl:17,xr:37},label:'Front Rack'},{pose:'pp_dip',bar:{y:24,xl:17,xr:37},label:'Dip & Drive'},{pose:'pp_top',bar:{y:6,xl:8,xr:46},label:'Lockout'}],
+  'Back Squat':            [{pose:'bsq_stand',bar:{y:20,xl:4,xr:50},label:'Start'},{pose:'bsq_bot',bar:{y:27,xl:4,xr:50},label:'Bottom'},{pose:'bsq_stand',bar:{y:20,xl:4,xr:50},label:'Stand'}],
+  'Front Squat':           [{pose:'fsq_stand',bar:{y:20,xl:17,xr:37},label:'Start'},{pose:'sqclean_catch',bar:{y:26,xl:17,xr:37},label:'Bottom'},{pose:'fsq_stand',bar:{y:20,xl:17,xr:37},label:'Stand'}],
+  'Overhead Squat':        [{pose:'overhead',bar:{y:6,xl:3,xr:51},label:'Start'},{pose:'ohs_bot',bar:{y:9,xl:3,xr:51},label:'Bottom'},{pose:'overhead',bar:{y:6,xl:3,xr:51},label:'Stand'}],
+  'Deadlift':              [{pose:'hinge',bar:{y:58,xl:8,xr:28},label:'Setup'},{pose:'hinge',bar:{y:43,xl:8,xr:28},label:'Mid Pull'},{pose:'dl_lock',bar:{y:52,xl:14,xr:40},label:'Lockout'}],
+  'Shoulder Press':        [{pose:'fsq_stand',bar:{y:20,xl:17,xr:37},label:'Front Rack'},{pose:'overhead',bar:{y:14,xl:8,xr:46},label:'Press'},{pose:'pp_top',bar:{y:6,xl:8,xr:46},label:'Lockout'}],
+  'Sumo Deadlift High Pull':[{pose:'sumo_hinge',bar:{y:58,xl:10,xr:30},label:'Setup'},{pose:'tripleext',bar:{y:44,xl:17,xr:37},label:'Extension'},{pose:'sdlhp_fin',bar:{y:16,xl:16,xr:38},label:'High Pull'}],
+  'Strict Pull-up':        [{pose:'hang',bar:{y:7,xl:13,xr:41},label:'Dead Hang'},{pose:'t2b_mid',bar:{y:7,xl:13,xr:41},label:'Pulling'},{pose:'pull_top',bar:{y:7,xl:15,xr:39},label:'Chin Over'}],
+  'Kipping Pull-up':       [{pose:'hang',bar:{y:7,xl:13,xr:41},label:'Arch'},{pose:'hang',bar:{y:7,xl:13,xr:41},label:'Hollow'},{pose:'pull_top',bar:{y:7,xl:15,xr:39},label:'Pull'}],
+  'Chest-to-Bar Pull-up':  [{pose:'hang',bar:{y:7,xl:13,xr:41},label:'Dead Hang'},{pose:'pull_top',bar:{y:7,xl:15,xr:39},label:'Pull'},{pose:'pull_top',bar:{y:7,xl:15,xr:39},label:'C2B Touch'}],
+  'Bar Muscle-up':         [{pose:'hang',bar:{y:7,xl:13,xr:41},label:'Hang & Kip'},{pose:'pull_top',bar:{y:7,xl:15,xr:39},label:'Hip to Bar'},{pose:'ring_top',bar:{y:27,xl:7,xr:47},label:'Support'}],
+  'Ring Muscle-up':        [{pose:'hang',bar:{y:7,xl:13,xr:41},label:'Hang'},{pose:'pull_top',bar:{y:7,xl:15,xr:39},label:'Transition'},{pose:'ring_top',bar:{y:27,xl:7,xr:47},label:'Support'}],
+  'Handstand Push-up':     [{pose:'hspu_up',label:'Handstand'},{pose:'hspu_low',label:'Head Down'},{pose:'hspu_up',label:'Press Up'}],
+  'Ring Dip':              [{pose:'ring_top',bar:{y:27,xl:7,xr:47},label:'Top'},{pose:'ring_bot',bar:{y:36,xl:7,xr:47},label:'Bottom'},{pose:'ring_top',bar:{y:27,xl:7,xr:47},label:'Press Up'}],
+  'Toes-to-Bar':           [{pose:'hang',bar:{y:7,xl:13,xr:41},label:'Dead Hang'},{pose:'t2b_mid',bar:{y:7,xl:13,xr:41},label:'Knees Up'},{pose:'t2b_top',bar:{y:7,xl:13,xr:41},label:'Toes to Bar'}],
+  'Box Jump':              [{pose:'stand',label:'Load'},{pose:'box_crouch',label:'Jump'},{pose:'box_land',label:'Land'}],
+  'Burpee':                [{pose:'stand',label:'Start'},{pose:'plank',label:'Chest Down'},{pose:'stand',label:'Jump & Clap'}],
+  'Double-Under':          [{pose:'stand',label:'Small Jump'},{pose:'stand',label:'Spin Wrists'},{pose:'stand',label:'Two Passes'}],
+  'Pistol Squat':          [{pose:'stand',label:'Stand Tall'},{pose:'box_crouch',label:'Descend'},{pose:'pistol_bot',label:'Full Depth'}],
+  'KB Swing (American)':   [{pose:'kb_hike',kb:{cx:22,cy:52},label:'Hike Back'},{pose:'stand',kb:{cx:27,cy:34},label:'Hip Drive'},{pose:'kb_top',kb:{cx:27,cy:6},label:'Overhead'}],
+  'KB Turkish Get-up':     [{pose:'plank',kb:{cx:8,cy:44},label:'Lie Down'},{pose:'ring_top',kb:{cx:13,cy:22},label:'Sit & Kneel'},{pose:'stand',kb:{cx:14,cy:8},label:'Stand'}],
+  'Wall Ball':             [{pose:'wall_squat',kb:{cx:27,cy:28},label:'Squat'},{pose:'stand',kb:{cx:27,cy:22},label:'Drive'},{pose:'stand',kb:{cx:27,cy:8},label:'Throw'}],
+  'DB Snatch':             [{pose:'hinge',kb:{cx:17,cy:58},label:'Setup'},{pose:'tripleext',kb:{cx:25,cy:42},label:'Extension'},{pose:'overhead',kb:{cx:27,cy:6},label:'Overhead'}],
+  'Row (Concept2)':        [{pose:'row_catch',label:'Catch'},{pose:'row_catch',label:'Leg Drive'},{pose:'row_fin',label:'Finish'}],
+  'Assault / Echo Bike':   [{pose:'stand',label:'Push Arms'},{pose:'stand',label:'Pull Arms'},{pose:'stand',label:'Drive Legs'}],
+  'Running':               [{pose:'run',label:'Drive'},{pose:'stand',label:'Extension'},{pose:'run',label:'Land Soft'}],
+  'Jump Rope / Singles':   [{pose:'stand',label:'Small Jump'},{pose:'stand',label:'Spin Wrists'},{pose:'stand',label:'Land Soft'}],
+};
+
+// ── MOVEMENTS LIBRARY JS ─────────────────────
+let exFilterCat = 'all';
+
+function filterEx(btn, cat) {
+  document.querySelectorAll('.ex-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  exFilterCat = cat;
+  renderEx();
+}
+
+function renderEx() {
+  const q = (document.getElementById('ex-search').value || '').toLowerCase();
+  const catLabels = { olympic:'Olympic', strength:'Strength', gymnastics:'Gymnastics', kb:'KB / DB', cardio:'Cardio' };
+  const list = EX_DB.filter(e => {
+    const catOk = exFilterCat === 'all' || e.cat === exFilterCat;
+    const txtOk = !q || e.name.toLowerCase().includes(q) || e.muscles.toLowerCase().includes(q);
+    return catOk && txtOk;
+  });
+  const el = document.getElementById('ex-list');
+  if (!list.length) { el.innerHTML = '<div class="wod-empty">No movements found.</div>'; return; }
+  el.innerHTML = list.map(e => {
+    const stars = '★'.repeat(e.diff) + '☆'.repeat(3 - e.diff);
+    return `<div class="ex-card" onclick="toggleEx(this)">
+      <div class="ex-card-header">
+        <div class="ex-card-meta">
+          <div class="ex-card-name">${e.name}</div>
+          <div class="ex-tags">
+            <span class="ex-tag tag-${e.cat}">${catLabels[e.cat]}</span>
+          </div>
+          <div class="ex-diff"><span style="color:#f59f00">${stars}</span></div>
+        </div>
+        <span class="ex-chevron">▼</span>
+      </div>
+      <div class="ex-card-body">
+        <div class="ex-muscles">💪 ${e.muscles}</div>
+        ${EX_FRAMES[e.name] ? exSVG(EX_FRAMES[e.name]) : ''}
+
+        <div class="ex-section-title">Setup</div>
+        <div style="font-size:0.82rem;color:#334155;line-height:1.6">${e.setup}</div>
+
+        <div class="ex-section-title">Execution</div>
+        <ol class="ex-steps">${e.steps.map(s => `<li>${s}</li>`).join('')}</ol>
+
+        <div class="ex-section-title">Key Cues</div>
+        <div class="ex-cues">${e.cues.map(c => `<span class="ex-cue">→ ${c}</span>`).join('')}</div>
+
+        <div class="ex-section-title">Common Faults</div>
+        <ul class="ex-faults">${e.faults.map(f => `<li>${f}</li>`).join('')}</ul>
+
+        <div class="ex-section-title">Scaling</div>
+        <div class="ex-scale">📉 ${e.scale}</div>
+
+        <a class="ex-video-btn" href="${e.yt}" target="_blank" rel="noopener" onclick="event.stopPropagation()">▶ Watch Technique Video</a>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleEx(card) { card.classList.toggle('open'); }
+
+function initExTab() {
+  if (!document.getElementById('ex-list').innerHTML) renderEx();
+}
+
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
   }
